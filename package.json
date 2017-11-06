@@ -13,6 +13,7 @@
     "node": "8.5.x"
   },
   "dependencies": {
+    "aws-sdk": "^2.145.0",
     "body-parser": "~1.17.1",
     "co": "^4.6.0",
     "cookie-parser": "~1.4.3",
