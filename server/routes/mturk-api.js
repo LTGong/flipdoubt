@@ -11,6 +11,5 @@ router.get('/transform', function(req, res, next) {
       message: 'HAPPY THOUGHTS'
     });
   });
-});
 
 module.exports = router;
