@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-import frustratedMonkey from './frustrated-monkey.gif';
+//import frustratedMonkey from './frustrated-monkey.gif';
 import './frontpage.css';
 
-const countStyle = {
-  color: 'brown',
-};
+// const countStyle = {
+//   color: 'brown',
+// };
 
 class Frontpage extends Component {
 
@@ -31,10 +31,9 @@ class Frontpage extends Component {
 
   transform(){
     console.log('we transformin yo');
-    fetch('/api/mturk-api/transform', {
+    fetch('/api/mturk/transform', {
       method: 'POST',
-      body: JSON.stringify({thoughtText: this.state.value}),
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json'}
+      body: JSON.stringify({thoughtText: this.state.value})
     })
     .then((res) => res.json() )
     .then( (data) => {

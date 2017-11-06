@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+//import { Link } from 'react-router-dom'
 
 // lightweight component declaration style
 const Footer = () => (
   <section className="section">
     <footer>
       <div className="content">
-
+      This is the footer.
       </div>
     </footer>
   </section>

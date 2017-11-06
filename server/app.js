@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(expressMongoDb(process.env.DB_URI));
 
 app.use('/api/db', dbApi);
-app.use('/api/mturk-api', mturkApi);
+app.use('/api/mturk', mturkApi);
 
 // react routing (production)
 var reactBase = path.resolve(__dirname, '../web/build')
