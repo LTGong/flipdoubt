@@ -12,13 +12,22 @@ export default ({profile, getAuthorizationHeader}) => (
       Current user id is: <code>{getUserId(profile)}</code>
     </p>
 
-    <div className="content">
-      <UnprotectedCall />
-    </div>
+    // <div className="content">
+    //   <UnprotectedCall />
+    // </div>
+    //
+    // <div className="content">
+    //   <ProtectedCall getAuthorizationHeader={getAuthorizationHeader}/>
+    // </div>
 
-    <div className="content">
-      <ProtectedCall getAuthorizationHeader={getAuthorizationHeader}/>
-    </div>
-    
+    <p>
+
+    {this.props.message}
+
+    </p>
+
+
   </div>
+
+
 )

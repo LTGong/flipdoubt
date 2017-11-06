@@ -11,6 +11,7 @@ const expressMongoDb = require('express-mongo-db');
 
 const auth = require('./auth');
 const dbApi = require('./routes/db-api');
+const mturkApi = require('./routes/mturk-api');
 
 const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(expressMongoDb(process.env.DB_URI));
 
 app.use('/api/db', dbApi);
+app.use('/api/mturk-api', mturkApi);
 
 // react routing (production)
 var reactBase = path.resolve(__dirname, '../web/build')
