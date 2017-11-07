@@ -4,11 +4,20 @@ import React from 'react';
 // lightweight component declaration style
 const Footer = () => (
   <section className="section">
-    <footer>
-      <div className="content">
-      This is the footer.
-      </div>
-    </footer>
+      <footer className="footer">
+        <div className="container">
+          <div className="content has-text-centered">
+            <p>
+              <strong>Imposter Syndrom Killer App</strong> by Frozen City Savages.
+            </p>
+            <p>
+              <a className="icon" href="https://github.com/umn-5117-f17/module-2-group-assignment-frozen-city-savages">
+                <i className="fa fa-github"></i>
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
   </section>
 );
 

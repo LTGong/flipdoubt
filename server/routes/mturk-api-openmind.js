@@ -34,3 +34,25 @@ mturk.createClient(config).then(function(api){
 
 
 }).catch(console.error);
+
+//Import an XML file. You can use one of our examples in the templates folder *
+fs.readFile('./templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
+  if(err){console.error(err);return}
+  
+  //HIT options
+  var params = {
+    Title: "Create HIT Example",
+    Description: "An example of how to create a HIT",
+    Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
+    AssignmentDurationInSeconds: 180, // Allow 3 minutes to answer
+    AutoApprovalDelayInSeconds: 86400 * 1, // 1 day auto approve
+    MaxAssignments: 100, // 100 worker responses
+    LifetimeInSeconds: 86400 * 3, // Expire in 3 days
+    Reward: {CurrencyCode:'USD', Amount:0.50}
+  };
+  
+  api.req('CreateHIT', params).then(function(res){
+    //DO SOMETHING
+  }).catch(console.error);
+  
+})
