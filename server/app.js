@@ -11,7 +11,7 @@ const expressMongoDb = require('express-mongo-db');
 
 const auth = require('./auth');
 const dbApi = require('./routes/db-api');
-const mturkApi = require('./routes/mturk-api');
+const mturkApi = require('./routes/mturk-api-openmind.js');
 
 const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
