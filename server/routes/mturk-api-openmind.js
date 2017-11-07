@@ -14,24 +14,25 @@ var config = {
 }
 
 router.post('/transform', function(req, res, next) {
-  console.log('server: In transform');
-  console.log(req.body);
-
+  console.log(req.body.thoughtText);
   mturk.createClient(config)
   .then(function(api){
     console.log('In createClient');
 
-    api.req('GetAccountBalance')
-      .then(function(res){
-        console.log(res.GetAccountBalanceResult);
-      })
-      .catch(console.error);
+    // api.req('GetAccountBalance')
+    //   .then(function(res){
+    //     console.log(res.GetAccountBalanceResult);
+    //   })
+    //   .catch(console.error);
 
     //Import an XML file. You can use one of our examples in the templates folder *
     fs.readFile(__dirname + '/../templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
-
-      console.log('server: in readFile');
       if(err){console.error(err);return}
+
+      var neg_thought = req.body.thoughtText;
+      var tag = '%%THOUGHT.TAG%%';
+      unescapedXML = unescapedXML.replace(tag, neg_thought);
+      console.log(unescapedXML);
 
       //HIT options
       var params = {

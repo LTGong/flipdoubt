@@ -34,7 +34,11 @@ class Frontpage extends Component {
 
     var fetch_data = {
       method: 'POST',
-      body: {thoughtText: thought} //NOT WORKING???!! //JSON.stringify({thoughtText: thought})
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({thoughtText: thought}) //NOT WORKING???!! //JSON.stringify({thoughtText: thought})
     }
 
     fetch('/api/mturk/transform', fetch_data)

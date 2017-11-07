@@ -6,8 +6,7 @@
 		<IsRequired>true</IsRequired>
 		<QuestionContent>
 			<Title>The following text is a negative thought that a person typed about themself:</Title>
-			<Text> The text of the thought from the request. </Text>
-
+      <Title> "%%THOUGHT.TAG%%" </Title>
       <Title> Rewrite this thought in a way that is more positive. For instance, try to think up a way of saying it that might go on a motivational poster. Try to be as inspirational as possible so that you can encourage the person to feel better about themself!  </Title>
 
       <Text> Here is an example negative thought: </Text>
