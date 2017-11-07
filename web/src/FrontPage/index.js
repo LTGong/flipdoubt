@@ -18,6 +18,9 @@ class Frontpage extends Component {
     this.transform = this
       .transform
       .bind(this);
+    this.checkresults = this
+      .checkresults
+      .bind(this);
   }
 
   foo(e) {
@@ -65,16 +68,26 @@ class Frontpage extends Component {
       .then((res) => {
         var mongoIdString = res._id;
         console.log(mongoIdString);
-        // OTHER STUFF THAT WE WANT TO DO WITH THE THOUGHT
-        // TODO: RENDER THE PROCESSING CARD
-        // TODO: POLL AMT TO WAIT FOR WHEN THERE HIT HAS BEEN COMPLETED, THEN UPDATE DB AND RELOAD
-        // Probably use mongoIdString as the :id ?
       })
       .catch(err => console.log(err))
 
     }).catch(err => console.log(err))
   }
 
+  // Poll using a function like this?? I currently just have a button that calls it...
+  // Probably just do two things in this function:
+  //    (1) check if hit results are in, and if so, update database
+  //    (2) check if any of the "processing" values have changed from true to false in the database, and
+  //        re-render the gallery if so, based on the values stored in the db...
+checkresults(){
+  console.log('CHECKIN IN NOW');
+  fetch('/api/mturk/check-hits')
+  .then((res) => res.json())
+  .then((res) => {
+    console.log(res);
+  })
+  .catch(err => console.log(err))
+}
 
 
   render() {
@@ -100,6 +113,14 @@ class Frontpage extends Component {
               </a>
             </p>
           </div>
+        </div>
+
+        <div className = "box">
+        <p className="control">
+          <a className="button is-info" onClick={this.checkresults}>
+            Check Results
+          </a>
+        </p>
         </div>
 
         {/* Move this to gallery component */}

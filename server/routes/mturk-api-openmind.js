@@ -17,7 +17,7 @@ router.post('/transform', function(req, res, next) {
   console.log(req.body.thoughtText);
   mturk.createClient(config)
   .then(function(api){
-    console.log('In createClient');
+    console.log('In createClient-transform');
 
     // api.req('GetAccountBalance')
     //   .then(function(res){
@@ -40,9 +40,9 @@ router.post('/transform', function(req, res, next) {
         Description: "You will read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive one.",
         Keywords: "writing, editing, help, psychology",
         Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
-        AssignmentDurationInSeconds: 180, // Allow 3 minutes to answer
-        AutoApprovalDelayInSeconds: 86400 * 1, // 1 day auto approve
-        MaxAssignments: 5, // 3 worker responses
+        AssignmentDurationInSeconds: 300, // Allow 5 minutes to answer
+        AutoApprovalDelayInSeconds: 1,//86400 * 1, // 1 day auto approve
+        MaxAssignments: 1, // 1 worker responses
         LifetimeInSeconds: 86400 * 1, // Expire in 1 day
         Reward: {CurrencyCode:'USD', Amount:0.10}
       };
@@ -60,6 +60,19 @@ router.post('/transform', function(req, res, next) {
         })
         .catch(console.error)
     })})});
+
+    router.get('/check-hits', function(req, res, next) {
+      console.log('In check-hits.');
+      mturk.createClient(config)
+        .then(function(api){
+          api.req('GetReviewableHITs')
+          .then( results => {
+            console.log('In createClient-GetReviewableHITs callback.');
+            console.log(results.GetReviewableHITsResult[0].HIT);
+          })
+        })
+        .catch(console.error)
+    })
 
   module.exports = router;
 
