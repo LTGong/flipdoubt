@@ -32,9 +32,9 @@ router.post('/transform', function(req, res, next) {
       var neg_thought = req.body.thoughtText;
       var tag = '%%THOUGHT.TAG%%';
       unescapedXML = unescapedXML.replace(tag, neg_thought);
-      console.log(unescapedXML);
+      // console.log(unescapedXML);
 
-      //HIT options
+      // HIT options
       var params = {
         Title: "Re-write a negative sentence with a positive spin.",
         Description: "You will read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive one.",
@@ -49,9 +49,14 @@ router.post('/transform', function(req, res, next) {
 
       //CREATE HIT
       api.req('CreateHIT', params)
-        .then(function(res){
+        .then(function(results){
           console.log('server: after CreateHIT');
-          console.log(res);
+          var returned_turk_data = {
+            HITId : results.HIT[0].HITId,
+            HITTypeId : results.HIT[0].HITTypeId
+          }
+          console.log(returned_turk_data);
+          res.status(200).send(returned_turk_data);
         })
         .catch(console.error)
     })})});

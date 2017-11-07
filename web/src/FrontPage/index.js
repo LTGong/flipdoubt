@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 //import frustratedMonkey from './frustrated-monkey.gif';
 import './frontpage.css';
 
@@ -32,21 +31,51 @@ class Frontpage extends Component {
     var thought = this.state.value
     console.log('we transformin "' + thought + '"');
 
-    var fetch_data = {
+    var turk_data = {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({thoughtText: thought}) //NOT WORKING???!! //JSON.stringify({thoughtText: thought})
+      body: JSON.stringify({thoughtText: thought})
     }
 
-    fetch('/api/mturk/transform', fetch_data)
-    .then((res) => res.json() )
-    .then( (data) => {
-      console.log(data)
+    fetch('/api/mturk/transform', turk_data)
+    .then((res) => res.json())
+    .then((res) => {
+      console.log('In callback after mturk api call');
+
+      let HIT_data = {
+        text: thought,
+        processing: true,
+        HITId: res.HITId,
+        HITTypeId: res.HITTypeId
+      }
+
+      let db_request = new Request('/api/db/unprotected', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(HIT_data)
+      });
+      fetch(db_request)
+      .then((res) => res.json())
+      .then((res) => {
+        var mongoIdString = res._id;
+        console.log(mongoIdString);
+        // OTHER STUFF THAT WE WANT TO DO WITH THE THOUGHT
+        // TODO: RENDER THE PROCESSING CARD
+        // TODO: POLL AMT TO WAIT FOR WHEN THERE HIT HAS BEEN COMPLETED, THEN UPDATE DB AND RELOAD
+        // Probably use mongoIdString as the :id ?
+      })
+      .catch(err => console.log(err))
+
     }).catch(err => console.log(err))
   }
+
+
 
   render() {
     return (

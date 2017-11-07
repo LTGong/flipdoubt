@@ -1,7 +1,7 @@
 import React from 'react';
 
-// import ProtectedCall from './ProtectedCall';
-// import UnprotectedCall from './UnprotectedCall';
+import ProtectedCall from './ProtectedCall';
+import UnprotectedCall from './UnprotectedCall';
 
 const getUserId = (profile) => !profile ? '(not logged in)' : profile.sub;
 
@@ -13,21 +13,14 @@ export default ({profile, getAuthorizationHeader}) => (
     </p>
 
     <p>
+    <div className="content">
+      <UnprotectedCall />
+    </div>
 
-    {this.props.message}
+    <div className="content">
+      <ProtectedCall getAuthorizationHeader={getAuthorizationHeader}/>
+    </div>
 
     </p>
-
-
   </div>
-
-
 )
-
-// <div className="content">
-//   <UnprotectedCall />
-// </div>
-//
-// <div className="content">
-//   <ProtectedCall getAuthorizationHeader={getAuthorizationHeader}/>
-// </div>
