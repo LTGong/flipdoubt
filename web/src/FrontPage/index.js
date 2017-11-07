@@ -28,12 +28,18 @@ class Frontpage extends Component {
     console.log(this.state.value)
   }
 
-  transform() {
-    console.log('we transformin yo');
-    fetch('/api/mturk/transform', {
+  transform(){
+    var thought = this.state.value
+    console.log('we transformin "' + thought + '"');
+
+    var fetch_data = {
       method: 'POST',
-      body: JSON.stringify({thoughtText: this.state.value})
-    }).then((res) => res.json()).then((data) => {
+      body: {thoughtText: thought} //NOT WORKING???!! //JSON.stringify({thoughtText: thought})
+    }
+
+    fetch('/api/mturk/transform', fetch_data)
+    .then((res) => res.json() )
+    .then( (data) => {
       console.log(data)
     }).catch(err => console.log(err))
   }
