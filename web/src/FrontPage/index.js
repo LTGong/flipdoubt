@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 //import frustratedMonkey from './frustrated-monkey.gif';
-import './frontpage.css';
+import "./frontpage.css";
+import './flipcard.css';
 
 // const countStyle = {   color: 'brown', };
 
@@ -91,20 +92,12 @@ checkresults(){
 
 
   render() {
-    return (
-      <div className="FrontPage">
-
+    return <div className="FrontPage">
         {/* Move this to search component */}
         <div className="box">
-
           <div className="field is-grouped">
             <p className="control is-expanded">
-              <input
-                value={this.state.value}
-                onChange={this.foo}
-                className="input"
-                type="text"
-                placeholder="Purge your thought."/>
+              <input value={this.state.value} onChange={this.foo} className="input" type="text" placeholder="Purge your thought." />
             </p>
 
             <p className="control">
@@ -114,31 +107,40 @@ checkresults(){
             </p>
           </div>
         </div>
-
-        <div className = "box">
-        <p className="control">
-          <a className="button is-info" onClick={this.checkresults}>
-            Check Results
-          </a>
-        </p>
+        <div className="box">
+          <p className="control">
+            <a className="button is-info" onClick={this.checkresults}>
+              Check Results
+            </a>
+          </p>
         </div>
 
         {/* Move this to gallery component */}
         <div className="box gallery">
           <h1 className="has-text-centered">Gallery of the Mind</h1>
           <div className="columns">
-
             <div className="column is-4">
-            <div className="card">
-                <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img
-                      src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg"
-                      alt=""/>
-                  </figure>
+              <div className="card">
+                <div className="flip-container" ontouchstart="this.classList.toggle('hover');">
+                  <div className="flipper">
+                    <div className="front">
+                      {/* <!-- front content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                    <div className="back">
+                      {/* <!-- back content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/734899052_13956580111.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <br/>
-
                 <footer className="card-footer">
                   <a className="card-footer-item">Tweet on Twitter</a>
                   <a className="card-footer-item">Post on Facebook</a>
@@ -148,15 +150,26 @@ checkresults(){
 
             <div className="column is-4">
               <div className="card">
-                <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img
-                      src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg"
-                      alt=""/>
-                  </figure>
+                <div className="flip-container" ontouchstart="this.classList.toggle('hover');">
+                  <div className="flipper">
+                    <div className="front">
+                      {/* <!-- front content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                    <div className="back">
+                      {/* <!-- back content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/734899052_13956580111.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <br/>
-
                 <footer className="card-footer">
                   <a className="card-footer-item">Tweet on Twitter</a>
                   <a className="card-footer-item">Post on Facebook</a>
@@ -166,14 +179,26 @@ checkresults(){
 
             <div className="column is-4">
               <div className="card">
-                <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img
-                      src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg"
-                      alt=""/>
-                  </figure>
+                <div className="flip-container" ontouchstart="this.classList.toggle('hover');">
+                  <div className="flipper">
+                    <div className="front">
+                      {/* <!-- front content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/beautiful-scenery-wallpaper.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                    <div className="back">
+                      {/* <!-- back content --> */}
+                      <div className="card-image">
+                        <figure className="image is-4by3">
+                          <img src="http://www.planwallpaper.com/static/images/734899052_13956580111.jpg" alt="" />
+                        </figure>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <br/>
                 <footer className="card-footer">
                   <a className="card-footer-item">Tweet on Twitter</a>
                   <a className="card-footer-item">Post on Facebook</a>
@@ -182,8 +207,7 @@ checkresults(){
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
 }
 
