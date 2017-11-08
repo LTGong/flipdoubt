@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 //import frustratedMonkey from './frustrated-monkey.gif';
 import "./frontpage.css";
-import './flipcard.css';
+import "./flipcard.css";
+import './banner.css';
 
 // const countStyle = {   color: 'brown', };
 
@@ -93,6 +94,26 @@ class Frontpage extends Component {
 
   render() {
     return <div className="FrontPage">
+      <div id="container">
+        <header>
+          <h1>Animated Photo Banner</h1>
+          <p>Lorem ipsum dolor...</p>
+        </header>
+        
+        {/* <!-- Each image is 350px by 233px --> */}
+        <div class="photobanner">
+          <img class="first" src="puppy.jpg" alt="" />
+          {<img src="cat.jpg" alt="" />}
+          {/* <img src="image-3.jpg" alt="" />
+          <img src="image-4.jpg" alt="" />
+          <img src="image-5.jpg" alt="" />
+          <img src="image-6.jpg" alt="" />
+          <img src="image-1.jpg" alt="" />
+          <img src="image-2.jpg" alt="" />
+          <img src="image-3.jpg" alt="" />
+          <img src="image-4.jpg" alt="" /> */}
+        </div>
+      </div>
         {/* Move this to search component */}
         <div className="box">
           <div className="field is-grouped">
