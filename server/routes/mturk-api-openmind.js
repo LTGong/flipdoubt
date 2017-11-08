@@ -59,22 +59,44 @@ router.post('/transform', function(req, res, next) {
           res.status(200).send(returned_turk_data);
         })
         .catch(console.error)
-    })})});
+    });
+  });
+});
 
-    router.get('/check-hits', function(req, res, next) {
-      console.log('In check-hits.');
-      mturk.createClient(config)
-        .then(function(api){
-          api.req('GetReviewableHITs')
-          .then( results => {
-            console.log('In createClient-GetReviewableHITs callback.');
-            console.log(results.GetReviewableHITsResult[0].HIT);
-          })
-        })
-        .catch(console.error)
+router.get('/check-hits', function(req, res, next) {
+  console.log('In check-hits.');
+  mturk.createClient(config)
+    .then(function(api){
+      console.log(api);
+      debugger
+      api.req('GetReviewableHITs')
+      .then(results => {
+        console.log('In createClient-GetReviewableHITs callback.');
+        console.log(results.GetReviewableHITsResult[0].HIT);
+        //My idea here is to get the assignments for a HIT that comes back in the results from
+        //GetReviewableHITs and then check the NumResults field on the returned object if that field is
+        //greater than 0 then we make calls for all the HITS that are returned
+        debugger
+        api.req('GetAssignmentsForHIT', {HITId: "302U8RURJZCMPKMOFQVFH5OFH4NNVU"}).then(results => {
+          //The HITId passed into this call is one that was returned from GetReviewableHITs
+          //and its NumResults field is 0 which leads me to believe you (Estelle) are right that
+          //there is nothing to review. Otherwise we would be able to call GetAssignment and pass the
+          //AssignmentId to be able to review the turkers work and approver or reject it at which point we could
+          //just dump it in our database and approve it. Since there are no assignments completed there is no
+          //assignment array on the object getting returned by the above call.  I could always be wrong about this
+          //but thats how I believe it's supposed to work based on the horrendous documentation I've read.
+          api.req('GetAssignment', {AssignmentId: "some assignment id"}).then(result => {
+            debugger
+            //this is theoretically where we should be able to write the code to send the dataz to Mongo and then
+            //respond to the client that we can rerender the gallery
+          });
+        });
+      })
     })
+    .catch(console.error)
+});
 
-  module.exports = router;
+module.exports = router;
 
     // //Example operation, with params
     // api.req('SearchHITs', { PageSize: 100 }).then(function(res){

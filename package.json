@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./server/bin/www",
     "dev": "heroku local web,server --procfile Procfile.dev",
-    "dev-express": "nodemon ./server/bin/www",
+    "dev-express": "nodemon --inspect ./server/bin/www",
     "dev-react": "cd web ; npm start",
     "postinstall": "cd web ; npm install ; npm run build"
   },

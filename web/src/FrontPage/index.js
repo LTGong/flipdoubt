@@ -80,15 +80,15 @@ class Frontpage extends Component {
   //    (1) check if hit results are in, and if so, update database
   //    (2) check if any of the "processing" values have changed from true to false in the database, and
   //        re-render the gallery if so, based on the values stored in the db...
-checkresults(){
-  console.log('CHECKIN IN NOW');
-  fetch('/api/mturk/check-hits')
-  .then((res) => res.json())
-  .then((res) => {
-    console.log(res);
-  })
-  .catch(err => console.log(err))
-}
+  checkresults(){
+    console.log('CHECKIN IN NOW');
+    fetch('/api/mturk/check-hits')
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+    })
+    .catch(err => console.log(err))
+  }
 
 
   render() {
