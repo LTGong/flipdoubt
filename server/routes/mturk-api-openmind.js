@@ -68,84 +68,50 @@ router.get('/check-hits', function(req, res, next) {
   mturk.createClient(config)
     .then(function(api){
       console.log(api);
-      debugger
       api.req('GetReviewableHITs')
       .then(results => {
         console.log('In createClient-GetReviewableHITs callback.');
         console.log(results.GetReviewableHITsResult[0].HIT);
-        //My idea here is to get the assignments for a HIT that comes back in the results from
-        //GetReviewableHITs and then check the NumResults field on the returned object if that field is
-        //greater than 0 then we make calls for all the HITS that are returned
-        debugger
-        api.req('GetAssignmentsForHIT', {HITId: "302U8RURJZCMPKMOFQVFH5OFH4NNVU"}).then(results => {
-          //The HITId passed into this call is one that was returned from GetReviewableHITs
-          //and its NumResults field is 0 which leads me to believe you (Estelle) are right that
-          //there is nothing to review. Otherwise we would be able to call GetAssignment and pass the
-          //AssignmentId to be able to review the turkers work and approver or reject it at which point we could
-          //just dump it in our database and approve it. Since there are no assignments completed there is no
-          //assignment array on the object getting returned by the above call.  I could always be wrong about this
-          //but thats how I believe it's supposed to work based on the horrendous documentation I've read.
-          api.req('GetAssignment', {AssignmentId: "some assignment id"}).then(result => {
+        let HITIDs = [];
+        let numHits = results.GetReviewableHITsResult[0].HIT.length;
+        let i = 0;
+        for (i=0; i < numHits; i++) {
+          HITIDs.push(results.GetReviewableHITsResult[0].HIT[i].HITId);
+        }
+
+        let promises = [];
+        for (i=0; i < numHits; i++) {
+          HITId = HITIDs[i];
+          console.log('API Request for HIT', HITId, 'sent');
+          promises.push(api.req('GetAssignmentsForHIT', {HITId: HITId}));
+        }
+        Promise.all(promises).then(results => {
+          _.forEach(results, (result) => {
+            console.log('A HIT was found\n');
             debugger
-            //this is theoretically where we should be able to write the code to send the dataz to Mongo and then
-            //respond to the client that we can rerender the gallery
-          });
+            _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
+              console.log('An Assignment was found\n');
+              console.log(assignment.Answer);
+            });
+          })
         });
       })
     })
-    .catch(console.error)
 });
 
 module.exports = router;
 
-    // //Example operation, with params
-    // api.req('SearchHITs', { PageSize: 100 }).then(function(res){
-    //    //Do something
-    // }).catch(console.error)
-
-
-    // //MTurk limits the velocity of requests. Normally,
-    // //if you exceed their request rate-limit, you will receive a
-    // //'503 Service Unavailable' response. As of v2.0, our interface
-    // //automatically throttles your requests to 3 per second.
-    // for(var i=1; i < 20; i++){
-    //   //These requests will be queued and executed at a rate of 3 per second
-    //   api.req('SearchHITs', { PageNumber: i }).then(function(res){
-    //     //Do something
-    //   }).catch(console.error);
-    // }
-
-
-// router.post('/transform', function(req, res, next) {
-//   console.log('server: In transform');
-//   mturk.createClient(config).then(function(api){
-//
-//     console.log('server: in createClient');
-//     //Import an XML file. You can use one of our examples in the templates folder *
-//     fs.readFile(__dirname + '/../templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
-//
-//       console.log('server: in readFile');
-//       if(err){console.error(err);return}
-//
-//       //HIT options
-//       var params = {
-//         Title: "Create HIT Example",
-//         Description: "An example of how to create a HIT",
-//         Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
-//         AssignmentDurationInSeconds: 180, // Allow 3 minutes to answer
-//         AutoApprovalDelayInSeconds: 86400 * 1, // 1 day auto approve
-//         MaxAssignments: 100, // 100 worker responses
-//         LifetimeInSeconds: 86400 * 3, // Expire in 3 days
-//         Reward: {CurrencyCode:'USD', Amount:0.50}
-//       };
-//
-//       api.req('CreateHIT', params).then(function(res){
-//         console.log('server: after CreateHIT');
-//         res.status(201).end()
-//       }).catch(console.error);
-//     }, (err)=> {
-//       console.log(err)
-//       res.status(507).send({message: err})
-//       })
-//   })
+// api.req('GetAssignmentsForHIT', {HITId: "302U8RURJZCMPKMOFQVFH5OFH4NNVU"}).then(results => {
+//   //The HITId passed into this call is one that was returned from GetReviewableHITs
+//   //and its NumResults field is 0 which leads me to believe you (Estelle) are right that
+//   //there is nothing to review. Otherwise we would be able to call GetAssignment and pass the
+//   //AssignmentId to be able to review the turkers work and approver or reject it at which point we could
+//   //just dump it in our database and approve it. Since there are no assignments completed there is no
+//   //assignment array on the object getting returned by the above call.  I could always be wrong about this
+//   //but thats how I believe it's supposed to work based on the horrendous documentation I've read.
+//   api.req('GetAssignment', {AssignmentId: "some assignment id"}).then(result => {
+//     debugger
+//     //this is theoretically where we should be able to write the code to send the dataz to Mongo and then
+//     //respond to the client that we can rerender the gallery
+//   });
 // });
