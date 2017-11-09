@@ -2,6 +2,7 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:300,700);
 .card-container *{
   box-sizing:border-box;
+  min-height: inherit;
 }
 
 .card-container, figure{
@@ -52,7 +53,8 @@ figure .fa {
 figure img{
   position: relative;
   display: block;
-  min-height: 100%;
+  min-height: inherit;
+  background: linear-gradient( rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8) )
 }
 
 figure .caption {
@@ -69,14 +71,22 @@ figure .caption {
 
 figure i {
   padding: 2em;
+  transition: all .3s ease-in-out; 
 }
 
 figure i:hover {
-    color: #fff;
+  -webkit-transform:scale(1.5); /* Safari and Chrome */
+  -moz-transform:scale(1.5); /* Firefox */
+  -ms-transform:scale(1.5); /* IE 9 */
+  -o-transform:scale(1.5); /* Opera */
+   transform:scale(1.5);
   }
 
+figure .fa {
+  color: #fff !important;
+}
 .front .caption{
-  font-size: 1.05em;
+  font-size: 0.90em;
 }
 
 .front .caption:before {
@@ -133,12 +143,6 @@ figure i:hover {
           transform: scale(1);  
 }
 
-.custom-card.flipped .back dl {
-  opacity: 1;
-  -webkit-transform: translate3d(0,0,0);
-          transform: translate3d(0,0,0);
-}
-
 .back h2{
   word-spacing: 0.15em;
   font-weight: 300;
@@ -162,4 +166,8 @@ figure a{
   height: 100%;
 }
 
-
+.share-social {
+  position: absolute;
+  bottom: 0;
+  width:85%;
+}
