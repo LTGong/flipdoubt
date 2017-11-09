@@ -15,11 +15,11 @@ class Frontpage extends Component {
 
   render() {
     return <div className="FrontPage container">
-      <ThoughtBubble/>
+        <ThoughtBubble />
 
-      <Gallery/>
+        <Gallery />
 
-    </div>;
+      </div>;
   }
 }
 
