@@ -3,6 +3,7 @@ var mturk = require('mturk-api');
 var router = express.Router();
 var fs = require('fs');
 var _ = require('lodash');
+var xmlExtractor = require('xml-extract');
 const asyncMiddleware = require('../utils/asyncMiddleware');
 
 const checkJwt = require('../auth').checkJwt;
@@ -97,6 +98,22 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
     _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
       console.log('An Assignment was found\n');
       console.log(assignment.Answer);
+      let xml = assignment.Answer;
+      xmlExtractor(xml, 'FreeText', true, (error, element) => {
+        if (error) {
+          throw new Error(error);
+        }
+        
+        element = element.replace("<FreeText>", "");
+        element = element.replace("</FreeText>", "");
+
+        console.log(element);
+
+        // output:
+        // <loc>http://www.example.com/1</loc>
+        // <loc>http://www.example.com/2</loc>
+        // <loc>http://www.example.com/3</loc>
+      });
     });
   })
 }));

@@ -72,11 +72,6 @@ class Frontpage extends Component {
   // re-render the gallery if so, based on the values stored in the db...
   checkresults() {
     console.log('CHECKIN IN NOW');
-<<<<<<< HEAD
-    fetch('/api/mturk/check-hits').then((res) => res.json()).then((res) => {
-      console.log(res);
-    }).catch(err => console.log(err))
-=======
     fetch('/api/db/get-processing-HITs')
     // .then(res => {
     //   debugger
@@ -102,7 +97,6 @@ class Frontpage extends Component {
       .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
->>>>>>> MTurk answers returning
   }
 
   render() {

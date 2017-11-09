@@ -32,7 +32,8 @@
     "multer-gridfs-storage": "^2.1.0",
     "node-fetch": "^1.7.3",
     "reset-css": "^2.2.1",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "xml-extract": "^1.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.12.1"
