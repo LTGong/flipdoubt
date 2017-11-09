@@ -12,7 +12,7 @@ const fetch = require('node-fetch');
 var config = {
     access : 'AKIAINJT6YTLRJMBWOWA',
     secret : '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',
-    sandbox: true
+    sandbox: false
 }
 
 router.post('/transform', function(req, res, next) {
