@@ -65,18 +65,9 @@ class Frontpage extends Component {
     }).catch(err => console.log(err))
   }
 
-  // Poll using a function like this?? I currently just have a button that calls
-  // it... Probably just do two things in this function:    (1) check if hit
-  // results are in, and if so, update database    (2) check if any of the
-  // "processing" values have changed from true to false in the database, and
-  // re-render the gallery if so, based on the values stored in the db...
   checkresults() {
     console.log('CHECKIN IN NOW');
     fetch('/api/db/get-processing-HITs')
-    // .then(res => {
-    //   debugger
-    //   console.log(res);
-    // })
     .then(res => res.json())
     .then(results => {
 
@@ -92,7 +83,20 @@ class Frontpage extends Component {
       fetch(checkin_request)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
+        console.log("Results back from checkin_request\n",res);
+        let db_updates = new Request('/api/db/update-processed-HIT', {
+          'method': 'POST',
+          'headers': {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          'body': JSON.stringify(res)
+        })
+        fetch(db_updates)
+        .then((res)=> res.json())
+        .then((res)=> {
+          console.log(res);
+        })
       })
       .catch(err => console.log(err));
     })

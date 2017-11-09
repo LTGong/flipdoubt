@@ -42,6 +42,21 @@ router.get('/get-processing-HITs', function(req, res, next) {
   });
 })
 
+router.post('/update-processed-HIT', function(req, res, next) {
+  console.log('in db update-processed-HIT');
+
+  let HIT_updates = req.body;
+  _.forEach(HIT_updates, function(HIT_update){
+    req.db.collection('thoughts').updateOne(
+      {_HITId: HIT_update.HITId},
+      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
+    )
+  });
+  res.json({message: 'FUCK YEA!'});
+});
+
+
+
 
 // checkJwt middleware will enforce valid authorization token
 router.get('/protected', checkJwt, function(req, res, next) {

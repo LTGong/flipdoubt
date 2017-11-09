@@ -21,20 +21,12 @@ router.post('/transform', function(req, res, next) {
   .then(function(api){
     console.log('In createClient-transform');
 
-    // api.req('GetAccountBalance')
-    //   .then(function(res){
-    //     console.log(res.GetAccountBalanceResult);
-    //   })
-    //   .catch(console.error);
-
-    //Import an XML file. You can use one of our examples in the templates folder *
     fs.readFile(__dirname + '/../templates/HTMLQuestion.xml', 'utf8', function(err, unescapedXML){
       if(err){console.error(err);return}
 
       var neg_thought = req.body.thoughtText;
       var tag = '%%THOUGHT.TAG%%';
       unescapedXML = unescapedXML.replace(tag, neg_thought);
-      // console.log(unescapedXML);
 
       // HIT options
       var params = {
@@ -67,22 +59,10 @@ router.post('/transform', function(req, res, next) {
 
 router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
   console.log('In check-hits.');
-
-  var HITIDs = req.body.HITIds;
-  let numHits = HITIDs.length;
-
   const api = await mturk.createClient(config);
 
-  const reviewableHITs = await api.req('GetReviewableHITs');
-  let newHITIDs = [];
-
-  let i = 0;
-  let NEWnumHits = reviewableHITs.GetReviewableHITsResult[0].HIT.length;
-  for(i = 0; i < NEWnumHits; i++) {
-    newHITIDs.push(reviewableHITs.GetReviewableHITsResult[0].HIT[i].HITId);
-  }
-  console.log(newHITIDs);
-  console.log(HITIDs);
+  let HITIDs = req.body.HITIds,
+      numHits = HITIDs.length;
 
   let promises = [];
   for (i=0; i < numHits; i++) {
@@ -90,48 +70,26 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
     console.log('API Request for HIT', HITId, 'sent');
     promises.push(api.req('GetAssignmentsForHIT', {HITId: HITId}));
   }
-
   let results = await Promise.all(promises);
 
+  let updates = [];
   _.forEach(results, (result) => {
-    console.log('A HIT was found\n');
     _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
-      console.log('An Assignment was found\n');
-      console.log(assignment.Answer);
+      let HITId = assignment.HITId;
       let xml = assignment.Answer;
       xmlExtractor(xml, 'FreeText', true, (error, element) => {
-        if (error) {
-          throw new Error(error);
-        }
-        
+        if (error) {throw new Error(error);}
         element = element.replace("<FreeText>", "");
         element = element.replace("</FreeText>", "");
-
-        console.log(element);
-
-        // output:
-        // <loc>http://www.example.com/1</loc>
-        // <loc>http://www.example.com/2</loc>
-        // <loc>http://www.example.com/3</loc>
+        updates.push({
+          "HITId" : HITId,
+          "pos_thought" : element
+        });
       });
     });
-  })
+  });
+  console.log('Updates to send to the client\n', updates);
+  res.status(200).send(updates);
 }));
 
-
 module.exports = router;
-
-// api.req('GetAssignmentsForHIT', {HITId: "302U8RURJZCMPKMOFQVFH5OFH4NNVU"}).then(results => {
-//   //The HITId passed into this call is one that was returned from GetReviewableHITs
-//   //and its NumResults field is 0 which leads me to believe you (Estelle) are right that
-//   //there is nothing to review. Otherwise we would be able to call GetAssignment and pass the
-//   //AssignmentId to be able to review the turkers work and approver or reject it at which point we could
-//   //just dump it in our database and approve it. Since there are no assignments completed there is no
-//   //assignment array on the object getting returned by the above call.  I could always be wrong about this
-//   //but thats how I believe it's supposed to work based on the horrendous documentation I've read.
-//   api.req('GetAssignment', {AssignmentId: "some assignment id"}).then(result => {
-//     debugger
-//     //this is theoretically where we should be able to write the code to send the dataz to Mongo and then
-//     //respond to the client that we can rerender the gallery
-//   });
-// });
