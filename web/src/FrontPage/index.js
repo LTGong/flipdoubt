@@ -43,19 +43,19 @@ class Frontpage extends Component {
       console.log('In callback after mturk api call');
 
       let HIT_data = {
-        text: thought,
-        processing: true,
-        HITId: res.HITId,
-        HITTypeId: res.HITTypeId
+        'text': thought,
+        'processing': true,
+        'HITId': res.HITId,
+        'HITTypeId': res.HITTypeId
       }
 
       let db_request = new Request('/api/db/unprotected', {
-        method: 'POST',
-        headers: {
+        'method': 'POST',
+        'headers': {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(HIT_data)
+        'body': JSON.stringify(HIT_data)
       });
       fetch(db_request).then((res) => res.json()).then((res) => {
         var mongoIdString = res._id;
@@ -72,9 +72,37 @@ class Frontpage extends Component {
   // re-render the gallery if so, based on the values stored in the db...
   checkresults() {
     console.log('CHECKIN IN NOW');
+<<<<<<< HEAD
     fetch('/api/mturk/check-hits').then((res) => res.json()).then((res) => {
       console.log(res);
     }).catch(err => console.log(err))
+=======
+    fetch('/api/db/get-processing-HITs')
+    // .then(res => {
+    //   debugger
+    //   console.log(res);
+    // })
+    .then(res => res.json())
+    .then(results => {
+
+      let checkin_request = new Request('/api/mturk/check-hits', {
+        'method': 'POST',
+        'headers': {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        'body': JSON.stringify({ 'HITIds': results })
+      });
+
+      fetch(checkin_request)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+>>>>>>> MTurk answers returning
   }
 
   render() {

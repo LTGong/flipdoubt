@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Thought = require('../lib/thought.js');
+var _ = require('lodash');
 
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
@@ -27,6 +28,20 @@ router.post('/unprotected', function(req, res, next) {
         throw (error);
       });
 });
+
+router.get('/get-processing-HITs', function(req, res, next) {
+  console.log('in db get-processing-HITs');
+
+  let HITIds = [];
+  req.db.collection('thoughts').find({_processing: true})
+  .toArray(function(err, results){
+    _.forEach(results, ( result =>{
+      HITIds.push(result._HITId);
+    }))
+    res.status(200).send(HITIds);
+  });
+})
+
 
 // checkJwt middleware will enforce valid authorization token
 router.get('/protected', checkJwt, function(req, res, next) {

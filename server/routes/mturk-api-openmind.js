@@ -3,6 +3,7 @@ var mturk = require('mturk-api');
 var router = express.Router();
 var fs = require('fs');
 var _ = require('lodash');
+const asyncMiddleware = require('../utils/asyncMiddleware');
 
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
@@ -10,7 +11,7 @@ const fetch = require('node-fetch');
 var config = {
     access : 'AKIAINJT6YTLRJMBWOWA',
     secret : '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',
-    sandbox: true
+    sandbox: false
 }
 
 router.post('/transform', function(req, res, next) {
@@ -63,41 +64,43 @@ router.post('/transform', function(req, res, next) {
   });
 });
 
-router.get('/check-hits', function(req, res, next) {
+router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
   console.log('In check-hits.');
-  mturk.createClient(config)
-    .then(function(api){
-      console.log(api);
-      api.req('GetReviewableHITs')
-      .then(results => {
-        console.log('In createClient-GetReviewableHITs callback.');
-        console.log(results.GetReviewableHITsResult[0].HIT);
-        let HITIDs = [];
-        let numHits = results.GetReviewableHITsResult[0].HIT.length;
-        let i = 0;
-        for (i=0; i < numHits; i++) {
-          HITIDs.push(results.GetReviewableHITsResult[0].HIT[i].HITId);
-        }
 
-        let promises = [];
-        for (i=0; i < numHits; i++) {
-          HITId = HITIDs[i];
-          console.log('API Request for HIT', HITId, 'sent');
-          promises.push(api.req('GetAssignmentsForHIT', {HITId: HITId}));
-        }
-        Promise.all(promises).then(results => {
-          _.forEach(results, (result) => {
-            console.log('A HIT was found\n');
-            debugger
-            _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
-              console.log('An Assignment was found\n');
-              console.log(assignment.Answer);
-            });
-          })
-        });
-      })
-    })
-});
+  var HITIDs = req.body.HITIds;
+  let numHits = HITIDs.length;
+
+  const api = await mturk.createClient(config);
+
+  const reviewableHITs = await api.req('GetReviewableHITs');
+  let newHITIDs = [];
+
+  let i = 0;
+  let NEWnumHits = reviewableHITs.GetReviewableHITsResult[0].HIT.length;
+  for(i = 0; i < NEWnumHits; i++) {
+    newHITIDs.push(reviewableHITs.GetReviewableHITsResult[0].HIT[i].HITId);
+  }
+  console.log(newHITIDs);
+  console.log(HITIDs);
+
+  let promises = [];
+  for (i=0; i < numHits; i++) {
+    let HITId = HITIDs[i];
+    console.log('API Request for HIT', HITId, 'sent');
+    promises.push(api.req('GetAssignmentsForHIT', {HITId: HITId}));
+  }
+
+  let results = await Promise.all(promises);
+
+  _.forEach(results, (result) => {
+    console.log('A HIT was found\n');
+    _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
+      console.log('An Assignment was found\n');
+      console.log(assignment.Answer);
+    });
+  })
+}));
+
 
 module.exports = router;
 
