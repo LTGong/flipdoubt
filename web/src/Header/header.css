@@ -3,9 +3,9 @@
   color: #fff;
 }
 .is-dark {
-  /* background-color: #F62459;
-  background-image: linear-gradient(rgba(25, 181, 254, 0.6),rgba(246, 36, 89, 0.6)),linear-gradient(rgba(0, 0, 0, 0.6),rgba(0, 0, 0, 0.6)), url("milky-way.jpg"); */
-  background: url("milky-way.jpg");
+  background-color: #F62459;
+  background-image: linear-gradient(rgba(25, 181, 254, 0.6),rgba(246, 36, 89, 0.6)),linear-gradient(rgba(0, 0, 0, 0.6),rgba(0, 0, 0, 0.6));
+  /* background: url("milky-way.jpg"); */
 }
 .navbar {
   
