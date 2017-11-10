@@ -6,17 +6,15 @@ var _ = require('lodash');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-// simple API call, no authentication or user info NOTE FROM ESTELLE: ALL WE
-// SHOULD HAVE TO DO IS ADD THE checkJwt token to this function and change the
-// route name to unprotected when we figure out the authentication issue...
 router.post('/unprotected', checkJwt, function (req, res, next) {
-
   console.log(req.body);
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
 
   let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false);
 
+  //let thoughts = req.db.collection('thougts');
+  //let results = await
   req
     .db
     .collection('thoughts')
@@ -35,10 +33,9 @@ router.post('/unprotected', checkJwt, function (req, res, next) {
     });
 });
 
-router.get('/get-user-quotes', function (req, res, next) {
+router.get('/get-user-quotes', checkJwt, function (req, res, next) {
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
-  debugger
   req
     .db
     .collection('thoughts')

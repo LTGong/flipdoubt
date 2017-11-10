@@ -17,7 +17,7 @@ class App extends Component {
 
         <Header {...this.props}/>
         <br />
-        <Route exact path="/" component={FrontPage}/>
+        <Route path="/" render={props=> <FrontPage {...this.props} />} />
         <br />
         <Footer/>
 

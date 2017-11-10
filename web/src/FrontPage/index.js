@@ -3,7 +3,6 @@ import "./frontpage.css";
 import Gallery from '../Gallery';
 import ThoughtBubble from '../ThoughtBubble';
 
-
 class Frontpage extends Component {
 
   constructor(props) {
@@ -15,9 +14,9 @@ class Frontpage extends Component {
 
   render() {
     return <div className="FrontPage container">
-        <ThoughtBubble />
+        <ThoughtBubble {...this.props} />
 
-        <Gallery />
+        <Gallery getAuthorizationHeader={this.props.getAuthorizationHeader}/>
 
       </div>;
   }
