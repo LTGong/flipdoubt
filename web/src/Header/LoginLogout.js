@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class LoginLogout extends Component {
 
@@ -8,6 +9,8 @@ class LoginLogout extends Component {
     this.isAuthenticated = this.props.isAuthenticated.bind(this);
     this.login = this.props.login.bind(this);
     this.logout = this.props.logout.bind(this);
+    console.log(this.props.profile);
+    
   }
 
   isLoggedIn() {
@@ -16,12 +19,14 @@ class LoginLogout extends Component {
 
   render() {
 
-    const userDisplay = this.isLoggedIn()
-      ? (
-        <div className="navbar-item">
-          <span>{this.props.profile.name}</span>
-        </div>
-      ) : null;
+    const userDisplay = this.isLoggedIn() ? <div>
+        <a className="navbar-item">
+          <img src={this.props.profile.picture} />
+          <Link to="/user">
+            {this.props.profile.name}
+          </Link>
+        </a>
+      </div> : null;
 
     const loginLogoutButton = this.isLoggedIn()
       ? (
