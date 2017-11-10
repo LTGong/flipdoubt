@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-// import "./ThoughtBubble.css";
-
+import "./ThoughtBubble.css";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; // ES6
+// var ReactCSSTransitionGroup = require('react-addons-css-transition-group'); // ES5 with npm
 class ThoughtBubble extends Component {
 
   constructor(props) {
@@ -34,16 +35,13 @@ class ThoughtBubble extends Component {
     this.handleClear();
     console.log('we transformin "' + thought + '"');
 
-    var turk_data = {
+    let request = new Request('/api/mturk/transform', {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({thoughtText: thought})
-    }
+      body: JSON.stringify({thoughtText: thought}),
+      headers: this.props.getAuthorizationHeader()
+    });
 
-    fetch('/api/mturk/transform', turk_data).then((res) => res.json()).then((res) => {
+    fetch(request).then((res) => res.json()).then((res) => {
       console.log('In callback after mturk api call');
 
       let HIT_data = {
@@ -54,13 +52,11 @@ class ThoughtBubble extends Component {
       }
 
       let db_request = new Request('/api/db/unprotected', {
-        'method': 'POST',
-        'headers': {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        'body': JSON.stringify(HIT_data)
+        method: 'POST',
+        body: JSON.stringify(HIT_data),
+        headers: this.props.getAuthorizationHeader()
       });
+
       fetch(db_request).then((res) => res.json()).then((res) => {
         var mongoIdString = res._id;
         console.log(mongoIdString);
@@ -107,37 +103,42 @@ class ThoughtBubble extends Component {
     .catch(err => console.log(err));
   }
 
+  bubbleClicked () {
+
+  }
+
+
   render() {
-    return (
-      <div>
-      <div className="box">
-        <div className="field is-grouped">
-          <p className="control is-expanded">
-            <input
-              value={this.state.value}
-              onChange={this.handleChange}
-              className="input"
-              type="text"
-              placeholder="Purge your thought."/>
-          </p>
+    return <div>
+        {/* <div>
+          <button>Have a negative thought?</button>
+
+          <input type="email" value="" name="EMAIL" className="email-field" id="email-field" placeholder="Tell me more" />
+
+          <input type="submit" value="Subscribe" name="subscribe" id="subscribe-button" className="" />
+
+        </div> */}
+        <div className="box cloud">
+          <div className="field is-grouped">
+            <p className="control is-expanded">
+              <input value={this.state.value} onChange={this.handleChange} className="input" type="text" placeholder="Purge your thought." />
+            </p>
+            <p className="control">
+              <a className="button is-info" onClick={this.transform}>
+                Transform
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div className="box">
           <p className="control">
-            <a className="button is-info" onClick={this.transform}>
-              Transform
+            <a className="button is-info" onClick={this.checkresults}>
+              Check Results
             </a>
           </p>
         </div>
-      </div>
-
-      <div className="box">
-        <p className="control">
-          <a className="button is-info" onClick={this.checkresults}>
-            Check Results
-          </a>
-        </p>
-      </div>
-
-    </div>
-  );
+      </div>;
   }
 }
 

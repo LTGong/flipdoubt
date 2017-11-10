@@ -25,10 +25,15 @@ class Gallery extends Component {
     }
 
     componentWillMount() {
-        fetch('/api/db/get-user-quotes').then((res) => res.json()).then((res) => {
-            console.log(res);
-            this.setState({thoughts: res});
-        }).catch(err => console.log(err));
+      let request = new Request('/api/db/get-user-quotes', {
+        method: 'GET',
+        // this header sends the user token from auth0
+        headers: this.props.getAuthorizationHeader()
+      });
+      fetch(request).then((res) => res.json()).then((res) => {
+          console.log(res);
+          this.setState({thoughts: res});
+      }).catch(err => console.log(err));
     }
 
     handleCardClick(e) {

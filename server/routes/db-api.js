@@ -6,17 +6,15 @@ var _ = require('lodash');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-// simple API call, no authentication or user info NOTE FROM ESTELLE: ALL WE
-// SHOULD HAVE TO DO IS ADD THE checkJwt token to this function and change the
-// route name to unprotected when we figure out the authentication issue...
-router.post('/unprotected', function (req, res, next) {
-
+router.post('/unprotected', checkJwt, function (req, res, next) {
   console.log(req.body);
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
 
   let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false);
 
+  //let thoughts = req.db.collection('thougts');
+  //let results = await
   req
     .db
     .collection('thoughts')
@@ -27,13 +25,15 @@ router.post('/unprotected', function (req, res, next) {
       res
         .status(200)
         .send(result.ops[0]);
+    }, (error) => {
+      console.log("error");
     })
     .catch(function (error) {
       throw(error);
     });
 });
 
-router.get('/get-user-quotes', function (req, res, next) {
+router.get('/get-user-quotes', checkJwt, function (req, res, next) {
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
   req
@@ -71,6 +71,33 @@ router.get('/get-processing-HITs', function(req, res, next) {
     res.status(200).send(HITIds);
   });
 })
+
+router.post('/update-processed-HIT', function(req, res, next) {
+  console.log('in db update-processed-HIT');
+
+  let HIT_updates = req.body;
+  _.forEach(HIT_updates, function(HIT_update){
+    req.db.collection('thoughts').updateOne(
+      {_HITId: HIT_update.HITId},
+      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
+    )
+  });
+  res.json({message: 'FUCK YEA!'});
+});
+
+router.get('/community-thoughts', function(req, res, next) {
+  console.log('in db community-thoughts');
+
+  let db_ids = [];
+  req.db.collection('thoughts').find({_community: true})
+  .toArray(function(err, results){
+    _.forEach(results, ( result =>{
+      db_ids.push(result._id);
+    }))
+    res.status(200).send(db_ids);
+  });
+})
+
 
 router.post('/update-processed-HIT', function(req, res, next) {
   console.log('in db update-processed-HIT');

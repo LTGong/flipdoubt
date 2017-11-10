@@ -15,7 +15,7 @@ var config = {
     sandbox: false
 }
 
-router.post('/transform', function(req, res, next) {
+router.post('/transform', checkJwt, function(req, res, next) {
   console.log(req.body.thoughtText);
   mturk.createClient(config)
   .then(function(api){

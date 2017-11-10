@@ -20,7 +20,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressMongoDb(process.env.DB_URI));
-
 app.use('/api/db', dbApi);
 app.use('/api/mturk', mturkApi);
 
