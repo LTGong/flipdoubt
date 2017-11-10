@@ -4,5 +4,14 @@
 	padding: 14rem;
 	position: relative;
 	margin: auto;
-	width: 90%;
+	/*width: 90%;*/
+}
+
+.thought {
+  margin: auto;
+  padding-left: 13rem;
+  padding-right: 12rem;
+}
+.submit-for-cloud {
+  margin-top: .5rem;
 }

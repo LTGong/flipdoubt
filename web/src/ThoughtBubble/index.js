@@ -116,36 +116,31 @@ class ThoughtBubble extends Component {
 
 
   render() {
-    return <div>
-        {/* <div>
-          <button>Have a negative thought?</button>
-
-          <input type="email" value="" name="EMAIL" className="email-field" id="email-field" placeholder="Tell me more" />
-
-          <input type="submit" value="Subscribe" name="subscribe" id="subscribe-button" className="" />
-
-        </div> */}
-        <div className="box cloud">
-          <div className="field is-grouped">
-            <p className="control is-expanded">
-              <input value={this.state.value} onChange={this.handleChange} className="input" type="text" placeholder="Purge your thought." />
-            </p>
-            <p className="control">
-              <a className="button is-info" onClick={this.transform}>
-                Transform
+    return (
+        <div>
+          <div className="box cloud">
+            <div className="thought">
+              <div className="field">
+                <div className="control text-centered">
+                  <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
+                </div>
+                <div className="control submit-for-cloud">
+                  <a className="button is-info" onClick={this.transform}>
+                    Transform
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="box">
+            <div className="control">
+              <a className="button is-info" onClick={this.checkresults}>
+                Check Results
               </a>
-            </p>
+            </div>
           </div>
         </div>
-
-        <div className="box">
-          <p className="control">
-            <a className="button is-info" onClick={this.checkresults}>
-              Check Results
-            </a>
-          </p>
-        </div>
-      </div>;
+    )
   }
 }
 
