@@ -42,4 +42,4 @@ Please do not document required libraries (e.g., Express, Bulma).**
 relied on external code, expertise, or anything else, please disclose that
 here:**
 
-...
+CSS Flipping Animaiton: <https://davidwalsh.name/css-flip/>
