@@ -65,11 +65,10 @@ router.get('/swap-image', checkJwt, function (req, res, next) {
 
 router.get('/get-community-quotes', function (req, res, next) {
   // This will come from req.user when we figure out authentication
-  let user_id = 'Temp_Fake_UserID_12345';
   req
     .db
     .collection('thoughts')
-    .find({"_user_id": user_id, "_community": true})
+    .find({"_community": true})
     .toArray(function(err, results) {
       res
       .json(results);
