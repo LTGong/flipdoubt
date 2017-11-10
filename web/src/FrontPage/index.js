@@ -14,14 +14,14 @@ class Frontpage extends Component {
   }
 
   render() {
+    if(!this.props.profile === undefined) {
+      var gallery = <Gallery getAuthorizationHeader={this.props.getAuthorizationHeader} user={this.props.profile.nickname}/>;
+    }
     return <div className="FrontPage container">
       <ThoughtBubble {...this.props} />
-
-      <Gallery {...this.props}/>
-
+      {gallery}
       <Community/>
-
-    </div>;
+    </div>
   }
 }
 
