@@ -15,9 +15,9 @@ class Frontpage extends Component {
 
   render() {
     return <div className="FrontPage container">
-        <ThoughtBubble {...this.props} />
+      <ThoughtBubble {...this.props} />
 
-        <Gallery getAuthorizationHeader={this.props.getAuthorizationHeader}/>
+      <Gallery getAuthorizationHeader={this.props.getAuthorizationHeader}/>
 
       <Community/>
 

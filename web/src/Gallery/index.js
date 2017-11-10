@@ -22,6 +22,9 @@ class Gallery extends Component {
         this.handleCardClick = this
             .handleCardClick
             .bind(this);
+        this.swap = this
+            .swap
+            .bind(this);
     }
 
     componentWillMount() {
@@ -49,8 +52,24 @@ class Gallery extends Component {
         }
     }
 
-    getBackground(){
-        switch(Math.floor(Math.random() * 10) + 1 ) {
+    swap(e, thought){
+      console.log('swap');
+      let img_request = new Request('/api/db/swap-image', {
+        method: 'POST',
+        // this header sends the user token from auth0
+        headers: this.props.getAuthorizationHeader(),
+        body: thought
+      });
+      fetch(img_request).then((res) => res.json()).then((res) => {
+          console.log(res);
+          // rerender the page...
+      }).catch(err => console.log(err));
+    }
+
+
+// Math.floor(Math.random() * 10) + 1
+    getBackground(img_id){
+        switch(img_id) {
             case 1:
                 return background1;
             case 2:
@@ -83,19 +102,19 @@ class Gallery extends Component {
         while(i < this.state.thoughts.length){
             setsOfThree.push(this.state.thoughts.slice(i, i + 3));
             i += 3
-        }   
+        }
 
         let templates = [];
         for(i = 0; i < setsOfThree.length; i++) {
             templates.push(
-                setsOfThree[i].map((thought, i) => 
-                {   
-                    return (<div className="column is-4">
+                setsOfThree[i].map((thought, i) =>
+                {
+                    return (<div className="column is-4" >
                             <div className="card-container">
                             <div className="custom-card" onClick={this.handleCardClick}>
-                            
+
                             <figure className="front">
-                                <img src={this.getBackground()} alt="front"/>
+                                <img src={this.getBackground(thought._img_id)} alt="front"/>
                                 <div className="caption">
                                     <h2>{thought._pos_thought}</h2>
                                     <div className="share-social">
@@ -113,16 +132,21 @@ class Gallery extends Component {
                                 </div>
                             </figure>
                             </div>
+                            Add img swap button here?
                             </div>
                             </div>
                         );
                 })
             );
         }
-
-        var gallery_template = 
+        // <div className="control">
+        //   <a className="button is-info " onClick={this.swap(thought)}>
+        //     IMAGE_SWAP
+        //   </a>
+        // </div>
+        var gallery_template =
             templates
-            .map((template, i) => 
+            .map((template, i) =>
                 <div className="columns">
                     {template}
                 </div>

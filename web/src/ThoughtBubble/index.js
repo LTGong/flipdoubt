@@ -32,16 +32,17 @@ class ThoughtBubble extends Component {
 
   transform() {
     var thought = this.state.value;
+    var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
     this.handleClear();
     console.log('we transformin "' + thought + '"');
 
-    let request = new Request('/api/mturk/transform', {
+    let turk_request = new Request('/api/mturk/transform', {
       method: 'POST',
       body: JSON.stringify({thoughtText: thought}),
-      headers: this.props.getAuthorizationHeader()
+      headers: the_headers
     });
 
-    fetch(request).then((res) => res.json()).then((res) => {
+    fetch(turk_request).then((res) => res.json()).then((res) => {
       console.log('In callback after mturk api call');
 
       let HIT_data = {
@@ -54,7 +55,7 @@ class ThoughtBubble extends Component {
       let db_request = new Request('/api/db/unprotected', {
         method: 'POST',
         body: JSON.stringify(HIT_data),
-        headers: this.props.getAuthorizationHeader()
+        headers: the_headers
       });
 
       fetch(db_request).then((res) => res.json()).then((res) => {

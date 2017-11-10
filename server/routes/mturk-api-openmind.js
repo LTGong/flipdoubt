@@ -12,11 +12,13 @@ const fetch = require('node-fetch');
 var config = {
     access : 'AKIAINJT6YTLRJMBWOWA',
     secret : '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',
-    sandbox: false
+    sandbox: true
 }
 
 router.post('/transform', checkJwt, function(req, res, next) {
+  console.log('In mturk-api TRANSFORM');
   console.log(req.body.thoughtText);
+
   mturk.createClient(config)
   .then(function(api){
     console.log('In createClient-transform');
@@ -40,7 +42,7 @@ router.post('/transform', checkJwt, function(req, res, next) {
         LifetimeInSeconds: 86400 * 1, // Expire in 1 day
         Reward: {CurrencyCode:'USD', Amount:0.10}
       };
-
+  
       //CREATE HIT
       api.req('CreateHIT', params)
         .then(function(results){

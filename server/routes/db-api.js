@@ -10,8 +10,9 @@ router.post('/unprotected', checkJwt, function (req, res, next) {
   console.log(req.body);
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
+  let img_id = Math.floor(Math.random() * 10) + 1;
 
-  let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false);
+  let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id);
 
   //let thoughts = req.db.collection('thougts');
   //let results = await
@@ -45,6 +46,25 @@ router.get('/get-user-quotes', checkJwt, function (req, res, next) {
       .json(results);
     })
 });
+
+
+router.get('/swap-image', checkJwt, function (req, res, next) {
+
+  console.log(req.body);
+  let HITId = req.body._HITId;
+  // let user_id = req.body._user_id;
+  let old_img_id = req.body._img_id;
+  let new_img_id = Math.floor(Math.random() * 10) + 1;
+
+  req.db.collection('thoughts').updateOne(
+    {_HITId: HITId},
+    {$set: {"_img_id": new_img_id}}
+  ).then((result)=> {
+    console.log(result)
+    res.status(200).send("Swapped img_id " + old_img_id + " for " + new_img_id);
+  })
+});
+
 
 router.get('/get-community-quotes', function (req, res, next) {
   // This will come from req.user when we figure out authentication
