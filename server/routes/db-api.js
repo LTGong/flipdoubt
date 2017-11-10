@@ -15,7 +15,7 @@ router.post('/unprotected', function (req, res, next) {
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
 
-  let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId);
+  let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false);
 
   req
     .db
@@ -36,11 +36,23 @@ router.post('/unprotected', function (req, res, next) {
 router.get('/get-user-quotes', function (req, res, next) {
   // This will come from req.user when we figure out authentication
   let user_id = 'Temp_Fake_UserID_12345';
-  debugger
   req
     .db
     .collection('thoughts')
     .find({"_user_id": user_id, "_processing": false})
+    .toArray(function(err, results) {
+      res
+      .json(results);
+    })
+});
+
+router.get('/get-community-quotes', function (req, res, next) {
+  // This will come from req.user when we figure out authentication
+  let user_id = 'Temp_Fake_UserID_12345';
+  req
+    .db
+    .collection('thoughts')
+    .find({"_user_id": user_id, "_community": true})
     .toArray(function(err, results) {
       res
       .json(results);
@@ -59,6 +71,21 @@ router.get('/get-processing-HITs', function(req, res, next) {
     res.status(200).send(HITIds);
   });
 })
+
+router.post('/update-processed-HIT', function(req, res, next) {
+  console.log('in db update-processed-HIT');
+
+  let HIT_updates = req.body;
+  _.forEach(HIT_updates, function(HIT_update){
+    req.db.collection('thoughts').updateOne(
+      {_HITId: HIT_update.HITId},
+      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
+    )
+  });
+  res.json({message: 'FUCK YEA!'});
+});
+
+
 
 router.post('/update-processed-HIT', function(req, res, next) {
   console.log('in db update-processed-HIT');

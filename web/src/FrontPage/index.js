@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import "./frontpage.css";
 import Gallery from '../Gallery';
+import Community from '../Community';
 import ThoughtBubble from '../ThoughtBubble';
-
 
 class Frontpage extends Component {
 
@@ -18,6 +18,8 @@ class Frontpage extends Component {
       <ThoughtBubble/>
 
       <Gallery/>
+
+      <Community/>
 
     </div>;
   }
