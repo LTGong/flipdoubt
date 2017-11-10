@@ -245,6 +245,12 @@ class User extends Component {
                     <br />
                     <time datetime={timestamp}>~{timestamp} </time>
                   </div>
+                  <div class="social">
+                    <i class="fa fa-facebook-square" aria-hidden="true" />
+                    <i class="fa fa-twitter-square" aria-hidden="true" />
+                    <i class="fa fa-pinterest-square" aria-hidden="true" />
+                    <i class="fa fa-tumblr-square" aria-hidden="true" />
+                  </div>
                 </div>
               </div>
             </div>
