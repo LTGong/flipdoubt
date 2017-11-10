@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import "./ThoughtBubble.css";
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; // ES6
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; // ES6
 // var ReactCSSTransitionGroup = require('react-addons-css-transition-group'); // ES5 with npm
 class ThoughtBubble extends Component {
 
@@ -107,11 +107,6 @@ class ThoughtBubble extends Component {
     })
     .catch(err => console.log(err));
   }
-
-  bubbleClicked () {
-
-  }
-
 
   render() {
     return <div>

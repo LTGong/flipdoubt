@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 class ProfilePage extends Component {
 
   // to redirect if not logged in:
-  // componentWillMount() {
-  //   if (!this.props.isAuthenticated() || !!this.props.profile) {
-  //     this.props.history.replace('/');
-  //   }
-  // }
+  componentWillMount() {
+    if (!this.props.isAuthenticated() || !!this.props.profile) {
+      this.props.history.replace('/');
+    }
+  }
 
   render() {
 
