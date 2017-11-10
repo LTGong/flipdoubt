@@ -6,16 +6,12 @@ var _ = require('lodash');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-router.post('/unprotected', checkJwt, function (req, res, next) {
-  console.log(req.body);
-  // This will come from req.user when we figure out authentication
-  let user_id = 'Temp_Fake_UserID_12345';
+router.post('/create-new-thought', checkJwt, function (req, res, next) {
+  console.log('IN CREATE NEW THOUGHT.');
   let img_id = Math.floor(Math.random() * 10) + 1;
 
-  let newThought = new Thought(req.body.text, null, user_id, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id);
+  let newThought = new Thought(req.body.text, null, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id);
 
-  //let thoughts = req.db.collection('thougts');
-  //let results = await
   req
     .db
     .collection('thoughts')
@@ -34,9 +30,10 @@ router.post('/unprotected', checkJwt, function (req, res, next) {
     });
 });
 
-router.get('/get-user-quotes', checkJwt, function (req, res, next) {
-  // This will come from req.user when we figure out authentication
-  let user_id = 'Temp_Fake_UserID_12345';
+router.post('/get-user-quotes', checkJwt, function (req, res, next) {
+console.log("In get user quotes");
+  let user_id = req.body.username;
+  console.log(user_id);
   req
     .db
     .collection('thoughts')

@@ -28,11 +28,16 @@ class Gallery extends Component {
     }
 
     componentWillMount() {
+      var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+      console.log(this.props.user);
       let request = new Request('/api/db/get-user-quotes', {
-        method: 'GET',
-        // this header sends the user token from auth0
-        headers: this.props.getAuthorizationHeader()
+        method: 'POST',
+        body: JSON.stringify({username: this.props.user}),
+        headers: the_headers,
+
       });
+
+      console.log(request);
       fetch(request).then((res) => res.json()).then((res) => {
           console.log(res);
           this.setState({thoughts: res});

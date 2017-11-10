@@ -31,39 +31,45 @@ class ThoughtBubble extends Component {
   }
 
   transform() {
-    var thought = this.state.value;
-    var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
-    this.handleClear();
-    console.log('we transformin "' + thought + '"');
+    if (this.props.profile){
+      var thought = this.state.value;
+      var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+      this.handleClear();
+      console.log('we transformin "' + thought + '"');
 
-    let turk_request = new Request('/api/mturk/transform', {
-      method: 'POST',
-      body: JSON.stringify({thoughtText: thought}),
-      headers: the_headers
-    });
-
-    fetch(turk_request).then((res) => res.json()).then((res) => {
-      console.log('In callback after mturk api call');
-
-      let HIT_data = {
-        'text': thought,
-        'processing': true,
-        'HITId': res.HITId,
-        'HITTypeId': res.HITTypeId
-      }
-
-      let db_request = new Request('/api/db/unprotected', {
+      let turk_request = new Request('/api/mturk/transform', {
         method: 'POST',
-        body: JSON.stringify(HIT_data),
+        body: JSON.stringify({thoughtText: thought}),
         headers: the_headers
       });
 
-      fetch(db_request).then((res) => res.json()).then((res) => {
-        var mongoIdString = res._id;
-        console.log(mongoIdString);
-      }).catch(err => console.log(err))
+      fetch(turk_request).then((res) => res.json()).then((res) => {
+        console.log('In callback after mturk api call');
 
-    }).catch(err => console.log(err))
+        let HIT_data = {
+          'text': thought,
+          'user_name' : this.props.profile.nickname,
+          'processing': true,
+          'HITId': res.HITId,
+          'HITTypeId': res.HITTypeId
+        }
+
+        let db_request = new Request('/api/db/create-new-thought', {
+          method: 'POST',
+          body: JSON.stringify(HIT_data),
+          headers: the_headers
+        });
+
+        fetch(db_request).then((res) => res.json()).then((res) => {
+          let mongoIdString = res._id;
+          console.log(mongoIdString);
+        }).catch(err => console.log(err))
+
+      }).catch(err => console.log(err))
+    }
+    else{
+      console.log("No user profile (not logged in.)")
+    }
   }
 
   checkresults() {

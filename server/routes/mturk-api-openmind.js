@@ -17,7 +17,6 @@ var config = {
 
 router.post('/transform', checkJwt, function(req, res, next) {
   console.log('In mturk-api TRANSFORM');
-  console.log(req.body.thoughtText);
 
   mturk.createClient(config)
   .then(function(api){
@@ -42,7 +41,7 @@ router.post('/transform', checkJwt, function(req, res, next) {
         LifetimeInSeconds: 86400 * 1, // Expire in 1 day
         Reward: {CurrencyCode:'USD', Amount:0.10}
       };
-  
+
       //CREATE HIT
       api.req('CreateHIT', params)
         .then(function(results){
@@ -51,7 +50,7 @@ router.post('/transform', checkJwt, function(req, res, next) {
             HITId : results.HIT[0].HITId,
             HITTypeId : results.HIT[0].HITTypeId
           }
-          console.log(returned_turk_data);
+          //console.log(returned_turk_data);
           res.status(200).send(returned_turk_data);
         })
         .catch(console.error)
