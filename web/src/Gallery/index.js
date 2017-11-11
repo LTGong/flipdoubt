@@ -41,7 +41,6 @@ class Gallery extends Component {
     }
 
     componentWillMount() {
-        debugger
         var the_headers = Object.assign({
             'Accept': 'application/json',
             'Content-Type': 'application/json'

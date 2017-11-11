@@ -8,7 +8,6 @@ import ReactDOM from "react-dom";
 // Pass fusioncharts as a dependency of charts
 charts(FusionCharts)
 
-
   var myDataSource = {
     chart: {
       caption: "Trend of thoughts",
@@ -16,8 +15,8 @@ charts(FusionCharts)
       xaxisname: "Month",
       yaxisname: "Frequency (In count)",
       // numberprefix: "$",
-      theme: "ocean"
-    },
+      theme: "ocean",
+
     categories: [
       {
         category: [
@@ -189,7 +188,8 @@ charts(FusionCharts)
         ]
       }
     ]
-  };
+  }};
+
   var props_multi_chart = {
     id: "multi_chart",
     type: "mscombi2d",
@@ -203,11 +203,26 @@ charts(FusionCharts)
 class User extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      user : this.props.profile
+    }
   }
 
-
   render() {
+
+    if (this.state.user){
+      var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+      let db_get_totals = new Request('/api/db/get-totals', {
+        method: 'POST',
+        body: JSON.stringify({'user' : this.props.profile.nickname}),
+        headers: the_headers
+      });
+
+      fetch(db_get_totals).then((res) => res.json()).then((res) => {
+        console.log(res);
+      }).catch(err => console.log(err));
+    }
+
     console.log(this.props.profile);
     const timestamp = this.props.profile.updated_at.split('T')[0];
 
@@ -237,7 +252,7 @@ class User extends Component {
                   </div>
 
                   <div class="content">
-                    I didn't come this far,
+                    I didnt come this far,
                     {/* <a>@bulmaio</a>.
                     <a href="#">#css</a> <a href="#">#responsive</a> */}
                     <br />
