@@ -12,7 +12,6 @@ class ThoughtBubble extends Component {
       styleClass: 'thoughtText is-hidden',
       inputClass: '',
       anotherThoughtClass: 'control is-hidden'
-
     }
     this.handleChange = this
       .handleChange
@@ -26,6 +25,7 @@ class ThoughtBubble extends Component {
     this.handleClear = this.handleClear.bind(this);
     this.showText = this.showText.bind(this);
     this.showInput = this.showInput.bind(this);
+    setInterval(() => { this.checkresults() }, 10000);
   }
 
   handleChange(e) {
@@ -103,40 +103,55 @@ class ThoughtBubble extends Component {
 
   checkresults() {
     console.log('CHECKIN IN NOW');
-    fetch('/api/db/get-processing-HITs')
-    .then(res => res.json())
-    .then(results => {
-
-      let checkin_request = new Request('/api/mturk/check-hits', {
+    if(this.props.profile !== undefined) {
+      var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+      let get_hits_request = new Request('/api/db/get-processing-HITs', {
         'method': 'POST',
-        'headers': {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        'body': JSON.stringify({ 'HITIds': results })
+        'headers': the_headers,
+        'body': JSON.stringify({ 'username': this.props.profile.nickname })
       });
+      fetch(get_hits_request)
+      .then(res => res.json())
+      .then(results => {
 
-      fetch(checkin_request)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("Results back from checkin_request\n",res);
-        let db_updates = new Request('/api/db/update-processed-HIT', {
+        let checkin_request = new Request('/api/mturk/check-hits', {
           'method': 'POST',
           'headers': {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          'body': JSON.stringify(res)
-        })
-        fetch(db_updates)
-        .then((res)=> res.json())
-        .then((res)=> {
-          console.log(res);
-        })
+          'body': JSON.stringify({ 'HITIds': results })
+        });
+
+        fetch(checkin_request)
+        .then((res) => res.json())
+        .then((res) => {
+          if(!(res.length === 0)) {
+            console.log("Results back from checkin_request\n",res);
+            let db_updates = new Request('/api/db/update-processed-HIT', {
+              'method': 'POST',
+              'headers': {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              'body': JSON.stringify(res)
+            })
+            fetch(db_updates)
+            .then((res)=> res.json())
+            .then((res)=> {
+              console.log("we gots the results yo");
+              //this.state.
+              console.log(res);
+            })
+          } else {
+            console.log("no updates from turk yo");
+          }
+        }).catch(err => console.log(err));
       })
       .catch(err => console.log(err));
-    })
-    .catch(err => console.log(err));
+    } else {
+      console.log("cannot check results, the user is not logged in");
+    }
   }
 
   bubbleClicked () {
@@ -164,15 +179,10 @@ class ThoughtBubble extends Component {
               <p className={this.state.styleClass}>{this.state.value}</p>
             </div>
           </div>
-          <div className={this.state.anotherThoughtClass}>
-            <a className="button is-info" onClick={this.showInput}>
-              Add Another Thought
-            </a>
-          </div>
           <div className="box">
-            <div className="control">
-              <a className="button is-info" onClick={this.checkresults}>
-                Check Results
+            <div className={this.state.anotherThoughtClass}>
+              <a className="button is-info" onClick={this.showInput}>
+                Add Another Thought
               </a>
             </div>
           </div>

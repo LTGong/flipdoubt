@@ -78,14 +78,16 @@ router.get('/get-community-quotes', function (req, res, next) {
     })
 });
 
-router.get('/get-processing-HITs', function (req, res, next) {
+router.post('/get-processing-HITs', function (req, res, next) {
+  let user = req.body.username;
+  console.log(user);
   console.log('in db get-processing-HITs');
 
   let HITIds = [];
   req
     .db
     .collection('thoughts')
-    .find({_processing: true})
+    .find({_processing: true, _user_id: user})
     .toArray(function (err, results) {
       _.forEach(results, (result => {
         HITIds.push(result._HITId);
@@ -98,8 +100,8 @@ router.get('/get-processing-HITs', function (req, res, next) {
 
 router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
-
   let HIT_updates = req.body;
+  console.log(HIT_updates);
   _.forEach(HIT_updates, function (HIT_update) {
     req
       .db
