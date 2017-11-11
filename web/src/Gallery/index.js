@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+
 import './gallery.css';
 import background1 from './background-1.jpg';
 import background2 from './background-2.jpg';
@@ -11,6 +12,9 @@ import background8 from './background-8.jpg';
 import background9 from './background-9.jpg';
 import background10 from './background-10.jpg';
 import background11 from './background-11.jpg';
+
+var share = require('social-share');
+
 
 class Gallery extends Component {
 
@@ -25,54 +29,80 @@ class Gallery extends Component {
         this.swap = this
             .swap
             .bind(this);
+        this.handleShareClick = this
+            .handleShareClick
+            .bind(this);
     }
 
     componentWillMount() {
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
-      // console.log(this.props.user);
-      let request = new Request('/api/db/get-user-quotes', {
-        method: 'POST',
-        body: JSON.stringify({username: this.props.profile.nickname}),
-        headers: the_headers,
+      if( this.props.profile != null)
+      {
+        let request = new Request('/api/db/get-user-quotes', {
+            method: 'POST',
+            body: JSON.stringify({username: this.props.profile.nickname}),
+            headers: the_headers,
 
-      });
+        });
 
-      console.log(request);
-      fetch(request).then((res) => res.json()).then((res) => {
-          console.log(res);
-          this.setState({thoughts: res});
-      }).catch(err => console.log(err));
+        console.log(request);
+        fetch(request).then((res) => res.json()).then((res) => {
+            console.log(res);
+            this.setState({thoughts: res});
+        }).catch(err => console.log(err));
+    }
     }
 
     handleCardClick(e) {
         e.preventDefault();
         if (e.currentTarget.className.includes('flipped')) {
             e.currentTarget.className = "custom-card";
-            e.currentTarget.children[0].className = "front";
-            e.currentTarget.children[1].className = "back is-hidden";
         } else {
             e.currentTarget.className = "custom-card flipped";
-            e.currentTarget.children[0].className = "front is-hidden";
-            e.currentTarget.children[1].className = "back";
         }
     }
 
-    swap(e, thought){
-      console.log('swap');
-      let img_request = new Request('/api/db/swap-image', {
-        method: 'POST',
-        // this header sends the user token from auth0
-        headers: this.props.getAuthorizationHeader(),
-        body: thought
-      });
-      fetch(img_request).then((res) => res.json()).then((res) => {
-          console.log(res);
-          // rerender the page...
-      }).catch(err => console.log(err));
+    handleTwitterClick(e) {
+        console.log("child click");
+        e.stopPropagation();
+        var url = share('twitter', {
+            title: e.currentTarget.getAttribute('value')
+        });
+        window.open(url, "_blank");
+    }
+
+    handleShareClick(e) {
+        e.stopPropagation();
+        var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+        let share_request = new Request('/api/db/share-thought', {
+            method: 'POST',
+            body: JSON.stringify({_HITId: e .currentTarget.getAttribute('value')}),
+            // this header sends the user token from auth0
+            headers: the_headers,
+        });
+        fetch(share_request).then((res) => res.json()).then((res) => {
+            console.log(res.message);
+        }).catch(err => console.log(err));
+    }
+
+    swap(e) {
+        console.log('swap');
+        e.stopPropagation();
+        var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+        var img = e.currentTarget.parentElement.parentElement.parentElement.children[0];
+        let img_request = new Request('/api/db/swap-image', {
+            method: 'POST',
+            body: JSON.stringify({_HITId: e.currentTarget.getAttribute('value')}),
+            // this header sends the user token from auth0
+            headers: the_headers,
+        });
+
+        fetch(img_request).then((res) => res.json()).then((res) => {
+            img.src = this.getBackground(res._img_id);
+        }).catch(err => console.log(err));
     }
 
 
-// Math.floor(Math.random() * 10) + 1
     getBackground(img_id){
         switch(img_id) {
             case 1:
@@ -116,28 +146,27 @@ class Gallery extends Component {
                 {
                     return (<div className="column is-4" >
                             <div className="card-container">
-                            <div className="custom-card" onClick={this.handleCardClick}>
+                            <div className="custom-card" onClick={this.handleCardClick} >
 
                             <figure className="front">
                                 <img src={this.getBackground(thought._img_id)} alt="front"/>
                                 <div className="caption">
                                     <h2>{thought._pos_thought}</h2>
                                     <div className="share-social">
-                                        <i className="fa fa-twitter" aria-hidden="true"></i>
-                                        <i className="fa fa-google-plus" aria-hidden="true"></i>
-                                        <i className="fa fa-facebook" aria-hidden="true"></i>
+                                        <i data-service="twitter" className="fa fa-twitter" aria-hidden="true" value={thought._pos_thought} onClick={this.handleTwitterClick}></i>
+                                        <i className="fa fa-bullhorn" aria-hidden="true" value={thought._HITId} onClick={this.handleShareClick}></i>
+                                         <i className="fa fa-exchange" aria-hidden="true" value={thought._HITId} onClick={this.swap}></i>
                                     </div>
                                 </div>
                             </figure>
 
-                            <figure className="back is-hidden">
+                            <figure className="is-overlay back">
                                 <img src={background11} alt="back"/>
                                 <div className="caption">
                                     <h2>{thought._neg_thought}</h2>
                                 </div>
                             </figure>
                             </div>
-                            Add img swap button here?
                             </div>
                             </div>
                         );
@@ -158,7 +187,7 @@ class Gallery extends Component {
         );
         return (
             <div className="box">
-                <h2 className="title is-3 has-text-centered">Gallery of the Mind</h2>
+                <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
                 <br/>
                 {gallery_template}
             </div>

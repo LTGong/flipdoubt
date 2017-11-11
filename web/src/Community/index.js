@@ -123,7 +123,7 @@ class Community extends Component {
                 </div>
         );
         return (
-            <div className="box">
+            <div className="box container">
                 <h2 className="title is-3 has-text-centered">Community</h2>
                 <br/>
                 {gallery_template}

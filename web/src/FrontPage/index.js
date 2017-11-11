@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import "./frontpage.css";
 import Gallery from '../Gallery';
-import Community from '../Community';
 import ThoughtBubble from '../ThoughtBubble';
 
 class Frontpage extends Component {
@@ -18,9 +17,11 @@ class Frontpage extends Component {
       var gallery = <Gallery getAuthorizationHeader={this.props.getAuthorizationHeader} user={this.props.profile.nickname}/>;
     }
     return <div className="FrontPage container">
+
       <ThoughtBubble {...this.props} />
+
       {gallery}
-      <Community/>
+      
     </div>
   }
 }

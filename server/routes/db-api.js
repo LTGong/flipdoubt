@@ -31,120 +31,164 @@ router.post('/create-new-thought', checkJwt, function (req, res, next) {
 });
 
 router.post('/get-user-quotes', checkJwt, function (req, res, next) {
-console.log("In get user quotes");
+  console.log("In get user quotes");
   let user_id = req.body.username;
   console.log(user_id);
   req
     .db
     .collection('thoughts')
+    // .find()
     .find({"_user_id": user_id, "_processing": false})
-    .toArray(function(err, results) {
-      res
-      .json(results);
+    .toArray(function (err, results) {
+      res.json(results);
     })
 });
 
+router.post('/swap-image', checkJwt, function (req, res, next) {
 
-router.get('/swap-image', checkJwt, function (req, res, next) {
-
-  console.log(req.body);
-  let HITId = req.body._HITId;
-  // let user_id = req.body._user_id;
-  let old_img_id = req.body._img_id;
+  console.log("swap-image:req.body._HITId: " +  req.body._HITId);
   let new_img_id = Math.floor(Math.random() * 10) + 1;
 
-  req.db.collection('thoughts').updateOne(
-    {_HITId: HITId},
-    {$set: {"_img_id": new_img_id}}
-  ).then((result)=> {
-    console.log(result)
-    res.status(200).send("Swapped img_id " + old_img_id + " for " + new_img_id);
-  })
+  req
+    .db
+    .collection('thoughts')
+    .updateOne({
+      _HITId: req.body._HITId
+    }, {
+      $set: {
+        _img_id: new_img_id
+      }
+    })
+    .then((result) => {
+      console.log(result)
+      res
+        .status(200)
+        .send({_img_id: new_img_id});
+    })
 });
-
 
 router.get('/get-community-quotes', function (req, res, next) {
   // This will come from req.user when we figure out authentication
   req
     .db
     .collection('thoughts')
-    .find({"_community": true})
-    .toArray(function(err, results) {
-      res
-      .json(results);
+    .find({_community: true})
+    .toArray(function (err, results) {
+      res.json(results);
     })
 });
 
-router.get('/get-processing-HITs', function(req, res, next) {
+router.get('/get-processing-HITs', function (req, res, next) {
   console.log('in db get-processing-HITs');
 
   let HITIds = [];
-  req.db.collection('thoughts').find({_processing: true})
-  .toArray(function(err, results){
-    _.forEach(results, ( result =>{
-      HITIds.push(result._HITId);
-    }))
-    res.status(200).send(HITIds);
-  });
+  req
+    .db
+    .collection('thoughts')
+    .find({_processing: true})
+    .toArray(function (err, results) {
+      _.forEach(results, (result => {
+        HITIds.push(result._HITId);
+      }))
+      res
+        .status(200)
+        .send(HITIds);
+    });
 })
 
-router.post('/update-processed-HIT', function(req, res, next) {
+router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
 
   let HIT_updates = req.body;
-  _.forEach(HIT_updates, function(HIT_update){
-    req.db.collection('thoughts').updateOne(
-      {_HITId: HIT_update.HITId},
-      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
-    )
+  _.forEach(HIT_updates, function (HIT_update) {
+    req
+      .db
+      .collection('thoughts')
+      .updateOne({
+        _HITId: HIT_update.HITId
+      }, {
+        $set: {
+          "_processing": false,
+          "_pos_thought": HIT_update.pos_thought
+        }
+      })
   });
   res.json({message: 'FUCK YEA!'});
 });
 
-router.get('/community-thoughts', function(req, res, next) {
+router.get('/community-thoughts', function (req, res, next) {
   console.log('in db community-thoughts');
 
   let db_ids = [];
-  req.db.collection('thoughts').find({_community: true})
-  .toArray(function(err, results){
-    _.forEach(results, ( result =>{
-      db_ids.push(result._id);
-    }))
-    res.status(200).send(db_ids);
-  });
+  req
+    .db
+    .collection('thoughts')
+    .find({_community: true})
+    .toArray(function (err, results) {
+      _.forEach(results, (result => {
+        db_ids.push(result._id);
+      }))
+      res
+        .status(200)
+        .send(db_ids);
+    });
 })
 
+router.post('/share-thought', function (req, res, next) {
+  console.log("req.body._HITId: " +  req.body);
+  req
+    .db
+    .collection('thoughts')
+    .updateOne({
+      _HITId: req.body._HITId
+    }, {
+      $set: {
+        _community: true
+      }
+    });
 
-router.post('/update-processed-HIT', function(req, res, next) {
+    res.json({message: 'SHared to community'});
+})
+
+router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
 
   let HIT_updates = req.body;
-  _.forEach(HIT_updates, function(HIT_update){
-    req.db.collection('thoughts').updateOne(
-      {_HITId: HIT_update.HITId},
-      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
-    )
+  _.forEach(HIT_updates, function (HIT_update) {
+    req
+      .db
+      .collection('thoughts')
+      .updateOne({
+        _HITId: HIT_update.HITId
+      }, {
+        $set: {
+          "_processing": false,
+          "_pos_thought": HIT_update.pos_thought
+        }
+      })
   });
   res.json({message: 'FUCK YEA!'});
 });
 
-
-
-router.post('/update-processed-HIT', function(req, res, next) {
+router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
 
   let HIT_updates = req.body;
-  _.forEach(HIT_updates, function(HIT_update){
-    req.db.collection('thoughts').updateOne(
-      {_HITId: HIT_update.HITId},
-      {$set: {"_processing": false, "_pos_thought" : HIT_update.pos_thought}}
-    )
+  _.forEach(HIT_updates, function (HIT_update) {
+    req
+      .db
+      .collection('thoughts')
+      .updateOne({
+        _HITId: HIT_update.HITId
+      }, {
+        $set: {
+          "_processing": false,
+          "_pos_thought": HIT_update.pos_thought
+        }
+      })
   });
   res.json({message: 'FUCK YEA!'});
 });
-
-
-
 
 // checkJwt middleware will enforce valid authorization token
 router.get('/protected', checkJwt, function (req, res, next) {

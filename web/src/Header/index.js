@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { Link } from 'react-router-dom'
 import LoginLogout from './LoginLogout';
 import './header.css';
 
@@ -20,7 +20,7 @@ class Header extends Component {
                   <a className="navbar-item" href="/">
                     Home
                   </a>
-                  <a className="navbar-item">
+                  <a className="navbar-item" href="/community">
                     Motivations
                   </a>
                   <span className="navbar-item">
