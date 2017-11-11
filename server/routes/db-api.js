@@ -150,6 +150,38 @@ router.post('/share-thought', function (req, res, next) {
     res.json({message: 'SHared to community'});
 })
 
+router.post('/increment_pos_thought', function (req, res, next) {
+  console.log("req.body._HITId: " +  req.body);
+  req
+    .db
+    .collection('thoughts')
+    .updateOne({
+      _HITId: req.body._HITId
+    }, {
+      $inc: {
+        _pos_count: 1
+      }
+    });
+
+    res.json({message: 'Incremented Positive'});
+})
+
+router.post('/increment_neg_thought', function (req, res, next) {
+  console.log("req.body._HITId: " +  req.body);
+  req
+    .db
+    .collection('thoughts')
+    .updateOne({
+      _HITId: req.body._HITId
+    }, {
+      $inc: {
+        _neg_count: 1
+      }
+    });
+
+    res.json({message: 'Incremented Negative'});
+})
+
 router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
 

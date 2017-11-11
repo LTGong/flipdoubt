@@ -31,6 +31,13 @@ class Gallery extends Component {
         this.handleShareClick = this
             .handleShareClick
             .bind(this);
+        this.handlePositiveClick = this
+            .handlePositiveClick
+            .bind(this);
+        this.handleNegativeClick = this
+            .handleNegativeClick
+            .bind(this);
+
     }
 
     componentWillMount() {
@@ -91,6 +98,54 @@ class Gallery extends Component {
             headers: the_headers
         });
         fetch(share_request).then((res) => res.json()).then((res) => {
+            console.log(res.message);
+        }).catch(err => console.log(err));
+    }
+
+    handlePositiveClick(e) {
+        e.stopPropagation();
+
+        var the_headers = Object.assign({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, this.props.getAuthorizationHeader());
+
+        let increment_positive_req = new Request('/api/db/increment_pos_thought', {
+            method: 'POST',
+            body: JSON.stringify({
+                _HITId: e
+                    .currentTarget
+                    .getAttribute('value')
+            }),
+            // this header sends the user token from auth0
+            headers: the_headers
+        });
+
+        fetch(increment_positive_req).then((res) => res.json()).then((res) => {
+            console.log(res.message);
+        }).catch(err => console.log(err));
+    }
+
+    handleNegativeClick(e) {
+        e.stopPropagation();
+
+        var the_headers = Object.assign({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, this.props.getAuthorizationHeader());
+
+        let increment_negative_req = new Request('/api/db/increment_neg_thought', {
+            method: 'POST',
+            body: JSON.stringify({
+                _HITId: e
+                    .currentTarget
+                    .getAttribute('value')
+            }),
+            // this header sends the user token from auth0
+            headers: the_headers
+        });
+
+        fetch(increment_negative_req).then((res) => res.json()).then((res) => {
             console.log(res.message);
         }).catch(err => console.log(err));
     }
@@ -184,6 +239,11 @@ class Gallery extends Component {
                                                 aria-hidden="true"
                                                 value={thought._HITId}
                                                 onClick={this.swap}></i>
+                                            <i
+                                                value={thought._HITId}
+                                                className="fa fa-plus"
+                                                aria-hidden="true"
+                                                onClick={this.handlePositiveClick}></i>
                                         </div>
                                     </div>
                                 </figure>
@@ -192,6 +252,13 @@ class Gallery extends Component {
                                     <img src={background11} alt="back"/>
                                     <div className="caption">
                                         <h2>{thought._neg_thought}</h2>
+                                        <div className="share-social">
+                                            <i
+                                                value={thought._HITId}
+                                                className="fa fa-plus"
+                                                aria-hidden="true"
+                                                onClick={this.handleNegativeClick}></i>
+                                        </div>
                                     </div>
                                 </figure>
                             </div>
