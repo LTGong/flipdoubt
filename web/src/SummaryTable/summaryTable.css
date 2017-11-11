@@ -1,0 +1,7 @@
+.right-border {
+    border-right: 1px solid #dbdbdb !important
+}
+
+.is-inprocess {
+    background: rgb(223, 223, 223);
+}

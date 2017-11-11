@@ -139,10 +139,6 @@ class ThoughtBubble extends Component {
     .catch(err => console.log(err));
   }
 
-  bubbleClicked () {
-
-  }
-
 
   render() {
     return (
