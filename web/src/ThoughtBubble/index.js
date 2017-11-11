@@ -25,7 +25,7 @@ class ThoughtBubble extends Component {
     this.handleClear = this.handleClear.bind(this);
     this.showText = this.showText.bind(this);
     this.showInput = this.showInput.bind(this);
-    setTimeout(() => { this.checkresults() }, 100);
+    setInterval(() => { this.checkresults() }, 10000);
   }
 
   handleChange(e) {
