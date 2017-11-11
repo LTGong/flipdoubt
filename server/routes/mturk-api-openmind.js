@@ -12,7 +12,7 @@ const fetch = require('node-fetch');
 var config = {
     access : 'AKIAINJT6YTLRJMBWOWA',
     secret : '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',
-    sandbox: true
+    sandbox: false
 }
 
 router.post('/transform', checkJwt, function(req, res, next) {
@@ -74,6 +74,7 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
   let results = await Promise.all(promises);
 
   let updates = [];
+
   _.forEach(results, (result) => {
     _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
       let HITId = assignment.HITId;
