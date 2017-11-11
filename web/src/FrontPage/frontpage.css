@@ -1,3 +1,7 @@
+.box.dark {
+  background-color: hsl(0, 0%, 21%);
+ }
+
 .FrontPage .the-logo {
   max-width: 200px;
 }

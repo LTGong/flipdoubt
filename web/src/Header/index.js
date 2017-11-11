@@ -6,7 +6,7 @@ import './header.css';
 class Header extends Component {
 
   render() {
-    return <header className="hero is-dark header">
+    return <header className="hero header">
         <div className="hero-head">
           <div className="container">
             <nav className="navbar">
@@ -33,7 +33,6 @@ class Header extends Component {
         </div>
       </header>;
   }
-  
 }
 
 export default Header;

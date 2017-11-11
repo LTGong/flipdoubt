@@ -171,3 +171,10 @@ figure a{
   bottom: 0;
   width:85%;
 }
+
+.box.dark {
+  background-color: hsl(0, 0%, 21%)	;
+}
+.box.dark > h2 {
+  color: #fff;
+}
