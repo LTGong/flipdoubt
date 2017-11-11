@@ -4,15 +4,21 @@
 	padding: 14rem;
 	position: relative;
 	margin: auto;
-	/*width: 90%;*/
+  width: 70%;
+  height: 634px;
+  display: table;
 }
 
 .thought {
-  margin: auto;
-  padding-left: 13rem;
-  padding-right: 12rem;
+  display: table-cell;
+  width: 50%;
 }
 .submit-for-cloud {
   margin-top: .5rem;
 
+}
+.thoughtText {
+  font-size: x-large;
+  text-align: center;
+  padding-top: 3rem;
 }

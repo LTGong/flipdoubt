@@ -8,7 +8,11 @@ class ThoughtBubble extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: ''
+      value: '',
+      styleClass: 'thoughtText is-hidden',
+      inputClass: '',
+      anotherThoughtClass: 'control is-hidden'
+
     }
     this.handleChange = this
       .handleChange
@@ -20,6 +24,8 @@ class ThoughtBubble extends Component {
       .checkresults
       .bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.showText = this.showText.bind(this);
+    this.showInput = this.showInput.bind(this);
   }
 
   handleChange(e) {
@@ -28,15 +34,37 @@ class ThoughtBubble extends Component {
   }
 
   handleClear (e) {
-      this.setState({value: ''})
+      this.setState({value: '', styleClass: "thougtText"})
+  }
+
+  showText(e) {
+    console.log("we in this show text method yo");
+    this.setState({
+      value: this.state.value,
+      styleClass: "thoughtText",
+      inputClass: "is-hidden",
+      anotherThoughtClass: "control"
+    });
+  }
+
+  showInput(e) {
+    e.preventDefault();
+    this.setState({
+      value: this.state.value,
+      styleClass: "thoughtText is-hidden",
+      inputClass: "",
+      anotherThoughtClass: "control is-hidden"
+    });
   }
 
   transform() {
     if (this.props.profile){
       var thought = this.state.value;
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
-      this.handleClear();
+      //this.handleClear();
       console.log('we transformin "' + thought + '"');
+
+      this.showText();
 
       let turk_request = new Request('/api/mturk/transform', {
         method: 'POST',
@@ -118,20 +146,28 @@ class ThoughtBubble extends Component {
 
   render() {
     return (
-        <div>
-          <div className="box cloud">
+        <div className="box">
+          <div className="cloud">
             <div className="thought">
-              <div className="field">
-                <div className="control text-centered">
-                  <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
-                </div>
-                <div className="control submit-for-cloud">
-                  <a className="button is-info" onClick={this.transform}>
-                    Transform
-                  </a>
+              <div className={this.state.inputClass}>
+                <div className="field">
+                  <div className="control text-centered">
+                    <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
+                  </div>
+                  <div className="control submit-for-cloud">
+                    <a className="button is-info" onClick={this.transform}>
+                      Transform
+                    </a>
+                  </div>
                 </div>
               </div>
+              <p className={this.state.styleClass}>{this.state.value}</p>
             </div>
+          </div>
+          <div className={this.state.anotherThoughtClass}>
+            <a className="button is-info" onClick={this.showInput}>
+              Add Another Thought
+            </a>
           </div>
           <div className="box">
             <div className="control">
