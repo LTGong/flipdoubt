@@ -2,10 +2,7 @@
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   color: #fff;
 }
-.is-dark {
-}
 .navbar {
-
   padding: 20px 0;
 }
 .hero.is-dark .navbar-item a:not(.button), .hero.is-dark a.navbar-item {
@@ -31,3 +28,10 @@
   padding: 10px 20px;
   height: 45px;
 }
+
+.dat-user-name {
+  text-decoration: none;
+  margin-top: .75rem;
+  color: white;
+}
+

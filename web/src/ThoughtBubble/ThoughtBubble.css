@@ -1,9 +1,11 @@
 .cloud {
 	background: url(https://content.mycutegraphics.com/frames/blue-scribble-border.png) no-repeat center;
 	height: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -5rem;
 	padding: 14rem;
 	position: relative;
-	margin: auto;
   width: 78%;
   height: 634px;
   display: table;

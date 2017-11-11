@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-
+import './header.css';
 class LoginLogout extends Component {
 
   constructor(props) {
@@ -18,8 +18,7 @@ class LoginLogout extends Component {
   render() {
     const userDisplay = this.isLoggedIn() ? <div>
         <div className="navbar-item">
-          <img src={this.props.profile.picture} alt="" />
-          <Link to="/user">
+          <Link className="dat-user-name" to="/user">
             {this.props.profile.name}
           </Link>
         </div>
@@ -39,7 +38,6 @@ class LoginLogout extends Component {
     return (
       <div className="navbar-end">
         {userDisplay}
-
         <div className="navbar-item">
           {loginLogoutButton}
         </div>
