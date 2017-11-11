@@ -37,8 +37,8 @@ router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    // .find()
-    .find({"_user_id": user_id, "_processing": false})
+    .find()
+    // .find({"_user_id": user_id, "_processing": false})
     .toArray(function (err, results) {
       res.json(results);
     })
@@ -158,8 +158,8 @@ router.post('/increment_pos_thought', function (req, res, next) {
     .updateOne({
       _HITId: req.body._HITId
     }, {
-      $inc: {
-        _pos_count: 1
+      $push: {
+        _pos_thought_timestamps: Date.now()
       }
     });
 
@@ -174,8 +174,8 @@ router.post('/increment_neg_thought', function (req, res, next) {
     .updateOne({
       _HITId: req.body._HITId
     }, {
-      $inc: {
-        _neg_count: 1
+      $push: {
+        _neg_thought_timestamps: Date.now()
       }
     });
 
