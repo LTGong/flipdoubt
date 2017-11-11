@@ -103,7 +103,7 @@ class ThoughtBubble extends Component {
 
   checkresults() {
     console.log('CHECKIN IN NOW');
-    if(this.props.profile !== undefined) {
+    if(this.props.profile) {
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
       let get_hits_request = new Request('/api/db/get-processing-HITs', {
         'method': 'POST',
