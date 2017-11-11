@@ -1,13 +1,14 @@
 import React from 'react';
+import './footer.css';
 //import { Link } from 'react-router-dom'
 
 // lightweight component declaration style
 const Footer = () => (
       <footer className="footer">
         <div className="container">
-          <div className="content has-text-centered">
+          <div className="has-text-centered">
             <p>
-              <strong>Therapist</strong> by Frozen City Savages.
+              <strong className="makeWhite">Therapist</strong> by Frozen City Savages.
             </p>
             <p>
               <a className="icon" href="https://github.com/umn-5117-f17/module-3-group-assignment-frozen-city-savages">

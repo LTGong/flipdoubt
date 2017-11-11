@@ -4,7 +4,7 @@
 	padding: 14rem;
 	position: relative;
 	margin: auto;
-  width: 70%;
+  width: 78%;
   height: 634px;
   display: table;
 }
@@ -13,9 +13,20 @@
   display: table-cell;
   width: 50%;
 }
+.add-padding {
+  padding-left: 5em;
+  padding-right: 5em;
+}
 .submit-for-cloud {
   margin-top: .5rem;
-
+  display: table;
+  width: 100%;
+}
+.submit-for-cloud-cell {
+  display: table-cell;
+  margin-left: 25%;
+  margin-right: 25%;
+  text-align: center;
 }
 .thoughtText {
   font-size: x-large;

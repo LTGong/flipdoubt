@@ -10,7 +10,7 @@ class ThoughtBubble extends Component {
     this.state = {
       value: '',
       styleClass: 'thoughtText is-hidden',
-      inputClass: '',
+      inputClass: 'add-padding',
       anotherThoughtClass: 'control is-hidden'
     }
     this.handleChange = this
@@ -52,7 +52,7 @@ class ThoughtBubble extends Component {
     this.setState({
       value: this.state.value,
       styleClass: "thoughtText is-hidden",
-      inputClass: "",
+      inputClass: "add-padding",
       anotherThoughtClass: "control is-hidden"
     });
   }
@@ -158,10 +158,9 @@ class ThoughtBubble extends Component {
 
   }
 
-
   render() {
     return (
-        <div className="box">
+        <div>
           <div className="cloud">
             <div className="thought">
               <div className={this.state.inputClass}>
@@ -170,25 +169,24 @@ class ThoughtBubble extends Component {
                     <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
                   </div>
                   <div className="control submit-for-cloud">
-                    <a className="button is-info" onClick={this.transform}>
-                      Transform
-                    </a>
+                    <div className="submit-for-cloud-cell">
+                      <a className="button is-info" onClick={this.transform}>
+                        Transform
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
               <p className={this.state.styleClass}>{this.state.value}</p>
             </div>
           </div>
-          <div className="box">
-            <div className={this.state.anotherThoughtClass}>
-              <a className="button is-info" onClick={this.showInput}>
-                Add Another Thought
-              </a>
-            </div>
+          <div className={this.state.anotherThoughtClass}>
+            <a className="button is-info" onClick={this.showInput}>
+              Add Another Thought
+            </a>
           </div>
         </div>
     )
-
   }
 }
 

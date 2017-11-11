@@ -8,12 +8,12 @@ import FrontPage from './FrontPage';
 import Header from './Header';
 import User from './User';
 import Community from './Community';
+import './App.css'
 
 class App extends Component {
 
   render() {
-
-    return <div className="App">
+    return <div className="App parallax is-fullheight">
         <Header {...this.props} />
         <Route path="/user" render={props => <User {...props} {...this.props} />} />
         <br />

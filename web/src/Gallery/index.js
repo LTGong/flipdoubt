@@ -41,7 +41,6 @@ class Gallery extends Component {
     }
 
     componentWillMount() {
-        debugger
         var the_headers = Object.assign({
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -273,7 +272,7 @@ class Gallery extends Component {
             {template}
         </div>);
         return (
-            <div className="box">
+            <div className="box dark has-text-centered is-radiusless">
                 <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
                 <br/> {gallery_template}
             </div>
