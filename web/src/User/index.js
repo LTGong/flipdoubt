@@ -240,8 +240,6 @@ class User extends Component {
 
                   <div className="content">
                     I didn't come this far,
-                    {/* <a>@bulmaio</a>.
-                    <a href="#">#css</a> <a href="#">#responsive</a> */}
                     <br />
                     just to come this far.
                     <br />

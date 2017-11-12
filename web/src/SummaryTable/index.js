@@ -112,11 +112,11 @@ class SummaryTable extends Component {
               </table>
             </div>
           </div>
-          {/* <footer className="card-footer">
-            <a href="#" className="card-footer-item">
+          <footer className="card-footer">
+            {/* <a href="#" className="card-footer-item">
               View All
-            </a>
-          </footer> */}
+            </a> */}
+          </footer>
       </div>
     );
     }
