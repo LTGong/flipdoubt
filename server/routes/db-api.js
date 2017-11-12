@@ -16,12 +16,12 @@ router.post('/create-new-thought', checkJwt, function (req, res, next) {
   let date_string = (new_today.getMonth() + 1) + '/' + new_today.getDate() + '/' +  new_today.getFullYear()
   let date_info = {
     full_stamp : today,
-    day: date_stuff[0], // Sat, Sun, Mon,
+    // day: date_stuff[0], // Sat, Sun, Mon
     full_date : date_string  // 11/11/2017
   }
-
   let newThought = new Thought(req.body.text, null, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_info]);
-
+  console.log(newThought);
+  
   req
     .db
     .collection('thoughts')
@@ -47,10 +47,10 @@ router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    .find()
-    // .find({"_user_id": user_id, "_processing": false})
+    .find({"_user_id": user_id, "_processing": false})
     .toArray(function (err, results) {
       res.json(results);
+      console.log(results);
     })
 });
 
@@ -132,48 +132,59 @@ router.post('/get-totals', checkJwt, function (req, res, next) {
     prior_7_days_counts_neg.push({ prior_date : 0});
   }
   console.log(prior_7_days_strings);
+  console.log(prior_7_days_counts_pos);
+  console.log(prior_7_days_counts_neg);
 
   let prior_thoughts_per_day = [];
-
-  req
-    .db
-    .collection('thoughts')
-    .find({_processing: false, _user_id: user})
-    .toArray(function (err, results) {
-      _.forEach(results, (result => {
-
+    
+  req.db
+    .collection("thoughts")
+    .find({ _user_id: user, _processing: false })
+    .toArray(function(err, results) {
+      // console.log(results);
+      _.forEach(results, result => {
+        console.log(result);
         //totals per thought. Haven't written the code to pass this to interface in the correct format yet.
+
         let num_pos = result._pos_thought_timestamps.length;
         let num_neg = result._neg_thought_timestamps.length;
+        console.log(num_pos, num_neg);
 
         //pulling out relevant info from the last 7 days
-        _.forEach(result._pos_thought_timestamps, (timeobj => {
+        _.forEach(result._pos_thought_timestamps, timeobj => {
           console.log(timeobj);
-          if (prior_7_days_strings.indexOf(timeobj.full_date) >= 0 ){
-              prior_7_days_counts_pos[timeobj.full_date] = prior_7_days_counts_pos[timeobj.full_date] + 1;
+          if (prior_7_days_strings.indexOf(timeobj.full_date) >= 0) {
+            prior_7_days_counts_pos[timeobj.full_date] = prior_7_days_counts_pos[timeobj.full_date] + 1;
           }
-        }))
+        });
 
-        _.forEach(result._neg_thought_timestamps, (timeobj => {
+        _.forEach(result._neg_thought_timestamps, timeobj => {
           console.log(timeobj);
-          if (prior_7_days_strings.indexOf(timeobj.full_date) >= 0 ){
-              prior_7_days_counts_neg[timeobj.full_date] = prior_7_days_counts_neg[timeobj.full_date] + 1;
+          let _full_date = timeobj.full_date;
+          console.log(_full_date);
+          if (prior_7_days_strings.indexOf(_full_date) >= 0) {
+            console.log(prior_7_days_counts_neg[_full_date]);
+            prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)]["prior_date"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)].prior_date + 1;
           }
-        }))
-
-        console.log('POSITIVE COUNTS')
+        });
+        
+        console.log("POSITIVE COUNTS");
         console.log(prior_7_days_counts_pos);
-        console.log('NEGATIVE COUNTS')
+        console.log("NEGATIVE COUNTS");
         console.log(prior_7_days_counts_neg);
-
-      }))
-      res
-        .status(200)
-        .send('OK whatevs.');
+      });
+      // res.status(200).send("OK whatevs.");
+      let total = [prior_7_days_strings, prior_7_days_counts_pos, prior_7_days_counts_neg];
+      res.json(total);
+      console.log(total);
     });
 
 })
 
+// function (err, results) {
+//       res.json(results);
+//       console.log(results);
+//     }
 
 router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
