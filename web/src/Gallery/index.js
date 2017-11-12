@@ -37,6 +37,9 @@ class Gallery extends Component {
         this.handleNegativeClick = this
             .handleNegativeClick
             .bind(this);
+        this.handleTwitterClick = this
+            .handleTwitterClick
+            .bind(this);
 
     }
 
