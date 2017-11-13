@@ -100,7 +100,7 @@ class ThoughtBubble extends Component {
       }).catch(err => console.log(err))
     }
     else{
-      console.log("No user profile (not logged in.)")
+      this.props.login();
     }
   }
 
