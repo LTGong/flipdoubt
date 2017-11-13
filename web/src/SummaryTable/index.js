@@ -31,27 +31,27 @@ class SummaryTable extends Component {
   }
 
   render() {
-    // var summary_table_template = this.state.thoughts.map((thought, i) => {
-    //     return <tr className="is-inprocess">
-    //     <td width="5%">
-    //       <i className="fa fa-frown-o has-text-danger"/>
-    //     </td>
-    //     <td>{thought._neg_thought}
-    //     </td>
-    //     <td>{thought._neg_thought_timestamps_count}</td>
-    //     <td className="right-border">
-    //       <i className="fa fa-plus" aria-hidden="true"/>
-    //     </td>
-    //     <td width="5%">
-    //       <i className="fa fa-smile-o has-text-success"/>
-    //     </td>
-    //     <td>{thought._pos_thought}</td>
-    //     <td>{thought._pos_thought_timestamps_count}</td>
-    //     <td>
-    //       <i className="fa fa-plus" aria-hidden="true"/>
-    //     </td>
-    //   </tr>
-    // });
+    var summary_table_template = this.state.thoughts.map((thought, i) => {
+        return <tr className="is-inprocess">
+        <td width="5%">
+          <i className="fa fa-frown-o has-text-danger"/>
+        </td>
+        <td>{thought._neg_thought}
+        </td>
+        <td>{thought._neg_thought_timestamps_count}</td>
+        <td className="right-border">
+          <i className="fa fa-plus" aria-hidden="true"/>
+        </td>
+        <td width="5%">
+          <i className="fa fa-smile-o has-text-success"/>
+        </td>
+        <td>{thought._pos_thought}</td>
+        <td>{thought._pos_thought_timestamps_count}</td>
+        <td>
+          <i className="fa fa-plus" aria-hidden="true"/>
+        </td>
+      </tr>
+    });
 
     return (
       <div className="card events-card">
@@ -76,7 +76,7 @@ class SummaryTable extends Component {
                 </tr>
               </thead>
               <tbody>
-                  {/* {summary_table_template} */}
+                  {summary_table_template}
               </tbody>
             </table>
           </div>

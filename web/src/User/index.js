@@ -86,36 +86,24 @@ class User extends Component {
       dataSource: myDataSource
     };
 
-    console.log(this.state._prior_7_days_counts_neg);
-    console.log(this.props.profile);
     const timestamp = this.props.profile.updated_at.split("T")[0];
 
-    return (
-      <div className="section">
+    return <div className="section">
         <div className="container">
           <div className="columns is-multiline">
-            <div className="column is-one-third">
+            <div className="column is-one-quarter">
               <div className="card">
                 <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img
-                      src="https://ecurrent.fit.edu/files/2014/11/Smiley-face-in-sea-of-sad-faces.png"
-                      alt="Placeholder"
-                    />
+                  <figure className="image is-square">
+                    <img src={this.props.profile.picture} alt="Placeholder" />
                   </figure>
                 </div>
                 <div className="card-content">
                   <div className="media">
-                    <div className="media-left">
-                      <figure className="image is-48x48">
-                        <img
-                          src={this.props.profile.picture}
-                          alt="Placeholder"
-                        />
-                      </figure>
-                    </div>
                     <div className="media-content">
-                      <p className="title is-4">{this.props.profile.name}</p>
+                      <p className="title is-4">
+                        {this.props.profile.name}
+                      </p>
                       <p className="subtitle is-6">
                         @{this.props.profile.nickname}
                       </p>
@@ -127,7 +115,7 @@ class User extends Component {
                     <br />
                     just to come this far.
                     <br />
-                    <time datetime={timestamp}>~{timestamp} </time>
+                    <time dateTime={timestamp}>~{timestamp} </time>
                   </div>
                   <div className="social">
                     <i className="fa fa-facebook-square" aria-hidden="true" />
@@ -141,12 +129,11 @@ class User extends Component {
             <div className="column is-two-thirds">
               <ReactFC {...props_multi_chart} />
               <br />
-              <SummaryTable {...this.props}/>
+              <SummaryTable {...this.props} />
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
 }
 
