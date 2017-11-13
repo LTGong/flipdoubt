@@ -10,17 +10,18 @@ import background7 from '../Gallery/background-7.jpg';
 import background8 from '../Gallery/background-8.jpg';
 import background9 from '../Gallery/background-9.jpg';
 import background10 from '../Gallery/background-10.jpg';
-import background11 from '../Gallery/background-11.jpg';
+
+var share = require('social-share');
 
 class Community extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            thoughts: [],
+            thoughts: []
         }
-        this.handleCardClick = this
-            .handleCardClick
+        this.handleTwitterClick = this
+            .handleTwitterClick
             .bind(this);
     }
 
@@ -31,21 +32,19 @@ class Community extends Component {
         }).catch(err => console.log(err));
     }
 
-    handleCardClick(e) {
-        e.preventDefault();
-        if (e.currentTarget.className.includes('flipped')) {
-            e.currentTarget.className = "custom-card";
-            e.currentTarget.children[0].className = "front";
-            e.currentTarget.children[1].className = "back is-hidden";
-        } else {
-            e.currentTarget.className = "custom-card flipped";
-            e.currentTarget.children[0].className = "front is-hidden";
-            e.currentTarget.children[1].className = "back";
-        }
+    handleTwitterClick(e) {
+        console.log("child click");
+        e.stopPropagation();
+        var url = share('twitter', {
+            title: e
+                .currentTarget
+                .getAttribute('value')
+        });
+        window.open(url, "_blank");
     }
 
-    getBackground(){
-        switch(Math.floor(Math.random() * 10) + 1 ) {
+    getBackground(img_id) {
+        switch (img_id) {
             case 1:
                 return background1;
             case 2:
@@ -75,58 +74,47 @@ class Community extends Component {
 
         let setsOfThree = [];
         let i = 0;
-        while(i < this.state.thoughts.length){
+        while (i < this.state.thoughts.length) {
             setsOfThree.push(this.state.thoughts.slice(i, i + 3));
             i += 3
         }
 
         let templates = [];
-        for(i = 0; i < setsOfThree.length; i++) {
-            templates.push(
-                setsOfThree[i].map((thought, i) =>
-                {
-                    return (<div className="column is-4">
-                            <div className="card-container">
-                            <div className="custom-card" onClick={this.handleCardClick}>
+        for (i = 0; i < setsOfThree.length; i++) {
+            templates.push(setsOfThree[i].map((thought, i) => {
+                return (
+                    <div className="column is-4">
+                        <div className="card-container">
+                            <div className="custom-card">
 
-                            <figure className="front">
-                                <img src={this.getBackground()} alt="front"/>
-                                <div className="caption">
-                                    <h2>{thought._pos_thought}</h2>
-                                    <div className="share-social">
-                                        <i className="fa fa-twitter" aria-hidden="true"></i>
-                                        <i className="fa fa-google-plus" aria-hidden="true"></i>
-                                        <i className="fa fa-facebook" aria-hidden="true"></i>
+                                <figure className="front">
+                                    <img src={this.getBackground(thought._img_id)} alt="front"/>
+                                    <div className="caption">
+                                        <h2>{thought._pos_thought}</h2>
+                                        <div className="share-social">
+                                            <i
+                                                data-service="twitter"
+                                                className="fa fa-twitter"
+                                                aria-hidden="true"
+                                                value={thought._pos_thought}
+                                                onClick={this.handleTwitterClick}></i>
+                                        </div>
                                     </div>
-                                </div>
-                            </figure>
-
-                            <figure className="back is-hidden">
-                                <img src={background11} alt="back"/>
-                                <div className="caption">
-                                    <h2>{thought._neg_thought}</h2>
-                                </div>
-                            </figure>
+                                </figure>
                             </div>
-                            </div>
-                            </div>
-                        );
-                })
-            );
+                        </div>
+                    </div>
+                );
+            }));
         }
 
-        var gallery_template =
-            templates
-            .map((template, i) =>
-                <div className="columns">
-                    {template}
-                </div>
-        );
+        var gallery_template = templates.map((template, i) => <div className="columns">
+            {template}
+        </div>);
         return (
             <div className="box dark has-text-centered container">
                 <h2 className="title is-3">Community</h2>
-                <br/>
-                {gallery_template}
+                <br/> {gallery_template}
             </div>
         );
     }

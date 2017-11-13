@@ -6,7 +6,7 @@ var _ = require('lodash');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-router.post("/create-new-thought", checkJwt, function(req, res, next) {
+router.post("/create-new-thought", checkJwt, function (req, res, next) {
   console.log("IN CREATE NEW THOUGHT.");
   let img_id = Math.floor(Math.random() * 10) + 1;
 
@@ -15,46 +15,29 @@ router.post("/create-new-thought", checkJwt, function(req, res, next) {
     .split(" ")[0];
   let today = Date.now();
   let new_today = new Date(today);
-  let date_string =
-    new_today.getMonth() +
-    1 +
-    "/" +
-    new_today.getDate() +
-    "/" +
-    new_today.getFullYear();
+  let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
   let date_info = {
     full_stamp: today,
     // day: date_stuff[0], // Sat, Sun, Mon
     full_date: date_string // 11/11/2017
   };
-  let newThought = new Thought(
-    req.body.text,
-    null,
-    req.body.user_name,
-    req.body.processing,
-    req.body.HITId,
-    req.body.HITTypeId,
-    false,
-    img_id,
-    [],
-    [date_info]
-  );
+  let newThought = new Thought(req.body.text, null, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_info]);
   console.log(newThought);
 
-  req.db
+  req
+    .db
     .collection("thoughts")
     .insertOne(newThought)
-    .then(
-      function(result) {
-        console.log("In unprotected db callback");
-        console.log(result.ops[0]);
-        res.status(200).send(result.ops[0]);
-      },
-      error => {
-        console.log("error");
-      }
-    )
-    .catch(function(error) {
+    .then(function (result) {
+      console.log("In unprotected db callback");
+      console.log(result.ops[0]);
+      res
+        .status(200)
+        .send(result.ops[0]);
+    }, error => {
+      console.log("error");
+    })
+    .catch(function (error) {
       throw error;
     });
 });
@@ -66,16 +49,46 @@ router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    .find()
-    // .find({"_user_id": user_id, "_processing": false})
+    // .find()
+    .find({"_user_id": user_id, "_processing": false})
     .toArray(function (err, results) {
+      res.json(results);
+    })
+});
+
+router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
+
+  let user_id = req.body.username;
+  console.log(user_id);
+  req
+    .db
+    .collection('thoughts')
+    // .find()
+    .find({"_user_id": user_id, "_processing": false})
+    .toArray(function (err, results) {
+      for (var i = 0; i < results.length; i++) {
+        result = results[i];
+
+        if (result._neg_thought_timestamps != undefined) {
+          result._neg_thought_timestamps_count = result._neg_thought_timestamps.length;
+        } else {
+          result._neg_thought_timestamps_count = 0;
+        }
+
+        if (result._pos_thought_timestamps != undefined) {
+          result._pos_thought_timestamps_count = result._pos_thought_timestamps.length;
+        } else {
+          result._pos_thought_timestamps_count = 0;
+        }
+
+      }
       res.json(results);
     })
 });
 
 router.post('/swap-image', checkJwt, function (req, res, next) {
 
-  console.log("swap-image:req.body._HITId: " +  req.body._HITId);
+  console.log("swap-image:req.body._HITId: " + req.body._HITId);
   let new_img_id = Math.floor(Math.random() * 10) + 1;
 
   req
@@ -127,8 +140,7 @@ router.post('/get-processing-HITs', function (req, res, next) {
     });
 })
 
-
-router.post("/get-totals", checkJwt, function(req, res, next) {
+router.post("/get-totals", checkJwt, function (req, res, next) {
   let user = req.body.user;
   console.log(req.body.user);
   console.log("in db get-totals for user: ", user);
@@ -138,28 +150,21 @@ router.post("/get-totals", checkJwt, function(req, res, next) {
     .split(" ")[0];
   let today = Date.now();
   let new_today = new Date(today);
-  let date_string =
-    new_today.getMonth() +
-    1 +
-    "/" +
-    new_today.getDate() +
-    "/" +
-    new_today.getFullYear();
+  let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
 
   let prior_7_days_counts_pos = [];
   let prior_7_days_counts_neg = [];
   let prior_7_days_strings = [];
-  let prior_7_days =[];
+  let prior_7_days = [];
   let i = 0;
   for (i = 0; i < 7; i++) {
     date = new Date();
     date.setDate(date.getDate() - i);
-    prior_date =
-      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
-    prior_7_days.push({ label: prior_date });
+    prior_date = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+    prior_7_days.push({label: prior_date});
     prior_7_days_strings.push(prior_date);
-    prior_7_days_counts_pos.push({ value: 0 });
-    prior_7_days_counts_neg.push({ value: 0 });
+    prior_7_days_counts_pos.push({value: 0});
+    prior_7_days_counts_neg.push({value: 0});
   }
   console.log(prior_7_days_strings);
   console.log(prior_7_days_counts_pos);
@@ -167,14 +172,16 @@ router.post("/get-totals", checkJwt, function(req, res, next) {
 
   let prior_thoughts_per_day = [];
 
-  req.db
+  req
+    .db
     .collection("thoughts")
-    .find({ _user_id: user, _processing: false })
-    .toArray(function(err, results) {
+    .find({_user_id: user, _processing: false})
+    .toArray(function (err, results) {
       // console.log(results);
       _.forEach(results, result => {
         console.log(result);
-        //totals per thought. Haven't written the code to pass this to interface in the correct format yet.
+        // totals per thought. Haven't written the code to pass this to interface in the
+        // correct format yet.
 
         let num_pos = result._pos_thought_timestamps.length;
         let num_neg = result._neg_thought_timestamps.length;
@@ -184,8 +191,7 @@ router.post("/get-totals", checkJwt, function(req, res, next) {
         _.forEach(result._pos_thought_timestamps, timeobj => {
           console.log(timeobj);
           if (prior_7_days_strings.indexOf(timeobj.full_date) >= 0) {
-            prior_7_days_counts_pos[timeobj.full_date] =
-              prior_7_days_counts_pos[timeobj.full_date] + 1;
+            prior_7_days_counts_pos[timeobj.full_date] = prior_7_days_counts_pos[timeobj.full_date] + 1;
           }
         });
 
@@ -195,12 +201,7 @@ router.post("/get-totals", checkJwt, function(req, res, next) {
           console.log(_full_date);
           if (prior_7_days_strings.indexOf(_full_date) >= 0) {
             console.log(prior_7_days_counts_neg[_full_date]);
-            prior_7_days_counts_neg[
-              prior_7_days_strings.indexOf(timeobj.full_date)
-            ]["value"] =
-              prior_7_days_counts_neg[
-                prior_7_days_strings.indexOf(timeobj.full_date)
-              ].value + 1;
+            prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)].value + 1;
           }
         });
 
@@ -255,7 +256,7 @@ router.get('/community-thoughts', function (req, res, next) {
 })
 
 router.post('/share-thought', function (req, res, next) {
-  console.log("req.body._HITId: " +  req.body);
+  console.log("req.body._HITId: " + req.body);
   req
     .db
     .collection('thoughts')
@@ -267,11 +268,11 @@ router.post('/share-thought', function (req, res, next) {
       }
     });
 
-    res.json({message: 'SHared to community'});
+  res.json({message: 'SHared to community'});
 })
 
 router.post('/increment_pos_thought', function (req, res, next) {
-  console.log("req.body._HITId: " +  req.body);
+  console.log("req.body._HITId: " + req.body);
   req
     .db
     .collection('thoughts')
@@ -283,11 +284,11 @@ router.post('/increment_pos_thought', function (req, res, next) {
       }
     });
 
-    res.json({message: 'Incremented Positive'});
+  res.json({message: 'Incremented Positive'});
 })
 
 router.post('/increment_neg_thought', function (req, res, next) {
-  console.log("req.body._HITId: " +  req.body);
+  console.log("req.body._HITId: " + req.body);
   req
     .db
     .collection('thoughts')
@@ -299,7 +300,7 @@ router.post('/increment_neg_thought', function (req, res, next) {
       }
     });
 
-    res.json({message: 'Incremented Negative'});
+  res.json({message: 'Incremented Negative'});
 })
 
 router.post('/update-processed-HIT', function (req, res, next) {
@@ -370,8 +371,9 @@ router.get('/protected', checkJwt, function (req, res, next) {
   // // fetch info about the user (this isn't useful here, just for demo) const
   // userInfoUrl = req.user.aud[1]; const bearer = req.headers.authorization;
   // fetch(userInfoUrl, { 	headers: { 'authorization': bearer }, })   .then(res =>
-  // res.json())   .then(userInfoRes => console.log('user info res', userInfoRes))
-  //   .catch(e => console.error('error fetching userinfo from auth0'));
+  // res.json())   .then(userInfoRes => console.log('user info res',
+  // userInfoRes))   .catch(e => console.error('error fetching userinfo from
+  // auth0'));
 });
 
 module.exports = router;
