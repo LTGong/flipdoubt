@@ -211,7 +211,7 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
         console.log(prior_7_days_counts_neg);
       });
       // res.status(200).send("OK whatevs.");
-      let total = [prior_7_days, prior_7_days_counts_pos, prior_7_days_counts_neg];
+      let total = [prior_7_days, prior_7_days_counts_pos, prior_7_days_counts_neg, results];
       res.json(total);
       console.log(total);
     });

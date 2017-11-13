@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import "./summaryTable.css";
 
 class SummaryTable extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

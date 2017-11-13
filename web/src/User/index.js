@@ -14,7 +14,8 @@ class User extends Component {
       user: this.props.profile,
       _prior_7_days: [],
       _prior_7_days_counts_pos: [],
-      _prior_7_days_counts_neg: []
+      _prior_7_days_counts_neg: [],
+      _thoughts: []
     };
   }
 
@@ -39,7 +40,8 @@ class User extends Component {
           this.setState({
             _prior_7_days: res[0],
             _prior_7_days_counts_pos: res[1],
-            _prior_7_days_counts_neg: res[2]
+            _prior_7_days_counts_neg: res[2],
+            _thoughts: res[3]
           });
         })
         .catch(err => console.log(err));
