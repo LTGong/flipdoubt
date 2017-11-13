@@ -70,8 +70,6 @@ class Gallery extends Component {
         } else {
             e.currentTarget.className = "custom-card flipped";
         }
-
-        this.bounce(e.currentTarget);
     }
 
     handleTwitterClick(e) {
