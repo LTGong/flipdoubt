@@ -83,6 +83,7 @@ router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
 
       }
       res.json(results);
+      console.log(results);
     })
 });
 
@@ -142,21 +143,13 @@ router.post('/get-processing-HITs', function (req, res, next) {
 
 router.post("/get-totals", checkJwt, function (req, res, next) {
   let user = req.body.user;
-  console.log(req.body.user);
   console.log("in db get-totals for user: ", user);
 
-  let date_day = Date(Date.now())
-    .toString()
-    .split(" ")[0];
-  let today = Date.now();
-  let new_today = new Date(today);
-  let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
+  let prior_7_days_counts_pos = [],
+    prior_7_days_counts_neg = [],
+    prior_7_days_strings = [],
+    prior_7_days = [];
 
-  let prior_7_days_counts_pos = [];
-  let prior_7_days_counts_neg = [];
-  let prior_7_days_strings = [];
-  let prior_7_days = [];
-  let i = 0;
   for (i = 0; i < 7; i++) {
     date = new Date();
     date.setDate(date.getDate() - i);
@@ -177,40 +170,29 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
     .collection("thoughts")
     .find({_user_id: user, _processing: false})
     .toArray(function (err, results) {
-      // console.log(results);
+      console.log(results);
       _.forEach(results, result => {
-        console.log(result);
-        // totals per thought. Haven't written the code to pass this to interface in the
-        // correct format yet.
-
-        let num_pos = result._pos_thought_timestamps.length;
-        let num_neg = result._neg_thought_timestamps.length;
-        console.log(num_pos, num_neg);
 
         //pulling out relevant info from the last 7 days
         _.forEach(result._pos_thought_timestamps, timeobj => {
-          console.log(timeobj);
-          if (prior_7_days_strings.indexOf(timeobj.full_date) >= 0) {
-            prior_7_days_counts_pos[timeobj.full_date] = prior_7_days_counts_pos[timeobj.full_date] + 1;
+          // Only count the pos thoughts that was recorded with the right timestamp
+          if (timeobj === timeobj + '') {
+            prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]["value"] = prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)].value + 1;
           }
         });
 
         _.forEach(result._neg_thought_timestamps, timeobj => {
-          console.log(timeobj);
           let _full_date = timeobj.full_date;
-          console.log(_full_date);
           if (prior_7_days_strings.indexOf(_full_date) >= 0) {
-            console.log(prior_7_days_counts_neg[_full_date]);
             prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)].value + 1;
           }
         });
 
-        console.log("POSITIVE COUNTS");
+        console.log("Total POSITIVE COUNTS after adding this thought: " + result._HITId);
         console.log(prior_7_days_counts_pos);
-        console.log("NEGATIVE COUNTS");
+        console.log("Total NEGATIVE COUNTS after adding this thought: " + result._HITId);
         console.log(prior_7_days_counts_neg);
       });
-      // res.status(200).send("OK whatevs.");
       let total = [prior_7_days, prior_7_days_counts_pos, prior_7_days_counts_neg, results];
       res.json(total);
       console.log(total);
@@ -273,6 +255,12 @@ router.post('/share-thought', function (req, res, next) {
 
 router.post('/increment_pos_thought', function (req, res, next) {
   console.log("req.body._HITId: " + req.body);
+
+  let today = Date.now();
+  let new_today = new Date(today);
+  let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
+  console.log(date_string);
+
   req
     .db
     .collection('thoughts')
@@ -280,7 +268,7 @@ router.post('/increment_pos_thought', function (req, res, next) {
       _HITId: req.body._HITId
     }, {
       $push: {
-        _pos_thought_timestamps: Date.now()
+        _pos_thought_timestamps: date_string
       }
     });
 
