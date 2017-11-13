@@ -11,7 +11,8 @@ class ThoughtBubble extends Component {
       value: '',
       styleClass: 'thoughtText is-hidden',
       inputClass: 'add-padding',
-      anotherThoughtClass: 'control is-hidden'
+      anotherThought: 'button is-info is-hidden',
+      transformButton: "button is-info"
     }
     this.handleChange = this
       .handleChange
@@ -43,17 +44,19 @@ class ThoughtBubble extends Component {
       value: this.state.value,
       styleClass: "thoughtText",
       inputClass: "is-hidden",
-      anotherThoughtClass: "control"
+      anotherThought: 'button is-info',
+      transformButton: 'button is-info is-hidden'
     });
   }
 
   showInput(e) {
     e.preventDefault();
     this.setState({
-      value: this.state.value,
+      value: '',
       styleClass: "thoughtText is-hidden",
       inputClass: "add-padding",
-      anotherThoughtClass: "control is-hidden"
+      anotherThought: "button is-info is-hidden",
+      transformButton: "button is-info"
     });
   }
 
@@ -164,22 +167,20 @@ class ThoughtBubble extends Component {
                   <div className="control text-centered">
                     <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
                   </div>
-                  <div className="control submit-for-cloud">
-                    <div className="submit-for-cloud-cell">
-                      <a className="button is-info" onClick={this.transform}>
-                        Transform
-                      </a>
-                    </div>
-                  </div>
                 </div>
               </div>
-              <p className={this.state.styleClass}>{this.state.value}</p>
+              <div className={this.state.styleClass}>{this.state.value}</div>
+              <div className="control submit-for-cloud">
+                <div className="submit-for-cloud-cell">
+                  <a className={this.state.transformButton} onClick={this.transform}>
+                    Transform
+                  </a>
+                  <a className={this.state.anotherThought} onClick={this.showInput}>
+                    Add Another Thought
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className={this.state.anotherThoughtClass}>
-            <a className="button is-info" onClick={this.showInput}>
-              Add Another Thought
-            </a>
           </div>
         </div>
     )
