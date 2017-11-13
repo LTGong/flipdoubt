@@ -10,7 +10,6 @@ import background7 from '../Gallery/background-7.jpg';
 import background8 from '../Gallery/background-8.jpg';
 import background9 from '../Gallery/background-9.jpg';
 import background10 from '../Gallery/background-10.jpg';
-import background11 from '../Gallery/background-11.jpg';
 
 var share = require('social-share');
 

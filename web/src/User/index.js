@@ -145,7 +145,7 @@ class User extends Component {
             <div className="column is-two-thirds">
               <ReactFC {...props_multi_chart} />
               <br />
-              <SummaryTable />
+              <SummaryTable {...this.props}/>
             </div>
           </div>
         </div>
