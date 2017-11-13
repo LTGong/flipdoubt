@@ -20,7 +20,7 @@ class SummaryTable extends Component {
     if (this.props.profile.nickname != null) {
       let request = new Request('/api/db/get-user-thought-summary', {
         method: 'POST',
-        body: JSON.stringify({username: this.props.user}),
+        body: JSON.stringify({username: this.props.profile.nickname}),
         headers: the_headers
       });
 
