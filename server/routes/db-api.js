@@ -64,7 +64,7 @@ router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
     .db
     .collection('thoughts')
     // .find()
-    .find({"_user_id": user_id, "_processing": false})
+    .find({"_user_id": user_id})
     .toArray(function (err, results) {
       for (var i = 0; i < results.length; i++) {
         result = results[i];
