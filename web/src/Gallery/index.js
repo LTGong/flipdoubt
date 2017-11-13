@@ -70,6 +70,8 @@ class Gallery extends Component {
         } else {
             e.currentTarget.className = "custom-card flipped";
         }
+
+        this.bounce(e.currentTarget);
     }
 
     handleTwitterClick(e) {
@@ -80,6 +82,8 @@ class Gallery extends Component {
                 .currentTarget
                 .getAttribute('value')
         });
+
+        this.bounce(e.currentTarget);
         window.open(url, "_blank");
     }
 
@@ -102,6 +106,8 @@ class Gallery extends Component {
         fetch(share_request).then((res) => res.json()).then((res) => {
             console.log(res.message);
         }).catch(err => console.log(err));
+
+        this.bounce(e.currentTarget);
     }
 
     handlePositiveClick(e) {
@@ -126,6 +132,8 @@ class Gallery extends Component {
         fetch(increment_positive_req).then((res) => res.json()).then((res) => {
             console.log(res.message);
         }).catch(err => console.log(err));
+
+        this.bounce(e.currentTarget);
     }
 
     handleNegativeClick(e) {
@@ -150,6 +158,13 @@ class Gallery extends Component {
         fetch(increment_negative_req).then((res) => res.json()).then((res) => {
             console.log(res.message);
         }).catch(err => console.log(err));
+
+        this.bounce(e.currentTarget);
+    }
+
+    bounce(element) {
+        element.classList.remove("bounce");
+        element.classList.add("bounce");
     }
 
     swap(e) {
@@ -174,6 +189,8 @@ class Gallery extends Component {
         fetch(img_request).then((res) => res.json()).then((res) => {
             img.src = this.getBackground(res._img_id);
         }).catch(err => console.log(err));
+
+        this.bounce(e.currentTarget);
     }
 
     getBackground(img_id) {
