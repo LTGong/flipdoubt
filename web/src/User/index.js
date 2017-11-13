@@ -133,7 +133,7 @@ class User extends Component {
                     <br />
                     just to come this far.
                     <br />
-                    <time datetime={timestamp}>~{timestamp} </time>
+                    <time dateTime={timestamp}>~{timestamp} </time>
                   </div>
                   <div className="social">
                     <i className="fa fa-facebook-square" aria-hidden="true" />
