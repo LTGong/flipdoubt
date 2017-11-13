@@ -71,15 +71,9 @@ class User extends Component {
         },
         {
           seriesname: "Total number of POSITIVE thoughts",
-          renderas: "line",
+          renderas: "area", //or line 
           showvalues: "0",
           data: this.state._prior_7_days_counts_pos
-        // },
-        // {
-        //   seriesname: "Total number of POSITIVE thoughts",
-        //   renderas: "area",
-        //   showvalues: "0",
-        //   data: this.state._prior_7_days_counts_pos
         }
       ]
     };
