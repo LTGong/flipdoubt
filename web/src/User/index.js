@@ -52,10 +52,10 @@ class User extends Component {
     charts(FusionCharts);
     var myDataSource = {
       chart: {
-        caption: "Trend of thoughts",
-        subcaption: "Breakdown by 7 day",
+        caption: "Thought Trends",
+        subcaption: "Past 7 Days",
         xaxisname: "Date",
-        yaxisname: "Frequency (In count)",
+        yaxisname: "Count",
         // numberprefix: "$",
         theme: "ocean"
       },
@@ -66,12 +66,12 @@ class User extends Component {
       ],
       dataset: [
         {
-          seriesname: "Total number of NEGATIVE thoughts",
+          seriesname: "NEGATIVE THOUGHTS",
           data: this.state._prior_7_days_counts_neg
         },
         {
-          seriesname: "Total number of POSITIVE thoughts",
-          renderas: "area", //or line 
+          seriesname: "POSITIVE THOUGHTS",
+          renderas: "area", //or line
           showvalues: "0",
           data: this.state._prior_7_days_counts_pos
         }

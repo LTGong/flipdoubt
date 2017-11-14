@@ -150,7 +150,7 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
     prior_7_days_strings = [],
     prior_7_days = [];
 
-  for (i = 0; i < 7; i++) {
+  for (i = 6; i > -1; i--) {
     date = new Date();
     date.setDate(date.getDate() - i);
     prior_date = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
