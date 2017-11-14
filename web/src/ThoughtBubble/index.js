@@ -61,7 +61,7 @@ class ThoughtBubble extends Component {
   }
 
   transform() {
-    if (this.props.profile){
+    if (this.props.isAuthenticated()){
       var thought = this.state.value;
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
       //this.handleClear();
@@ -99,7 +99,7 @@ class ThoughtBubble extends Component {
 
       }).catch(err => console.log(err))
     }
-    else{
+    else {
       this.props.login();
     }
   }
