@@ -28,6 +28,7 @@ router.post('/transform', checkJwt, function(req, res, next) {
       var neg_thought = req.body.thoughtText;
       var tag = '%%THOUGHT.TAG%%';
       unescapedXML = unescapedXML.replace(tag, neg_thought);
+      unescapedXML = unescapedXML.replace('&#13;', ' ');
 
       // HIT options
       var params = {

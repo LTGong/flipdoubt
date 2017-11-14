@@ -21,7 +21,7 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
     // day: date_stuff[0], // Sat, Sun, Mon
     full_date: date_string // 11/11/2017
   };
-  let default_pos_thought = " ... Transformation in progress. Check back soon! ...";
+  let default_pos_thought = "(... transformation in progress ...)";
   let newThought = new Thought(req.body.text, default_pos_thought, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_info]);
   console.log(newThought);
 
@@ -83,7 +83,8 @@ router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
         }
 
       }
-      res.json(results);
+
+      res.json(results.reverse());
       console.log(results);
     })
 });
