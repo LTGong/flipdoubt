@@ -13,7 +13,7 @@ class Header extends Component {
               <div className="container">
                 <div className="navbar-left navbar-menu">
                   <a className="navbar-item title is-3" href="/">
-                    THERAPIST
+                    Flip*Doubt
                   </a>
                 </div>
                 <div className="navbar-right navbar-menu navbar-end">
