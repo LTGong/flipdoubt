@@ -10,17 +10,26 @@ class Frontpage extends Component {
     this.state = {
       shouldRerender: false
     }
+    this.reRenderHack = this.reRenderHack.bind(this);
+  }
+
+  reRenderHack() {
+    console.log("this is running");
+    this.setState({shouldRerender: true});
+    this.forceUpdate();
   }
 
   render() {
     if (this.props.profile) {
       var gallery = <Gallery
         getAuthorizationHeader={this.props.getAuthorizationHeader}
+        reRender={this.state.shouldRerender}
         user={this.props.profile.nickname}/>;
     }
     return <div className="FrontPage container">
 
-      <ThoughtBubble {...this.props}/> {gallery}
+      <ThoughtBubble reRenderHack={this.reRenderHack} {...this.props}/>
+      {gallery}
 
     </div>
   }

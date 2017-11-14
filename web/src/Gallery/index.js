@@ -219,7 +219,7 @@ class Gallery extends Component {
     }
 
     render() {
-
+        debugger
         let setsOfThree = [];
         let i = 0;
         while (i < this.state.thoughts.length) {
@@ -291,6 +291,7 @@ class Gallery extends Component {
         </div>);
         return (
             <div className="box dark has-text-centered is-radiusless">
+                <p>{this.props.shouldRerender}</p>
                 <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
                 <br/> {gallery_template}
             </div>
