@@ -144,7 +144,7 @@ class ThoughtBubble extends Component {
             .then((res)=> {
               console.log("we gots the results yo");
               this.props.reRenderHack();
-              this.forceUpdate();
+              // this.forceUpdate();
               console.log(res);
             })
           } else {
