@@ -53,7 +53,7 @@ router.post('/get-user-quotes', checkJwt, function (req, res, next) {
     // .find()
     .find({"_user_id": user_id, "_processing": false})
     .toArray(function (err, results) {
-      res.json(results);
+      res.json(results.reverse());
     })
 });
 
@@ -177,16 +177,18 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
 
         //pulling out relevant info from the last 7 days
         _.forEach(result._pos_thought_timestamps, timeobj => {
-          // Only count the pos thoughts that was recorded with the right timestamp
+          // Only count the pos thoughts recorded with the right timestamp
           if (timeobj === timeobj + '') {
-            prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]["value"] = prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)].value + 1;
+            prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]["value"]
+              = prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)].value + 1;
           }
         });
 
         _.forEach(result._neg_thought_timestamps, timeobj => {
-          let _full_date = timeobj.full_date;
-          if (prior_7_days_strings.indexOf(_full_date) >= 0) {
-            prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)].value + 1;
+          // Only count the neg thoughts recorded with the right timestamp
+          if (timeobj === timeobj + '') {
+            prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)]["value"]
+              = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)].value + 1;
           }
         });
 
@@ -252,7 +254,7 @@ router.post('/share-thought', function (req, res, next) {
       }
     });
 
-  res.json({message: 'SHared to community'});
+  res.json({message: 'Shared to community'});
 })
 
 router.post('/increment_pos_thought', function (req, res, next) {
@@ -273,12 +275,17 @@ router.post('/increment_pos_thought', function (req, res, next) {
         _pos_thought_timestamps: date_string
       }
     });
-
+  console.log('POSITIVE INCREMENT');
   res.json({message: 'Incremented Positive'});
 })
 
 router.post('/increment_neg_thought', function (req, res, next) {
   console.log("req.body._HITId: " + req.body);
+
+  let new_today = new Date(Date.now());
+  let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
+  console.log(date_string);
+
   req
     .db
     .collection('thoughts')
@@ -286,10 +293,10 @@ router.post('/increment_neg_thought', function (req, res, next) {
       _HITId: req.body._HITId
     }, {
       $push: {
-        _neg_thought_timestamps: Date.now()
+        _neg_thought_timestamps: date_string
       }
     });
-
+    console.log('NEGATIVE INCREMENT');
   res.json({message: 'Incremented Negative'});
 })
 

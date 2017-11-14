@@ -114,19 +114,15 @@ class Community extends Component {
         return (
           <div>
           <div className="makeWhite has-text-centered container">
-         <h2 className="title is-3 makeWhite">Welcome to FLIP*DOUBT.</h2>
-
-         <p> Life is hard for everybody sometimes.</p>
-         <p> But how you think about life changes how you live. </p>
-         <p> FLIP*DOUBT helps you transform your life by changing how you think. </p>
-         <p> Get inspired by these positive thoughts shared by our community. </p>
-         <p> Then begin your own journey by transforming
-         and tracking your thoughts. </p>
-         <p>.</p>
-
+          <h2 className="title is-3 makeWhite">Life is hard for everybody sometimes.</h2>
+          <h2 className="title is-3 makeWhite">But how you think about life changes how you live.</h2>
+          <h2 className="title is-3 makeWhite">FLIP*DOUBT helps you change negative thought patterns.</h2>
+          <h2 className="title is-3 makeWhite">Get inspired by these positive thoughts from our community.</h2>
+          <h2 className="title is-3 makeWhite">Then transform and track your own thoughts.</h2>
+         &nbsp;
           </div>
             <div className="box dark has-text-centered container">
-                <h2 className="title is-3">Community</h2>
+                <h2 className="title is-3">Community Inspirations</h2>
                 <br/> {gallery_template}
             </div>
             </div>
@@ -135,3 +131,11 @@ class Community extends Component {
 }
 
 export default Community;
+
+// <h2 className="title is-3 makeWhite">Welcome to FLIP*DOUBT.</h2>
+//
+// <p> Life is hard for everybody sometimes.</p>
+// <p> But how you think about life changes how you live. </p>
+// <p> FLIP*DOUBT helps you change negative thought patterns. </p>
+// <p> Get inspired by these positive thoughts from our community. </p>
+// <p> Then transform and track your own thoughts.</p>
