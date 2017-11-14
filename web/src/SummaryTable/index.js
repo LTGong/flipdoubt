@@ -39,17 +39,11 @@ class SummaryTable extends Component {
         <td>{thought._neg_thought}
         </td>
         <td>{thought._neg_thought_timestamps_count}</td>
-        <td className="right-border">
-          <i className="fa fa-plus" aria-hidden="true"/>
-        </td>
         <td width="5%">
           <i className="fa fa-smile-o has-text-success"/>
         </td>
         <td>{thought._pos_thought}</td>
         <td>{thought._pos_thought_timestamps_count}</td>
-        <td>
-          <i className="fa fa-plus" aria-hidden="true"/>
-        </td>
       </tr>
     });
 
@@ -68,11 +62,9 @@ class SummaryTable extends Component {
                   <th/>
                   <th>Negative Thought</th>
                   <th>Count</th>
-                  <th>Add</th>
                   <th/>
                   <th>Positive Thought</th>
                   <th>Count</th>
-                  <th>Add</th>
                 </tr>
               </thead>
               <tbody>
