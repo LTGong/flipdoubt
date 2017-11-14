@@ -17,9 +17,9 @@ class App extends Component {
         <Header {...this.props} />
         <Route path="/user" render={props => <User {...props} {...this.props} />} />
         <br />
-        <Route exact path="/" render={props=> <FrontPage {...this.props} />} />
+        <Route exact path="/" render={props=> <Community {...this.props} />} />
         <br />
-        <Route path="/community" render={props=> <Community {...this.props} />} />
+        <Route path="/transform" render={props=> <FrontPage {...this.props} />} />
         <br />
         <Footer />
       </div>;

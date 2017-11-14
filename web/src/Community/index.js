@@ -113,15 +113,16 @@ class Community extends Component {
         </div>);
         return (
           <div>
-          <div className="box has-text-centered container">
-         <h2 className="title is-3 ">Welcome to FLIP*DOUBT.</h2>
+          <div className="makeWhite has-text-centered container">
+         <h2 className="title is-3 makeWhite">Welcome to FLIP*DOUBT.</h2>
 
          <p> Life is hard for everybody sometimes.</p>
          <p> But how you think about life changes how you live. </p>
-         <p> FLIP*DOUBT helps you transform your life by changing how you think.
-         Get inspired by these positive thoughts shared by our community.
-         Then begin your own journey by transforming
+         <p> FLIP*DOUBT helps you transform your life by changing how you think. </p>
+         <p> Get inspired by these positive thoughts shared by our community. </p>
+         <p> Then begin your own journey by transforming
          and tracking your thoughts. </p>
+         <p>.</p>
 
           </div>
             <div className="box dark has-text-centered container">
