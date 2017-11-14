@@ -12,7 +12,8 @@ class ThoughtBubble extends Component {
       styleClass: 'thoughtText is-hidden',
       inputClass: 'add-padding',
       anotherThought: 'button is-info is-hidden',
-      transformButton: "button is-info"
+      transformButton: "button is-info",
+      processing: "is-hidden"
     }
     this.handleChange = this
       .handleChange
@@ -45,7 +46,8 @@ class ThoughtBubble extends Component {
       styleClass: "thoughtText",
       inputClass: "is-hidden",
       anotherThought: 'button is-info',
-      transformButton: 'button is-info is-hidden'
+      transformButton: 'button is-info is-hidden',
+      processing: ''
     });
   }
 
@@ -56,7 +58,8 @@ class ThoughtBubble extends Component {
       styleClass: "thoughtText is-hidden",
       inputClass: "add-padding",
       anotherThought: "button is-info is-hidden",
-      transformButton: "button is-info"
+      transformButton: "button is-info",
+      processing: 'is-hidden'
     });
   }
 
@@ -64,7 +67,6 @@ class ThoughtBubble extends Component {
     if (this.props.isAuthenticated()){
       var thought = this.state.value;
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
-      //this.handleClear();
       console.log('we transformin "' + thought + '"');
 
       this.showText();
@@ -178,6 +180,7 @@ class ThoughtBubble extends Component {
                   <a className={this.state.anotherThought} onClick={this.showInput}>
                     Add Another Thought
                   </a>
+                  <div className={this.state.processing}>Your thought is processing...</div>
                 </div>
               </div>
             </div>
