@@ -10,19 +10,19 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
   console.log("IN CREATE NEW THOUGHT.");
   let img_id = Math.floor(Math.random() * 10) + 1;
 
-  let date_day = Date(Date.now())
-    .toString()
-    .split(" ")[0];
-  let today = Date.now();
-  let new_today = new Date(today);
+  // let date_day = Date(Date.now())
+  //   .toString()
+  //   .split(" ")[0];
+
+  let new_today = new Date(Date.now());
   let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
-  let date_info = {
-    full_stamp: today,
-    // day: date_stuff[0], // Sat, Sun, Mon
-    full_date: date_string // 11/11/2017
-  };
+  // let date_info = {
+  //   full_stamp: today,
+  //   // day: date_stuff[0], // Sat, Sun, Mon
+  //   full_date: date_string // 11/11/2017
+  // };
   let default_pos_thought = "(... transformation in progress ...)";
-  let newThought = new Thought(req.body.text, default_pos_thought, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_info]);
+  let newThought = new Thought(req.body.text, default_pos_thought, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_string]);
   console.log(newThought);
 
   req
