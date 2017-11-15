@@ -178,16 +178,18 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
         _.forEach(result._pos_thought_timestamps, timeobj => {
           // Only count the pos thoughts recorded with the right timestamp
           if (timeobj === timeobj + '') {
-            prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]["value"]
-              = prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)].value + 1;
+            if (prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]) {
+              prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)]["value"] = prior_7_days_counts_pos[prior_7_days_strings.indexOf(timeobj)].value + 1;
+            }
           }
         });
 
         _.forEach(result._neg_thought_timestamps, timeobj => {
           // Only count the neg thoughts recorded with the right timestamp
           if (timeobj === timeobj + '') {
-            prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)]["value"]
-              = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)].value + 1;
+            if (prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)]) {
+              prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)].value + 1;
+            }
           }
           // let _full_date = timeobj.full_date;
           // if (prior_7_days_strings.indexOf(_full_date) >= 0) {
