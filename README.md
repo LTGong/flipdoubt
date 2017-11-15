@@ -4,15 +4,16 @@ CSCI 5117, Fall 2017, [assignment description](https://docs.google.com/document/
 
 ## App Info:
 
-* Team Name: TODO
-* App Name: TODO
-* App Link: <https://TODO.herokuapp.com/>
+* Team Name: Frozen City Savages
+* App Name: Flip Doubt
+* App Link: <https://lit-sea-91058.herokuapp.com/>
 
 ### Students
 
-* First Last, x500@umn.edu
-* ...
-
+* Xinyi Wang, wang4831@umn.edu
+* William Lane, wwlane@umn.edu
+* Karan Jaswani, jaswa003@umn.edu
+* Estelle Smith, smit3694@umn.edu
 
 ## Key Features
 
