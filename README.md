@@ -20,14 +20,14 @@ CSCI 5117, Fall 2017, [assignment description](https://docs.google.com/document/
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
 
-* ...
+* Amazon Mechanical Turk integration required learning how to automatically create HITs and retrieve them from AMT. We used a SOAP protocol API by Barrios (see below) to help, but this was not well documented so was quite challenging to figure out how to use.
 
 
 ## Screenshots of Site
 
 ![homepage](/home.png?raw=true "homepage")
 ![profile](/profile.png?raw=true "profile page")
-![transform](/transform\ and\ gallery.png?raw=true "transform and gallery")
+![transform](/transform_gallery.png?raw=true "transform and gallery")
 
 
 ## External Dependencies
@@ -35,11 +35,14 @@ CSCI 5117, Fall 2017, [assignment description](https://docs.google.com/document/
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries (e.g., Express, Bulma).**
 
-* Library or service name: description of use
-* ...
+* Amazon Mechanical Turk: Used for "automatic" annotation of negative thoughts
+   (we used the api via Jose Barrios' js wrapper at https://github.com/JoseBarrios/api-mturk)
+* social-share : Used to share to twitter
+* Used images from online as background photos for the thoughts.
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
 here:**
 
 CSS Flipping Animaiton: <https://davidwalsh.name/css-flip/>
+CSS notification animation https://codepen.io/sugimo/pen/DgLty
