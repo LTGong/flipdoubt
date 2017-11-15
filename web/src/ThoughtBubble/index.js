@@ -145,7 +145,8 @@ class ThoughtBubble extends Component {
             .then((res)=> res.json())
             .then((res)=> {
               console.log("we gots the results yo");
-              //this.state.
+              this.props.reRenderHack();
+              // this.forceUpdate();
               console.log(res);
             })
           } else {

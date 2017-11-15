@@ -40,10 +40,24 @@ class Gallery extends Component {
         this.handleTwitterClick = this
             .handleTwitterClick
             .bind(this);
-
+        this.reRenderState = false;
     }
 
     componentWillMount() {
+        this.fetchThoughts();
+    }
+
+    componentWillUpdate() {
+        debugger
+        if (!this.reRenderState) {
+            this.reRenderState = this.props.reRender;
+            if (this.reRenderState) {
+                this.fetchThoughts();
+            }
+        }
+    }
+
+    fetchThoughts() {
         var the_headers = Object.assign({
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -59,6 +73,7 @@ class Gallery extends Component {
             fetch(request).then((res) => res.json()).then((res) => {
                 console.log(res);
                 this.setState({thoughts: res});
+                this.reRenderState = false;
             }).catch(err => console.log(err));
         }
     }
@@ -161,8 +176,12 @@ class Gallery extends Component {
     }
 
     bounce(element) {
-        element.classList.remove("bounce");
-        element.classList.add("bounce");
+        element
+            .classList
+            .remove("bounce");
+        element
+            .classList
+            .add("bounce");
     }
 
     swap(e) {
@@ -219,7 +238,7 @@ class Gallery extends Component {
     }
 
     render() {
-
+        debugger
         let setsOfThree = [];
         let i = 0;
         while (i < this.state.thoughts.length) {
@@ -284,13 +303,14 @@ class Gallery extends Component {
                 );
             }));
         }
-        // <div className="control">   <a className="button is-info "
-        // onClick={this.swap(thought)}>     IMAGE_SWAP   </a> </div>
+
         var gallery_template = templates.map((template, i) => <div className="columns">
             {template}
         </div>);
+
         return (
             <div className="box dark has-text-centered is-radiusless">
+                <p>{this.props.shouldRerender}</p>
                 <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
                 <br/> {gallery_template}
             </div>

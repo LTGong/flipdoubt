@@ -127,7 +127,6 @@ router.post('/get-processing-HITs', function (req, res, next) {
   let user = req.body.username;
   console.log(user);
   console.log('in db get-processing-HITs');
-
   let HITIds = [];
   req
     .db
@@ -211,8 +210,9 @@ router.post('/update-processed-HIT', function (req, res, next) {
   console.log('in db update-processed-HIT');
   let HIT_updates = req.body;
   console.log(HIT_updates);
+  var promises = [];
   _.forEach(HIT_updates, function (HIT_update) {
-    req
+    promises.push(req
       .db
       .collection('thoughts')
       .updateOne({
@@ -222,9 +222,11 @@ router.post('/update-processed-HIT', function (req, res, next) {
           "_processing": false,
           "_pos_thought": HIT_update.pos_thought
         }
-      })
+      }));
   });
-  res.json({message: 'FUCK YEA!'});
+  Promise.all(promises).then(results => {
+    res.json({message: 'FUCK YEA!'});
+  });
 });
 
 router.get('/community-thoughts', function (req, res, next) {
