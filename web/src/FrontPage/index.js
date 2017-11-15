@@ -32,7 +32,7 @@ class Frontpage extends Component {
     }
     return <div className="FrontPage container">
 
-      <ThoughtBubble reRenderHack={this.reRenderHack} {...this.props}/> 
+      <ThoughtBubble reRenderHack={this.reRenderHack} {...this.props} notification={this.props.showNotification}/> 
       
       {gallery}
 

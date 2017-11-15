@@ -12,6 +12,18 @@ import './App.css'
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      notification: "nortification is-hidden"
+    }
+    this.showNotification = this.showNotification.bind(this);
+  }
+
+  showNotification() {
+      this.setState({notification: "nortification animateOpen"})
+  }
+
   render() {
     return <div className="App parallax is-fullheight">
         <Header {...this.props} />
@@ -19,9 +31,12 @@ class App extends Component {
         <br />
         <Route exact path="/" render={props=> <Community {...this.props} />} />
         <br />
-        <Route path="/transform" render={props=> <FrontPage {...this.props} />} />
+        <Route path="/transform" render={props=> <FrontPage showNotification={this.showNotification} {...props} {...this.props} />} />
         <br />
         <Footer />
+
+        <span class={this.state.notification}>Your thought has been transformed!</span>
+
       </div>;
   }
 }
