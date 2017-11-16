@@ -33,14 +33,14 @@ router.post('/transform', checkJwt, function(req, res, next) {
       // HIT options
       var params = {
         Title: "Re-write a negative sentence with a positive spin.",
-        Description: "You will read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive one.",
-        Keywords: "writing, editing, help, psychology",
+        Description: "Read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive one.",
+        Keywords: "writing, editing, help, psychology, motivation",
         Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
         AssignmentDurationInSeconds: 300, // Allow 5 minutes to answer
-        AutoApprovalDelayInSeconds: 1,//86400 * 1, // 1 day auto approve
+        AutoApprovalDelayInSeconds: 86400 * 7, // 1 week auto approve
         MaxAssignments: 1, // 1 worker responses
         LifetimeInSeconds: 86400 * 1, // Expire in 1 day
-        Reward: {CurrencyCode:'USD', Amount:0.10}
+        Reward: {CurrencyCode:'USD', Amount:0.05}
       };
 
       //CREATE HIT
