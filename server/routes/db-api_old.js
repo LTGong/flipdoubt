@@ -2,15 +2,12 @@ var express = require('express');
 var router = express.Router();
 var Thought = require('../lib/thought.js');
 var _ = require('lodash');
-var ObjectId = require("mongodb").ObjectID;
 
-const asyncMiddleware = require('../utils/asyncMiddleware');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-
-router.post("/create-new-thought", function (req, res, next) {  //removed checkJwt
-  //console.log("IN CREATE NEW THOUGHT.");
+router.post("/create-new-thought", checkJwt, function (req, res, next) {
+  console.log("IN CREATE NEW THOUGHT.");
   let img_id = Math.floor(Math.random() * 10) + 1;
 
   // let date_day = Date(Date.now())
@@ -25,32 +22,16 @@ router.post("/create-new-thought", function (req, res, next) {  //removed checkJ
   //   full_date: date_string // 11/11/2017
   // };
   let default_pos_thought = "(... transformation in progress ...)";
-  let newThought = new Thought(
-    req.body.text,
-    default_pos_thought,
-    req.body.user_name,
-    req.body.user_loc,
-    req.body.processing,
-    req.body.HITId,
-    req.body.HITTypeId,
-    false,
-    img_id,
-    [],
-    [date_string],
-    req.body.forTurkBool,
-    false,
-    "anonymousFlipper",
-    "somewhere",
-    false  //invalid_thought
-  );
-  //console.log(newThought);
+  let newThought = new Thought(req.body.text, default_pos_thought, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_string]);
+  console.log(newThought);
 
   req
     .db
     .collection("thoughts_web")
     .insertOne(newThought)
     .then(function (result) {
-      //console.log(result.ops[0]);
+      console.log("In unprotected db callback");
+      console.log(result.ops[0]);
       res
         .status(200)
         .send(result.ops[0]);
@@ -62,43 +43,22 @@ router.post("/create-new-thought", function (req, res, next) {  //removed checkJ
     });
 });
 
-router.post('/get-user-quotes', function (req, res, next) {
+router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   console.log("In get user quotes");
   let user_id = req.body.username;
   console.log(user_id);
   req
     .db
     .collection("thoughts_web")
+    // .find()
     .find({"_user_id": user_id, "_processing": false})
     .toArray(function (err, results) {
       res.json(results.reverse());
     })
 });
 
+router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
 
-router.post('/get-mIDs-for-HITIds', asyncMiddleware(async function(req, res, next) {
-  console.log("getting mIDs for HITIds");
-  let user_id = req.body.username;
-  let hits = req.body.HITIds;
-  let promises = [];
-  let i = 0;
-  for (i; i<hits.length; i++) {
-    promises.push(
-      req.db.collection("thoughts_web")
-        .findOne({"_user_id": user_id, "_forTurk": true ,"_HITId": hits[i]})
-    )
-  }
-  let results = await Promise.all(promises);
-  let mIds = [];
-  _.forEach(results, (result) =>{
-    mIds.push(result._id);
-  })
-  //console.log(mIds);
-  res.json({mongoIds : mIds});
-}))
-
-//TODO: get this working with teh JWT's
-router.post('/get-user-thought-summary', function (req, res, next) {
   let user_id = req.body.username;
   console.log(user_id);
   req
@@ -129,15 +89,23 @@ router.post('/get-user-thought-summary', function (req, res, next) {
     })
 });
 
-router.post('/swap-image', function (req, res, next) {
+router.post('/swap-image', checkJwt, function (req, res, next) {
 
-  let new_img_id = Math.floor(Math.random() * 14) + 1;
+  console.log("swap-image:req.body._HITId: " + req.body._HITId);
+  let new_img_id = Math.floor(Math.random() * 10) + 1;
 
   req
     .db
     .collection("thoughts_web")
-    .updateOne({_id: ObjectId(req.body._id)}, {$set: {_img_id: new_img_id}})
+    .updateOne({
+      _HITId: req.body._HITId
+    }, {
+      $set: {
+        _img_id: new_img_id
+      }
+    })
     .then((result) => {
+      console.log(result)
       res
         .status(200)
         .send({_img_id: new_img_id});
@@ -155,155 +123,24 @@ router.get('/get-community-quotes', function (req, res, next) {
     })
 });
 
-//copied this func from stackoverflow
-function shuffle(o) {
-    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-    return o;
-};
-
-router.post("/get-thoughts-to-reframe", asyncMiddleware(async function(req, res, next) {
-  // This will come from req.user when we figure out authentication
-  console.log("get-thoughts-to-reframe");
-  console.log(req.body.username);
-  var user = req.body.username;
-  var default_blank = {
-    _neg_thought : "Woohoo! The world is in peace. Please check back later.",
-    _invalid_thought: true
-  }
-
-  req.db
-    .collection("thoughts_web")
-    .find({ _forTurk: false, _processing: true, _checkedOut: false })
-    .toArray(function(err, results) {
-      console.log('results');
-      var possibleThoughtsToReframe = [];
-      _.forEach(results, (result => {
-        if (user == result._user_id){console.log("I don't want to see my own negativity.");}
-        else {possibleThoughtsToReframe.push(result);}
-      }));
-
-      let i = 0;
-      let num_possible = possibleThoughtsToReframe.length;
-      let num_remaining =  num_possible - 3;
-
-      // Removed the checkedOut logic
-      if (num_remaining > -1){
-        let idxs = [];
-        for (i=0; i<num_possible; i++) {idxs.push(i)}
-        let rand_idxs = shuffle(idxs);
-        let threeThoughts = [];
-        for (i=0;i<3;i++) {threeThoughts.push(possibleThoughtsToReframe[rand_idxs[i]])}
-        //console.log(threeThoughts)
-        res.json(threeThoughts);
-      } else {
-        for (i=0; i < -num_remaining ; i++){possibleThoughtsToReframe.push(default_blank)}
-        //console.log(possibleThoughtsToReframe)
-        res.json(possibleThoughtsToReframe);
-      }
-
-      //// The if-else that has the checkedOut logic
-      // if (num_remaining > -1){
-      //   let idxs = [];
-      //   for (i=0; i<num_possible; i++) {idxs.push(i)}
-      //   let rand_idxs = shuffle(idxs);
-      //   let threeThoughts = [];
-      //   for (i=0;i<3;i++) {threeThoughts.push(possibleThoughtsToReframe[rand_idxs[i]])}
-
-      //   var promises = [];
-      //   _.forEach(threeThoughts, function (thought) {
-      //     promises.push(req.db.collection("thoughts_web")
-      //       .updateOne({_id: thought._id}, {$set: {"_checkedOut": true}}));
-      //   });
-      //   Promise.all(promises).then(results => {
-      //     res.json(threeThoughts);
-      //   });
-      // } else {
-      //   var promises = [];
-      //   _.forEach(possibleThoughtsToReframe, function (thought) {
-      //     promises.push(req.db.collection("thoughts_web")
-      //       .updateOne({_id: thought._id}, {$set: {"_checkedOut": true}}));
-      //   });
-      //   Promise.all(promises).then(results => {
-      //     for (i=0; i < -num_remaining ; i++){possibleThoughtsToReframe.push(default_blank)}
-      //     res.json(possibleThoughtsToReframe);
-      //   });
-      // }
-    });
-}));
-
 router.post('/get-processing-HITs', function (req, res, next) {
   let user = req.body.username;
+  console.log(user);
   console.log('in db get-processing-HITs');
   let HITIds = [];
   req
     .db
     .collection("thoughts_web")
-    .find({_processing: true, _user_id: user, _forTurk: true})
+    .find({_processing: true, _user_id: user})
     .toArray(function (err, results) {
       _.forEach(results, (result => {
         HITIds.push(result._HITId);
       }))
-      res.status(200).send(HITIds);
+      res
+        .status(200)
+        .send(HITIds);
     });
 })
-
-router.post('/get-processed', function (req, res, next) {
-  var user = req.body.username;
-  console.log('Getting MongoIds of negative thoughts that have been successfully processed for user: ', user);
-
-  req.db.collection("users_web").findOne({ '_user': user }).then(result => {
-    // console.log('checked findOne in get-Processed');
-    // console.log('result', result);
-    if (result){
-      console.log(user," exists in users_returned_thoughts collection")
-      let ids = result._ids;
-      let num_ids = ids.length;
-      if (num_ids > 0) {
-        console.log(num_ids, ' thoughts are available for push notifications.');
-        req.db.collection("users_web")
-          .updateOne({_user: user}, {_user: user, _ids: []})
-          .then ( results => {
-            console.log('MongoIds available for push notifications:');
-            console.log(ids);
-            res.json({mongoIds : ids});
-            }
-          )
-      } else {
-        console.log('No thoughts are available for push notifications');
-        res.json({mongoIds : null});
-      }
-    } else {
-      console.log(user," DOES NOT exist in users_returned_thoughts collection")
-      res.json({mongoIds : null}); //({message : 'NO USER'});
-      }
-    })
-})
-
-router.post('/add-processed', function (req, res, next){
-
-  let user = req.body.username;
-  let id = req.body.mongoId;
-  console.log('in add-processed');
-  //console.log(user, id);
-
-  req.db.collection("users_web").findOne({_user: user}).then(res => {
-    console.log('checked findOne');
-    if (res){
-      console.log('THERE\'s a USER!');
-      req.db.collection("users_web")
-        .updateOne({_user: user}, {$push: {_ids: id}})
-    } else {
-        console.log('There is no USER.');
-        if (user === null || user === '') {
-          console.log('NULL USER IN ADD-PROCESSED: PROBLEM?!');
-        } else {
-          req.db.collection("users_web")
-            .insertOne( {_user: user, _ids : [ id ] } )
-        }
-      }
-    })
-})
-
 
 router.post("/get-totals", checkJwt, function (req, res, next) {
   let user = req.body.user;
@@ -390,41 +227,8 @@ router.post('/update-processed-HIT', function (req, res, next) {
       }));
   });
   Promise.all(promises).then(results => {
-    res.json({message: 'HITs updated in DB.'});
+    res.json({message: 'FUCK YEA!'});
   });
-});
-
-router.post("/update-reframed-thought", function(req, res, next) {
-  console.log("In db: Updating reframed thought");
-  //console.log(req.body.neg_mId, typeof(req.body.neg_mId));
-
-  req.db
-    .collection("thoughts_web")
-    .updateOne({_id: ObjectId(req.body.neg_mId)},
-      {$set: {
-        _processing: false,
-        _pos_thought: req.body.pos_thought,
-        _flipper : req.body.flipper,
-        _flipper_loc: req.body.flipper_loc
-      }}
-    )
-    .then( result => { res.send('SUCCESS');}
-    )
-
-});
-
-router.post("/check-thought-in", function(req, res, next) {
-  //console.log("in db check-thought-in");
-  //console.log("Checking in thought with mongoId: ", req.body.mongoId)
-
-  req.db
-    .collection("thoughts_web")
-    .updateOne({_id: ObjectId(req.body.mongoId)},
-      {$set: {_checkedOut: false}}
-    )
-    .then( result => { res.send('SUCCESS');}
-    )
-
 });
 
 router.get('/community-thoughts', function (req, res, next) {
@@ -451,7 +255,7 @@ router.post('/share-thought', function (req, res, next) {
     .db
     .collection("thoughts_web")
     .updateOne({
-      _id: ObjectId(req.body._id)
+      _HITId: req.body._HITId
     }, {
       $set: {
         _community: true
@@ -473,7 +277,7 @@ router.post('/increment_pos_thought', function (req, res, next) {
     .db
     .collection("thoughts_web")
     .updateOne({
-      _id: ObjectId(req.body._id)
+      _HITId: req.body._HITId
     }, {
       $push: {
         _pos_thought_timestamps: date_string
@@ -494,7 +298,7 @@ router.post('/increment_neg_thought', function (req, res, next) {
     .db
     .collection("thoughts_web")
     .updateOne({
-      _id: ObjectId(req.body._id)
+      _HITId: req.body._HITId
     }, {
       $push: {
         _neg_thought_timestamps: date_string

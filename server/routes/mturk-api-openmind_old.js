@@ -15,7 +15,7 @@ var config = {
     sandbox: true
 }
 
-router.post('/transform', function(req, res, next) {  //removed checkJwt
+router.post('/transform', checkJwt, function(req, res, next) {
   console.log('In mturk-api TRANSFORM');
 
   mturk.createClient(config)
@@ -51,7 +51,7 @@ router.post('/transform', function(req, res, next) {  //removed checkJwt
             HITId : results.HIT[0].HITId,
             HITTypeId : results.HIT[0].HITTypeId
           }
-          console.log(returned_turk_data);
+          //console.log(returned_turk_data);
           res.status(200).send(returned_turk_data);
         })
         .catch(console.error)
