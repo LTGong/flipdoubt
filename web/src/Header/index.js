@@ -21,7 +21,10 @@ class Header extends Component {
                     Home
                   </a>
                   <a className="navbar-item" href="/transform">
-                    Transform
+                    My Thoughts
+                  </a>
+                  <a className="navbar-item" href="/flip">
+                    Flip Thoughts
                   </a>
                   <span className="navbar-item">
                     <LoginLogout {...this.props} />

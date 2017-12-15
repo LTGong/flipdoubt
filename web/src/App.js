@@ -5,6 +5,7 @@ import {withAuth} from './Auth';
 
 import Footer from './Footer';
 import FrontPage from './FrontPage';
+import FlipPage from './FlipPage';
 import Header from './Header';
 import User from './User';
 import Community from './Community';
@@ -32,6 +33,8 @@ class App extends Component {
         <Route exact path="/" render={props=> <Community {...this.props} />} />
         <br />
         <Route path="/transform" render={props=> <FrontPage showNotification={this.showNotification} {...props} {...this.props} />} />
+        <br />
+        <Route path="/flip" render={props=> <FlipPage showNotification={this.showNotification} {...props} {...this.props} />} />
         <br />
         <Footer />
 

@@ -32,7 +32,7 @@ class ThoughtBubble extends Component {
 
   handleChange(e) {
     this.setState({value: e.target.value})
-    console.log(this.state.value)
+    //console.log(this.state.value)
   }
 
   handleClear (e) {

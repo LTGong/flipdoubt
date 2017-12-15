@@ -167,7 +167,7 @@ router.post("/get-thoughts-to-reframe", asyncMiddleware(async function(req, res,
   console.log(req.body.username);
   var user = req.body.username;
   var default_blank = {
-    _neg_thought : "Woohoo! The world is in peace. Please check back later.",
+    _neg_thought : "Woohoo! The world is at peace. Please check back later.",
     _invalid_thought: true
   }
 
