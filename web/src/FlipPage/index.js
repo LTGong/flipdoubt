@@ -148,6 +148,8 @@ class Flip extends Component {
                   </div>
                 </div>
                 <h2 className="card-header title is-3 has-text-centered">Select an Image</h2>
+                <button><img src={background1}/></button>
+                <br/>
                 <br/> {imgs_template}
             </div>
         );
