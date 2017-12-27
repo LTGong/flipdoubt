@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import './gallery.css';
+import background0 from './background-0.jpg';
 import background1 from './background-1.jpg';
 import background2 from './background-2.jpg';
 import background3 from './background-3.jpg';
@@ -12,6 +13,10 @@ import background8 from './background-8.jpg';
 import background9 from './background-9.jpg';
 import background10 from './background-10.jpg';
 import background11 from './background-11.jpg';
+import background12 from './background-12.jpg';
+import background13 from './background-13.jpg';
+import background14 from './background-14.jpg';
+import background15 from './background-15.jpg';
 
 var share = require('social-share');
 
@@ -232,6 +237,16 @@ class Gallery extends Component {
                 return background9;
             case 10:
                 return background10;
+            case 11:
+                return background11;
+            case 12:
+                return background12;
+            case 13:
+                return background13;
+            case 14:
+                return background14;
+            case 15:
+                return background15;
             default:
                 return background1;
         }
@@ -285,7 +300,7 @@ class Gallery extends Component {
                                 </figure>
 
                                 <figure className="is-overlay back">
-                                    <img src={background11} alt="back"/>
+                                    <img src={background0} alt="back"/>
                                     <div className="caption">
                                         <h2>{thought._neg_thought}</h2>
                                         <div className="share-social">
