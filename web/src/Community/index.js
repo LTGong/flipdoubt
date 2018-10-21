@@ -86,7 +86,6 @@ class Community extends Component {
                     <div className="column is-4">
                         <div className="card-container">
                             <div className="custom-card">
-
                                 <figure className="front">
                                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                                     <div className="caption">
@@ -108,7 +107,7 @@ class Community extends Component {
             }));
         }
 
-        var gallery_template = templates.map((template, i) => <div className="columns">
+        var gallery_template = templates.map((template, i) => <div key={i.toString()} className="columns">
             {template}
         </div>);
         return (
@@ -131,11 +130,3 @@ class Community extends Component {
 }
 
 export default Community;
-
-// <h2 className="title is-3 makeWhite">Welcome to FLIP*DOUBT.</h2>
-//
-// <p> Life is hard for everybody sometimes.</p>
-// <p> But how you think about life changes how you live. </p>
-// <p> FLIP*DOUBT helps you change negative thought patterns. </p>
-// <p> Get inspired by these positive thoughts from our community. </p>
-// <p> Then transform and track your own thoughts.</p>

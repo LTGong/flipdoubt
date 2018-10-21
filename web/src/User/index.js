@@ -4,7 +4,7 @@ import FusionCharts from "fusioncharts";
 // Load the charts module
 import charts from "fusioncharts/fusioncharts.charts";
 import ReactFC from "react-fusioncharts";
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
 import SummaryTable from "../SummaryTable";;
 
 class User extends Component {

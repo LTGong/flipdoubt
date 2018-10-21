@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Route, Switch} from 'react-router-dom'
+import {Route} from 'react-router-dom'
 
 import {withAuth} from './Auth';
 
@@ -35,7 +35,7 @@ class App extends Component {
         <br />
         <Footer />
 
-        <span class={this.state.notification}>Your thought has been transformed!</span>
+        <span className={this.state.notification}>Your thought has been transformed!</span>
 
       </div>;
   }

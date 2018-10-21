@@ -16,14 +16,12 @@ class Frontpage extends Component {
   }
 
   reRenderHack() {
-    debugger
     console.log("reRenderHack: this is running");
     this.setState({shouldRerender: true});
     this.forceUpdate();
   }
 
   render() {
-    debugger
     if (this.props.profile) {
       var gallery = <Gallery
         getAuthorizationHeader={this.props.getAuthorizationHeader}
@@ -32,8 +30,8 @@ class Frontpage extends Component {
     }
     return <div className="FrontPage container">
 
-      <ThoughtBubble reRenderHack={this.reRenderHack} {...this.props} notification={this.props.showNotification}/> 
-      
+      <ThoughtBubble reRenderHack={this.reRenderHack} {...this.props} notification={this.props.showNotification}/>
+
       {gallery}
 
     </div>

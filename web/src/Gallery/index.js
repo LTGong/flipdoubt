@@ -48,7 +48,6 @@ class Gallery extends Component {
     }
 
     componentWillUpdate() {
-        debugger
         if (!this.reRenderState) {
             this.reRenderState = this.props.reRender;
             if (this.reRenderState) {
@@ -238,7 +237,6 @@ class Gallery extends Component {
     }
 
     render() {
-        debugger
         let setsOfThree = [];
         let i = 0;
         while (i < this.state.thoughts.length) {
