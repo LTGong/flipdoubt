@@ -248,7 +248,7 @@ class Gallery extends Component {
         for (i = 0; i < setsOfThree.length; i++) {
             templates.push(setsOfThree[i].map((thought, i) => {
                 return (
-                    <div className="column is-4">
+                    <div className="column is-4" key={i}>
                         <div className="card-container">
                             <div className="custom-card" onClick={this.handleCardClick}>
 
@@ -301,11 +301,9 @@ class Gallery extends Component {
                 );
             }));
         }
-
-        var gallery_template = templates.map((template, i) => <div className="columns">
+        var gallery_template = templates.map((template, i) => <div key={i} className="columns">
             {template}
         </div>);
-
         return (
             <div className="box dark has-text-centered is-radiusless">
                 <p>{this.props.shouldRerender}</p>
