@@ -43,6 +43,15 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
     });
 });
 
+router.get('/get-thoughts', checkJwt, function(req, res, next) {
+  console.log("In /get-thoughts")
+  req.db.collection('thoughts')
+    .find({"_processing": false})
+    .toArray(function(err, results) {
+      res.json(results.reverse());
+    })
+});
+
 router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   console.log("In get user quotes");
   let user_id = req.body.username;
@@ -119,6 +128,7 @@ router.get('/get-community-quotes', function (req, res, next) {
     .collection('thoughts')
     .find({_community: true})
     .toArray(function (err, results) {
+      console.log(results);
       res.json(results);
     })
 });

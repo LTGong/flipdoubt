@@ -29,7 +29,9 @@ class Community extends Component {
         fetch('/api/db/get-community-quotes').then((res) => res.json()).then((res) => {
             console.log(res);
             this.setState({thoughts: res});
-        }).catch(err => console.log(err));
+        }).catch(err => {
+          console.log(err)
+        });
     }
 
     handleTwitterClick(e) {

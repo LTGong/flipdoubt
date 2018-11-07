@@ -8,6 +8,7 @@ import FrontPage from './FrontPage';
 import Header from './Header';
 import User from './User';
 import Community from './Community';
+import Rate from './Rate';
 import './App.css'
 
 class App extends Component {
@@ -25,18 +26,14 @@ class App extends Component {
   }
 
   render() {
-    return <div className="App parallax is-fullheight">
-        <Header {...this.props} />
+    return <div className="App hero parallax is-primary is-fullheight">
+        <Header class="hero-header" {...this.props} />
         <Route path="/user" render={props => <User {...props} {...this.props} />} />
-        <br />
         <Route exact path="/" render={props=> <Community {...this.props} />} />
-        <br />
-        <Route path="/transform" render={props=> <FrontPage showNotification={this.showNotification} {...props} {...this.props} />} />
-        <br />
-        <Footer />
-
+        <Route path="/transform" render = {props=> <FrontPage showNotification={this.showNotification} {...props} {...this.props} />} />
+        <Route path="/rate" render = {props => <Rate {...props} {...this.props} />} />
+        <Footer class="hero-footer" />
         <span className={this.state.notification}>Your thought has been transformed!</span>
-
       </div>;
   }
 }

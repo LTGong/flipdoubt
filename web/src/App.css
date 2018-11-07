@@ -22,12 +22,12 @@ body{
     margin:0;
     padding:0;
   }
-  
+
   .ctrl{
       width:100%;
     position:relative;
   }
-  
+
   .nortification{
       display:block;
       font-size:14px;
@@ -45,15 +45,15 @@ body{
     text-align: center;
     box-shadow: 0 3px 0 rgba(0,0,0,0.2);
   }
-  
+
   .animateOpen{
       -webkit-animation:moveOpen 5s;
     -webkit-animation-iteration-count: 1;
     -webkit-animation-fill-mode: forwards;
   }
-  
+
   /* Safari and Chrome */
-  @-webkit-keyframes moveOpen 
+  @-webkit-keyframes moveOpen
       {
     from {-webkit-transform: translate(0,-100px);}
     10% {-webkit-transform: translate(0,20px);}

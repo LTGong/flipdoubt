@@ -23,6 +23,9 @@ class Header extends Component {
                   <a className="navbar-item" href="/transform">
                     Transform
                   </a>
+                  <a className="navbar-item" href="/rate">
+                    Rate
+                  </a>
                   <span className="navbar-item">
                     <LoginLogout {...this.props} />
                   </span>

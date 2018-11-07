@@ -1,0 +1,15 @@
+.custom-card {
+  width: auto;
+  height: auto;
+}
+
+.rating-box {
+  height: 600px;
+  background-color: green;
+  text-align: center;
+  color: white;
+}
+
+ h1 {
+   color: white;
+ }
