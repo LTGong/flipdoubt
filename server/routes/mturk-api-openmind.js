@@ -15,6 +15,12 @@ var config = {
     sandbox: false
 }
 
+var new_config =  {
+  access: 'AKIAJWCXZOXP7EJZYXGQ',
+  secret: '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',
+  sandbox: false
+}
+
 router.post('/transform', checkJwt, function(req, res, next) {
   console.log('In mturk-api TRANSFORM');
 

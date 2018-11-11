@@ -10,6 +10,10 @@ import User from './User';
 import Community from './Community';
 import Rate from './Rate';
 import './App.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft, faAngleRight, faCircle } from '@fortawesome/free-solid-svg-icons'
+library.add(faAngleLeft, faAngleRight, faCircle)
 
 class App extends Component {
 

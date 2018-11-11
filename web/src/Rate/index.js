@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Carousel from 'nuka-carousel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import Carousel from 'nuka-carousel';
 import '../Gallery/gallery.css';
 import background1 from '../Gallery/background-1.jpg';
 import background2 from '../Gallery/background-2.jpg';
@@ -21,28 +22,19 @@ class Rate extends Component {
     super(props);
     this.state = {
       thoughts: [],
-      currentlyShownPage: 0,
+      currentShownPage: 0,
       totalPages: null,
       showRating: false,
       currentThought: null
     }
     this.handleCardClick = this.handleCardClick.bind(this);
+    this.showNextPage = this.showNextPage.bind(this);
+    this.showPreviousPage = this.showPreviousPage.bind(this);
     this.reRenderState = false;
   }
 
   componentWillMount() {
     this.fetchAllThoughts();
-  }
-
-  componentDidMount(){
-    setTimeout(() => {
-      try {
-        this.carousel.setDimensions(null)
-      }
-      catch(err){
-        // sometimes it crashes in chrome, pristine error handling here
-      }
-    }, 300);
   }
 
   componentWillUpdate() {
@@ -67,19 +59,59 @@ class Rate extends Component {
     fetch(request).then((res) => res.json()).then((res) => {
       var thoughts = res.filter(thought => thought.hasOwnProperty('_pos_thoughts'))
       this.setState({thoughts: thoughts});
-      this.setState({totalNumPages: Math.ceil(thoughts/6.0)});
+      this.setState({totalPages: Math.floor(thoughts.length/6.0)});
+      this.setState({lowerBound: 0});
+      this.setState({upperBound: 2});
       this.reRenderState = false;
     }).catch(err => {
       console.log(err)
     });
   }
 
-  showNextPage() {
-    debugger
+  showNextPage(gallery_template) {
+    //var current_page = 0;
+    if(this.state.currentShownPage < this.state.totalPages) {
+      this.setState({currentShownPage: this.state.currentShownPage + 1})
+      //current_page = this.state.currentShownPage + 1;
+    } else if(this.state.currentShownPage === this.state.totalPages) {
+      //current_page = 0
+      this.setState({currentShownPage: 0})
+    }
+    var upper_bound = 0;
+    var lower_bound = 0;
+    if(this.state.upperBound === gallery_template.length) {
+      this.setState({lowerBound: 0});
+      this.setState({upperBound: 2});
+    } else {
+      upper_bound = (this.state.upperBound > gallery_template.length) ? gallery_template.length : this.state.upperBound + 2;
+      lower_bound = upper_bound -2;
+      this.setState({lowerBound: lower_bound});
+      this.setState({upperBound: upper_bound});
+    }
   }
 
-  showPreviousPage() {
-    debugger
+  showPreviousPage(gallery_template) {
+    var current_page = 0;
+    if(this.state.currentShownPage > 0) {
+      this.setState({currentShownPage: this.state.currentShownPage - 1})
+      current_page = this.state.currentShownPage - 1;
+    } else if(this.state.currentShownPage === 0) {
+      this.setState({currentShownPage: this.state.totalPages})
+      current_page = this.state.totalPages
+    }
+    var upper_bound = 0;
+    var lower_bound = 0;
+    if(current_page === this.state.totalPages) {
+      upper_bound = gallery_template.length;
+      lower_bound = upper_bound - 2;
+      this.setState({upperBound: upper_bound});
+      this.setState({lowerBound: lower_bound});
+    } else {
+      upper_bound = this.state.upperBound - 2;
+      lower_bound = upper_bound - 2;
+      this.setState({upperBound: upper_bound});
+      this.setState({lowerBound: lower_bound});
+    }
   }
 
   handleCardClick(thoughtId) {
@@ -88,7 +120,6 @@ class Rate extends Component {
       return thought._id === thoughtId;
     })[0];
     this.setState({currentThought: currentThought});
-    console.log(currentThought)
   }
 
   getBackground(img_id) {
@@ -117,6 +148,7 @@ class Rate extends Component {
         return background1;
     }
   }
+
   getThoughtsInSetsOfThree(thoughts) {
     let setsOfThree = [];
     let i = 0;
@@ -125,6 +157,15 @@ class Rate extends Component {
       i += 3
     }
     return setsOfThree;
+  }
+
+  getCircleIcons() {
+    var circles = [];
+    for(var i = 0; i <= this.state.totalPages; i++) {
+      var currentColor = this.state.currentShownPage === i ? "#125346" : "#FFFFFF"
+      circles.push((<FontAwesomeIcon key={i} className="circles" style={{color: currentColor}} icon="circle" />));
+    }
+    return ( <div className="circles-container">{circles}</div> )
   }
 
   render() {
@@ -174,11 +215,16 @@ class Rate extends Component {
       var gallery_template = templates.map((template, i) => <div key={i} className="columns">
         {template}
       </div>);
-      debugger
+      var circles = this.getCircleIcons();
       return (
         <div className="is-centered container">
           <div className="box dark carousel-container">
-            {gallery_template.slice(1)}
+            {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
+            <div className="control-container">
+              <div className="page-controls left"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
+              {circles}
+              <div className="page-controls right"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
+            </div>
           </div>
         </div>
       );

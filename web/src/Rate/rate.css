@@ -13,3 +13,35 @@
  h1 {
    color: white;
  }
+
+ .control-container {
+   width: 100%;
+   text-align: center;
+   display: table;
+ }
+
+ .page-controls {
+   display: table-cell;
+   color: white;
+ }
+
+ .left {
+   width: 10em;
+ }
+
+ .right {
+   width: 10em;
+ }
+
+ .circles-container {
+   display: table-cell;
+   vertical-align: middle;
+   padding-top: 5px;
+   width: 25%;
+ }
+
+ .circles {
+   color: white;
+   margin-left: 1em;
+   margin-right: 1em;
+ }
