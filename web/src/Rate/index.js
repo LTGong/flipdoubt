@@ -69,12 +69,9 @@ class Rate extends Component {
   }
 
   showNextPage(gallery_template) {
-    //var current_page = 0;
     if(this.state.currentShownPage < this.state.totalPages) {
       this.setState({currentShownPage: this.state.currentShownPage + 1})
-      //current_page = this.state.currentShownPage + 1;
     } else if(this.state.currentShownPage === this.state.totalPages) {
-      //current_page = 0
       this.setState({currentShownPage: 0})
     }
     var upper_bound = 0;
