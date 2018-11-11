@@ -9,13 +9,7 @@ const asyncMiddleware = require('../utils/asyncMiddleware');
 const checkJwt = require('../auth').checkJwt;
 const fetch = require('node-fetch');
 
-var config = {
-    access : 'AKIAINJT6YTLRJMBWOWA',
-    secret : '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',
-    sandbox: false
-}
-
-var new_config =  {
+var config =  {
   access: 'AKIAJWCXZOXP7EJZYXGQ',
   secret: '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',
   sandbox: false
@@ -81,7 +75,6 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
   let results = await Promise.all(promises);
 
   let updates = [];
-
   _.forEach(results, (result) => {
     _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {
       let HITId = assignment.HITId;
