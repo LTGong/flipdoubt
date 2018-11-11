@@ -29,6 +29,9 @@
    width: 10em;
  }
 
+ .page-controls, .left > svg { cursor: pointer; }
+ .page-controls, .right > svg { cursor: pointer; }
+
  .right {
    width: 10em;
  }
