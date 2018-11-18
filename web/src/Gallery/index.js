@@ -247,6 +247,9 @@ class Gallery extends Component {
         let templates = [];
         for (i = 0; i < setsOfThree.length; i++) {
             templates.push(setsOfThree[i].map((thought, i) => {
+              var positive_thought = thought._pos_thoughts.length > 0
+                ? thought._pos_thoughts[0]
+                : thought._placeholder;
                 return (
                     <div className="column is-4" key={i}>
                         <div className="card-container">
@@ -255,13 +258,13 @@ class Gallery extends Component {
                                 <figure className="front">
                                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                                     <div className="caption">
-                                        <h2>{thought._pos_thought}</h2>
+                                        <h2>{positive_thought}</h2>
                                         <div className="share-social">
                                             <i
                                                 data-service="twitter"
                                                 className="fa fa-twitter"
                                                 aria-hidden="true"
-                                                value={thought._pos_thought}
+                                                value={positive_thought}
                                                 onClick={this.handleTwitterClick}></i>
                                             <i
                                                 className="fa fa-bullhorn"

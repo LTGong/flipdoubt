@@ -32,8 +32,8 @@ router.post('/transform', checkJwt, function(req, res, next) {
 
       // HIT options
       var params = {
-        Title: "Re-write a negative sentence with a positive spin.",
-        Description: "Read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive one.",
+        Title: "Re-write a negative sentence with a positive but still realistic spin.",
+        Description: "Read a sentence that represents a negative personal thought, and help to reframe the thought as a more positive but still realistic one.",
         Keywords: "writing, editing, help, psychology, motivation",
         Question: _.escape(unescapedXML),//IMPORTANT: XML NEEDS TO BE ESCAPED!
         AssignmentDurationInSeconds: 300, // Allow 5 minutes to answer
@@ -43,18 +43,24 @@ router.post('/transform', checkJwt, function(req, res, next) {
         Reward: {CurrencyCode:'USD', Amount:0.05}
       };
 
-      //CREATE HIT
-      api.req('CreateHIT', params)
-        .then(function(results){
+      var promises = [];
+      for (i=0; i < 3; i++) {
+        promises.push(api.req('CreateHIT', params));
+      }
+
+      Promise.all(promises).then(results => {
+        var returned_turk_responses = [];
+        _.forEach(results, (result) => {
           console.log('server: after CreateHIT');
           var returned_turk_data = {
-            HITId : results.HIT[0].HITId,
-            HITTypeId : results.HIT[0].HITTypeId
+            HITId: result.HIT[0].HITId,
+            HITTypeId: result.HIT[0].HITTypeId
           }
-          //console.log(returned_turk_data);
-          res.status(200).send(returned_turk_data);
+          console.log(returned_turk_data);
+          returned_turk_responses.push(returned_turk_data);
         })
-        .catch(console.error)
+        res.status(200).send(returned_turk_responses);
+      })
     });
   });
 });
@@ -66,6 +72,9 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
   let HITIDs = req.body.HITIds,
       numHits = HITIDs.length;
 
+  console.log("HITIDs: " + req.body.HITIds);
+  console.log("numHits: " + req.body.HITIds.length);
+
   let promises = [];
   for (i=0; i < numHits; i++) {
     let HITId = HITIDs[i];
@@ -73,7 +82,6 @@ router.post('/check-hits', asyncMiddleware(async function(req, res, next) {
     promises.push(api.req('GetAssignmentsForHIT', {HITId: HITId}));
   }
   let results = await Promise.all(promises);
-
   let updates = [];
   _.forEach(results, (result) => {
     _.forEach(result.GetAssignmentsForHITResult[0].Assignment, (assignment) => {

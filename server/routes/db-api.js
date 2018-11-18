@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Thought = require('../lib/thought.js');
+var ObjectId = require('mongodb').ObjectID;
 var _ = require('lodash');
 
 const checkJwt = require('../auth').checkJwt;
@@ -10,19 +11,21 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
   console.log("IN CREATE NEW THOUGHT.");
   let img_id = Math.floor(Math.random() * 10) + 1;
 
-  // let date_day = Date(Date.now())
-  //   .toString()
-  //   .split(" ")[0];
-
   let new_today = new Date(Date.now());
   let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
-  // let date_info = {
-  //   full_stamp: today,
-  //   // day: date_stuff[0], // Sat, Sun, Mon
-  //   full_date: date_string // 11/11/2017
-  // };
+
   let default_pos_thought = "(... transformation in progress ...)";
-  let newThought = new Thought(req.body.text, default_pos_thought, req.body.user_name, req.body.processing, req.body.HITId, req.body.HITTypeId, false, img_id, [], [date_string]);
+  var HITs = req.body.map((item) => ({HITId: item.HITId, processing: true}))
+  let newThought = new Thought(
+    req.body.text,
+    default_pos_thought,
+    req.body.user_name,
+    HITs,
+    HITs[0].HITTypeId,
+    false,
+    img_id,
+    [],
+    [date_string]);
   console.log(newThought);
 
   req
@@ -44,12 +47,21 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
 });
 
 router.get('/get-thoughts', checkJwt, function(req, res, next) {
-  console.log("In /get-thoughts")
-  req.db.collection('thoughts')
-    .find({"_processing": false})
-    .toArray(function(err, results) {
-      res.json(results.reverse());
-    })
+  if(req.query.HITIds) {
+    var ids = req.query.HITIds.split(",");
+    req.db.collection('thoughts')
+       .find({_HITs: {$elemMatch: {HITId: { $in: ids } }}})
+      .toArray(function(err, results) {
+        res.json(results.reverse());
+      })
+  } else {
+    console.log("In /get-thoughts")
+    req.db.collection('thoughts')
+      .find({"_processing": false})
+      .toArray(function(err, results) {
+        res.json(results.reverse());
+      })
+  }
 });
 
 router.post('/get-user-quotes', checkJwt, function (req, res, next) {
@@ -141,16 +153,20 @@ router.post('/get-processing-HITs', function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    .find({_processing: true, _user_id: user})
+    .find({_HITs: {$elemMatch: {processing: true}}, _user_id: user})
     .toArray(function (err, results) {
       _.forEach(results, (result => {
-        HITIds.push(result._HITId);
+        var ids = result._HITs.map((hit) => { return hit.HITId });
+        for(var i=0; i < ids.length; i++) {
+          HITIds.push(ids[i]);
+        }
       }))
       res
         .status(200)
         .send(HITIds);
     });
 })
+
 
 router.post("/get-totals", checkJwt, function (req, res, next) {
   let user = req.body.user;
@@ -201,10 +217,6 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
               prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj)].value + 1;
             }
           }
-          // let _full_date = timeobj.full_date;
-          // if (prior_7_days_strings.indexOf(_full_date) >= 0) {
-          //   prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)]["value"] = prior_7_days_counts_neg[prior_7_days_strings.indexOf(timeobj.full_date)].value + 1;
-          // }
         });
 
         console.log("Total POSITIVE COUNTS after adding this thought: " + result._HITId);
@@ -214,7 +226,6 @@ router.post("/get-totals", checkJwt, function (req, res, next) {
       });
       let total = [prior_7_days, prior_7_days_counts_pos, prior_7_days_counts_neg, results];
       res.json(total);
-      // console.log(total);
     });
 });
 
@@ -224,17 +235,17 @@ router.post('/update-processed-HIT', function (req, res, next) {
   console.log(HIT_updates);
   var promises = [];
   _.forEach(HIT_updates, function (HIT_update) {
+    var id = ObjectId(HIT_update.id)
     promises.push(req
       .db
       .collection('thoughts')
-      .updateOne({
-        _HITId: HIT_update.HITId
-      }, {
-        $set: {
-          "_processing": false,
-          "_pos_thought": HIT_update.pos_thought
-        }
-      }));
+      .update(
+        {_id: id, "_HITs.HITId": HIT_update.HITId},
+        {$set: {
+          "_HITs.$.processing": false,
+          "_HITs.$.positive_thought": HIT_update.positive_thought,
+          "_HITs.$.rating": null
+        }}));
   });
   Promise.all(promises).then(results => {
     res.json({message: 'FUCK YEA!'});
@@ -317,46 +328,6 @@ router.post('/increment_neg_thought', function (req, res, next) {
     console.log('NEGATIVE INCREMENT');
   res.json({message: 'Incremented Negative'});
 })
-
-router.post('/update-processed-HIT', function (req, res, next) {
-  console.log('in db update-processed-HIT');
-
-  let HIT_updates = req.body;
-  _.forEach(HIT_updates, function (HIT_update) {
-    req
-      .db
-      .collection('thoughts')
-      .updateOne({
-        _HITId: HIT_update.HITId
-      }, {
-        $set: {
-          "_processing": false,
-          "_pos_thought": HIT_update.pos_thought
-        }
-      })
-  });
-  res.json({message: 'FUCK YEA!'});
-});
-
-router.post('/update-processed-HIT', function (req, res, next) {
-  console.log('in db update-processed-HIT');
-
-  let HIT_updates = req.body;
-  _.forEach(HIT_updates, function (HIT_update) {
-    req
-      .db
-      .collection('thoughts')
-      .updateOne({
-        _HITId: HIT_update.HITId
-      }, {
-        $set: {
-          "_processing": false,
-          "_pos_thought": HIT_update.pos_thought
-        }
-      })
-  });
-  res.json({message: 'FUCK YEA!'});
-});
 
 // checkJwt middleware will enforce valid authorization token
 router.get('/protected', checkJwt, function (req, res, next) {

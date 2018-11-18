@@ -79,18 +79,21 @@ class ThoughtBubble extends Component {
 
       fetch(turk_request).then((res) => res.json()).then((res) => {
         console.log('In callback after mturk api call');
-
-        let HIT_data = {
-          'text': thought,
-          'user_name' : this.props.profile.nickname,
-          'processing': true,
-          'HITId': res.HITId,
-          'HITTypeId': res.HITTypeId
-        }
+        var HITs_Created = [];
+        var that = this;
+        res.forEach(item => {
+          HITs_Created.push({
+            'text': thought,
+            'user_name': that.props.profile.nickname,
+            'processing': true,
+            'HITId': item.HITId,
+            'HITTypeId': item.HITTypeId
+          })
+        });
 
         let db_request = new Request('/api/db/create-new-thought', {
           method: 'POST',
-          body: JSON.stringify(HIT_data),
+          body: JSON.stringify(HITs_Created),
           headers: the_headers
         });
 
@@ -109,6 +112,7 @@ class ThoughtBubble extends Component {
   checkresults() {
     console.log('CHECKIN IN NOW');
     if(this.props.profile) {
+      var values_from_turk = [];
       var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
       let get_hits_request = new Request('/api/db/get-processing-HITs', {
         'method': 'POST',
@@ -118,7 +122,6 @@ class ThoughtBubble extends Component {
       fetch(get_hits_request)
       .then(res => res.json())
       .then(results => {
-
         let checkin_request = new Request('/api/mturk/check-hits', {
           'method': 'POST',
           'headers': {
@@ -132,24 +135,51 @@ class ThoughtBubble extends Component {
         .then((res) => res.json())
         .then((res) => {
           if(!(res.length === 0)) {
-            console.log("Results back from checkin_request\n",res);
-            let db_updates = new Request('/api/db/update-processed-HIT', {
-              'method': 'POST',
-              'headers': {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-              },
-              'body': JSON.stringify(res)
-            })
-            fetch(db_updates)
-            .then((res)=> res.json())
-            .then((res)=> {
-              console.log("we gots the results yo");
-              this.props.reRenderHack();
-              this.props.notification();
-              // this.forceUpdate();
-              console.log(res);
-            })
+            values_from_turk = res;
+            var hitids = res.map((item) => item.HITId);
+            var url = new URL("/api/db/get-thoughts", window.location.origin);
+            var params = {HITIds: hitids}
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+            var get_the_thoughts_for_hits = new Request(url.href, {
+              'method': 'GET',
+              'headers': the_headers
+            });
+            fetch(get_the_thoughts_for_hits)
+              .then((res)=> res.json())
+              .then((res)=> {
+                console.log("Results back from checkin_request\n",res);
+                var update_values = []
+                for(var i = 0; i < values_from_turk.length; i++) {
+                  for(var j = 0; j < res.length; j++) {
+                    for(var k = 0; k < res[j]._HITs.length; k++) {
+                      if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
+                        update_values.push({
+                          id: res[j]._id,
+                          HITId: values_from_turk[i].HITId,
+                          positive_thought: values_from_turk[i].pos_thought
+                        })
+                      }
+                    }
+                  }
+                }
+                let db_updates = new Request('/api/db/update-processed-HIT', {
+                  'method': 'POST',
+                  'headers': {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                  'body': JSON.stringify(update_values)
+                })
+                fetch(db_updates)
+                .then((res)=> res.json())
+                .then((res)=> {
+                  console.log("we gots the results yo");
+                  this.props.reRenderHack();
+                  this.props.notification();
+                  // this.forceUpdate();
+                  console.log(res);
+                })
+              });
           } else {
             console.log("no updates from turk yo");
           }
