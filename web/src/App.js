@@ -9,10 +9,11 @@ import Header from './Header';
 import User from './User';
 import Community from './Community';
 import Rate from './Rate';
-import './App.css'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleLeft, faAngleRight, faCircle } from '@fortawesome/free-solid-svg-icons'
-library.add(faAngleLeft, faAngleRight, faCircle)
+import './App.css';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faAngleLeft, faAngleRight, faCircle, faStar, faStarHalf } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/pro-regular-svg-icons';
+library.add(faAngleLeft, faAngleRight, faCircle, faStar, faStarHalf, faStarEmpty)
 
 class App extends Component {
 

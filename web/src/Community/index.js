@@ -28,6 +28,14 @@ class Community extends Component {
     componentWillMount() {
         fetch('/api/db/get-community-quotes').then((res) => res.json()).then((res) => {
             console.log(res);
+            res.forEach((item) => {
+              for(var i = 0; i < item._HITs.length; i++) {
+                if(item._HITs[i].positive_thought !== undefined
+                  && item._pos_thought === undefined) {
+                  item['_pos_thought'] = item._HITs[i].positive_thought;
+                }
+              }
+            });
             this.setState({thoughts: res});
         }).catch(err => {
           console.log(err)
@@ -80,7 +88,6 @@ class Community extends Component {
             setsOfThree.push(this.state.thoughts.slice(i, i + 3));
             i += 3
         }
-
         let templates = [];
         for (i = 0; i < setsOfThree.length; i++) {
             templates.push(setsOfThree[i].map((thought, i) => {

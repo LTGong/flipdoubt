@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import Carousel from 'nuka-carousel';
+import StarRatingComponent from 'react-star-rating-component';
 import '../Gallery/gallery.css';
 import background1 from '../Gallery/background-1.jpg';
 import background2 from '../Gallery/background-2.jpg';
@@ -25,7 +26,10 @@ class Rate extends Component {
       currentShownPage: 0,
       totalPages: null,
       showRating: false,
-      currentThought: null
+      currentThought: null,
+      rating1: null,
+      rating2: null,
+      rating3: null
     }
     this.handleCardClick = this.handleCardClick.bind(this);
     this.showNextPage = this.showNextPage.bind(this);
@@ -57,7 +61,7 @@ class Rate extends Component {
     });
 
     fetch(request).then((res) => res.json()).then((res) => {
-      var thoughts = res.filter(thought => thought.hasOwnProperty('_pos_thoughts'))
+      var thoughts = res;
       this.setState({thoughts: thoughts});
       this.setState({totalPages: Math.floor(thoughts.length/6.0)});
       this.setState({lowerBound: 0});
@@ -165,11 +169,92 @@ class Rate extends Component {
     return ( <div className="circles-container">{circles}</div> )
   }
 
+  update_thought_with_rating(thoughtId, hitId, rating) {
+    var the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
+    let request = new Request('/api/db/set-rating', {
+      method: 'POST',
+      body: JSON.stringify({
+        thoughtId,
+        hitId,
+        rating
+      }),
+      headers: the_headers
+    });
+
+    fetch(request).then((res) => res.json()).then((res) => {
+      console.log("Rating response updated")
+      debugger
+      this.state.showRating = true;
+      this.reRenderState = true;
+    }).catch(err => {
+      console.log(err)
+    });
+  }
+
+  onStarClickHalfStar(nextValue, prevValue, name, e) {
+    const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
+
+    if (xPos <= 0.5) {
+      nextValue -= 0.5;
+    }
+
+    console.log('name: %s, nextValue: %s, prevValue: %s', name, nextValue, prevValue);
+    var hitId = e.currentTarget.children[0].attributes['data-hitid'].value
+    for(var i = 0; i < this.state.currentThought._HITs.length; i++) {
+      if(this.state.currentThought._HITs[i].HITId === hitId) {
+        if(i === 0) {
+          this.setState({rating1: nextValue})
+         }
+        if(i === 1) {
+          this.setState({rating2: nextValue})
+         }
+        if(i === 2) {
+          this.setState({rating3: nextValue})
+         }
+      }
+    }
+    this.update_thought_with_rating(this.state.currentThought._id, hitId, nextValue)
+    //value={(i === 0) ? this.state.rating1 : (i === 1) ? this.state.rating2 : this.state.rating3}
+  }
+
   render() {
     if(this.state.showRating) {
-      var reframes = this.state.currentThought._pos_thoughts.map((positive_thought, i) => {
+      var reframes = this.state.currentThought._HITs.map((hit, i) => {
         return (
-          <div className="column" key={i}>{positive_thought.reframe}</div>
+          <div className="column is-one-third">
+            <div className="reframe-container">
+              <div className="reframe" data-hitid={hit.HITId} key={i}>{hit.positive_thought}</div>
+              <div style={{fontSize: 18}}>
+                <StarRatingComponent
+                  name={"rater_"+i.toString()}
+                  starColor="#ffb400"
+                  emptyStarColor="#ffb400"
+                  value={hit.rating}
+                  onStarClick={this.onStarClickHalfStar.bind(this)}
+                  renderStarIcon={(index, value) => {
+                  return (
+                    <span data-hitid={hit.HITId}>
+                      {(index <= value)
+                          ? <FontAwesomeIcon icon={['fas','star']} size="2x"/>
+                          : <FontAwesomeIcon icon={['far', 'star']} size="2x"/>}
+                    </span>
+                  );
+                }}
+                renderStarIconHalf={() => {
+                  return (
+                    <span data-hitid={hit.HITId} className="half-star-span">
+                      <FontAwesomeIcon style={{position: 'absolute'}} icon={['far', 'star']} size="2x"/>
+                      <FontAwesomeIcon icon={['fas', 'star-half']} size="2x"/>
+                    </span>
+                  );
+                }}
+                />
+              </div>
+            </div>
+         </div>
         )
       });
       return (
@@ -195,7 +280,7 @@ class Rate extends Component {
                 <figure className="is-overlay back">
                   <img src={this.getBackground(thought._img_id)} alt="back"/>
                   <div className="caption">
-                    <h2>{thought._pos_thought}</h2>
+                    <h2>{thought._HITs[0].positive_thought}</h2>
                   </div>
                 </figure>
                 <figure className="front">

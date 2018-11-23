@@ -48,3 +48,20 @@
    margin-left: 1em;
    margin-right: 1em;
  }
+
+.reframe-container {
+   font-weight: 800;
+   color: white;
+}
+
+.reframe {
+  padding: 1em;
+}
+
+.half-star-span > .svg-inline--fa {
+  vertical-align: 1em;
+}
+
+.svg-inline--fa {
+  vertical-align: 1em;
+}

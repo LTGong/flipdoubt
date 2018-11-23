@@ -17,7 +17,7 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
   let default_pos_thought = "(... transformation in progress ...)";
   var HITs = req.body.map((item) => ({HITId: item.HITId, processing: true}))
   let newThought = new Thought(
-    req.body.text,
+    req.body[0].text,
     default_pos_thought,
     req.body.user_name,
     HITs,
@@ -57,11 +57,34 @@ router.get('/get-thoughts', checkJwt, function(req, res, next) {
   } else {
     console.log("In /get-thoughts")
     req.db.collection('thoughts')
-      .find({"_processing": false})
+      .find({_HITs: { $elemMatch: {"processing": false}}})
       .toArray(function(err, results) {
-        res.json(results.reverse());
+        var resultsWithAllHitsRespondedTo = results.filter((item) => {
+          var numHitsRespondedTo = _.reduce(item._HITs, (sum, hit) => {
+            return (hit.processing === false) ? (sum + 1) : sum;
+          }, 0);
+          return numHitsRespondedTo === 3;
+        });
+        res.json(resultsWithAllHitsRespondedTo.reverse());
       })
   }
+});
+
+router.post('/set-rating', checkJwt, function(req, res, next) {
+  console.log("In set rating");
+  req.db.collection('thoughts')
+     .update(
+        {_id: ObjectId(req.body.thoughtId), "_HITs.HITId": req.body.hitId},
+        {$set: {
+          "_HITs.$.rating": req.body.rating
+        }})
+     .then((result) => {
+       res.status(200).send({
+         thoughtId: req.body.thoughtId,
+         hitId: req.body.hitId,
+         rating: req.body.rating
+       });
+     });
 });
 
 router.post('/get-user-quotes', checkJwt, function (req, res, next) {
@@ -71,8 +94,7 @@ router.post('/get-user-quotes', checkJwt, function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    // .find()
-    .find({"_user_id": user_id, "_processing": false})
+    .find({"_user_id": user_id, _HITs: { $elemMatch: {"processing": false}}})
     .toArray(function (err, results) {
       res.json(results.reverse());
     })
@@ -134,15 +156,11 @@ router.post('/swap-image', checkJwt, function (req, res, next) {
 });
 
 router.get('/get-community-quotes', function (req, res, next) {
-  // This will come from req.user when we figure out authentication
-  req
-    .db
-    .collection('thoughts')
-    .find({_community: true})
-    .toArray(function (err, results) {
-      console.log(results);
-      res.json(results);
-    })
+  req.db.collection('thoughts')
+     .find({_HITs: {$elemMatch: {positive_thought: {$ne: null}}}})
+     .toArray((err, results) => {
+       res.json(results.reverse())
+     })
 });
 
 router.post('/get-processing-HITs', function (req, res, next) {
