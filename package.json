@@ -46,6 +46,7 @@
     "react": "^16.6.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-bulma-components": "^2.2.0",
+    "react-burger-menu": "^2.5.4",
     "react-dom": "^16.6.0",
     "react-fusioncharts": "^1.0.5",
     "react-star-rating-component": "^1.4.1",

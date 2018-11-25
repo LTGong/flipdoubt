@@ -15,6 +15,41 @@
   color: #fff;
 }
 
+.open {
+  display:block;
+}
+
+.closed {
+  display: none;
+}
+
+.make-full-width {
+  width: 100%;
+}
+
+.burger {
+    cursor: pointer;
+    display: block;
+    position: relative;
+    margin-left: auto;
+}
+
+.link-wrapper {
+  background-color: hsl(0, 0%, 21%);
+  color: white;
+  padding: 0.5em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.dark {
+  background-color: hsl(0, 0%, 21%);
+}
+
+.brand {
+  background-color: transparent !important;
+}
+
 .navbar-item:hover {
   background-color: transparent;
 }

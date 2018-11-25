@@ -4,57 +4,61 @@
 }
 
 .rating-box {
-  height: 600px;
   background-color: green;
   text-align: center;
   color: white;
 }
 
- h1 {
+h1 {
    color: white;
  }
 
- .control-container {
+.control-container {
    width: 100%;
    text-align: center;
    display: table;
  }
 
- .page-controls {
+.page-controls {
    display: table-cell;
    color: white;
  }
 
- .left {
-   width: 10em;
- }
+.page-controls, .left > svg { cursor: pointer; }
+.page-controls, .right > svg { cursor: pointer; }
 
- .page-controls, .left > svg { cursor: pointer; }
- .page-controls, .right > svg { cursor: pointer; }
-
- .right {
-   width: 10em;
- }
-
- .circles-container {
+.circles-container {
    display: table-cell;
    vertical-align: middle;
    padding-top: 5px;
-   width: 25%;
  }
 
- .circles {
+.circles {
    color: white;
    margin-left: 1em;
    margin-right: 1em;
  }
 
-.reframe-container {
-   font-weight: 800;
-   color: white;
-}
+.column-container {
+   padding: 0;
+   margin: 0;
+ }
+
+.rating-column {
+ }
+
+.reframes {
+  color: white;
+  padding: 1em;
+ }
 
 .reframe {
+  max-height: 300px;
+  padding: 1em;
+  font-size: 1.5em;
+}
+
+.ratings {
   padding: 1em;
 }
 
@@ -64,4 +68,17 @@
 
 .svg-inline--fa {
   vertical-align: 1em;
+}
+
+.back-button {
+  font-size: 2em;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+}
+
+.negative-thought {
+  font-size: 2em;
+  color: white;
+  text-align: center;
 }

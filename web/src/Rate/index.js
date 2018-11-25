@@ -26,14 +26,12 @@ class Rate extends Component {
       currentShownPage: 0,
       totalPages: null,
       showRating: false,
-      currentThought: null,
-      rating1: null,
-      rating2: null,
-      rating3: null
+      currentThought: null
     }
     this.handleCardClick = this.handleCardClick.bind(this);
     this.showNextPage = this.showNextPage.bind(this);
     this.showPreviousPage = this.showPreviousPage.bind(this);
+    this.backToSelection = this.backToSelection.bind(this);
     this.reRenderState = false;
   }
 
@@ -63,9 +61,9 @@ class Rate extends Component {
     fetch(request).then((res) => res.json()).then((res) => {
       var thoughts = res;
       this.setState({thoughts: thoughts});
-      this.setState({totalPages: Math.floor(thoughts.length/6.0)});
+      this.setState({totalPages: thoughts.length === 3.0 ? 0 : Math.ceil(thoughts.length/3.0)});
       this.setState({lowerBound: 0});
-      this.setState({upperBound: 2});
+      this.setState({upperBound: 1});
       this.reRenderState = false;
     }).catch(err => {
       console.log(err)
@@ -73,19 +71,19 @@ class Rate extends Component {
   }
 
   showNextPage(gallery_template) {
-    if(this.state.currentShownPage < this.state.totalPages) {
+    if(this.state.currentShownPage < (this.state.totalPages - 1)) {
       this.setState({currentShownPage: this.state.currentShownPage + 1})
-    } else if(this.state.currentShownPage === this.state.totalPages) {
+    } else if(this.state.currentShownPage === (this.state.totalPages - 1)) {
       this.setState({currentShownPage: 0})
     }
     var upper_bound = 0;
     var lower_bound = 0;
     if(this.state.upperBound === gallery_template.length) {
       this.setState({lowerBound: 0});
-      this.setState({upperBound: 2});
+      this.setState({upperBound: 1});
     } else {
-      upper_bound = (this.state.upperBound > gallery_template.length) ? gallery_template.length : this.state.upperBound + 2;
-      lower_bound = upper_bound -2;
+      upper_bound = (this.state.upperBound > gallery_template.length) ? gallery_template.length : this.state.upperBound + 1;
+      lower_bound = upper_bound -1;
       this.setState({lowerBound: lower_bound});
       this.setState({upperBound: upper_bound});
     }
@@ -94,22 +92,22 @@ class Rate extends Component {
   showPreviousPage(gallery_template) {
     var current_page = 0;
     if(this.state.currentShownPage > 0) {
-      this.setState({currentShownPage: this.state.currentShownPage - 1})
+      this.setState({currentShownPage: (this.state.currentShownPage - 1)})
       current_page = this.state.currentShownPage - 1;
     } else if(this.state.currentShownPage === 0) {
-      this.setState({currentShownPage: this.state.totalPages})
-      current_page = this.state.totalPages
+      this.setState({currentShownPage: this.state.totalPages - 1})
+      current_page = this.state.totalPages - 1
     }
     var upper_bound = 0;
     var lower_bound = 0;
-    if(current_page === this.state.totalPages) {
+    if(current_page === (this.state.totalPages - 1)) {
       upper_bound = gallery_template.length;
-      lower_bound = upper_bound - 2;
+      lower_bound = upper_bound - 1;
       this.setState({upperBound: upper_bound});
       this.setState({lowerBound: lower_bound});
     } else {
-      upper_bound = this.state.upperBound - 2;
-      lower_bound = upper_bound - 2;
+      upper_bound = this.state.upperBound - 1;
+      lower_bound = upper_bound - 1;
       this.setState({upperBound: upper_bound});
       this.setState({lowerBound: lower_bound});
     }
@@ -162,8 +160,8 @@ class Rate extends Component {
 
   getCircleIcons() {
     var circles = [];
-    for(var i = 0; i <= this.state.totalPages; i++) {
-      var currentColor = this.state.currentShownPage === i ? "#125346" : "#FFFFFF"
+    for(var i = 0; i < this.state.totalPages; i++) {
+      var currentColor = this.state.currentShownPage === i ? "#000000" : "#FFFFFF"
       circles.push((<FontAwesomeIcon key={i} className="circles" style={{color: currentColor}} icon="circle" />));
     }
     return ( <div className="circles-container">{circles}</div> )
@@ -186,9 +184,13 @@ class Rate extends Component {
 
     fetch(request).then((res) => res.json()).then((res) => {
       console.log("Rating response updated")
-      debugger
-      this.state.showRating = true;
-      this.reRenderState = true;
+      var currentThought = this.state.currentThought;
+      for(var i = 0; i < currentThought._HITs.length; i++) {
+        if(res.hitId === currentThought._HITs[i].HITId) {
+          currentThought._HITs[i].rating = res.rating;
+        }
+      }
+      this.setState({currentThought: currentThought});
     }).catch(err => {
       console.log(err)
     });
@@ -217,7 +219,10 @@ class Rate extends Component {
       }
     }
     this.update_thought_with_rating(this.state.currentThought._id, hitId, nextValue)
-    //value={(i === 0) ? this.state.rating1 : (i === 1) ? this.state.rating2 : this.state.rating3}
+  }
+
+  backToSelection() {
+    this.setState({showRating: false});
   }
 
   render() {
@@ -225,9 +230,10 @@ class Rate extends Component {
       var reframes = this.state.currentThought._HITs.map((hit, i) => {
         return (
           <div className="column is-one-third">
-            <div className="reframe-container">
-              <div className="reframe" data-hitid={hit.HITId} key={i}>{hit.positive_thought}</div>
-              <div style={{fontSize: 18}}>
+              <div className="reframes">
+                <div className="reframe" data-hitid={hit.HITId} key={i}>{hit.positive_thought}</div>
+              </div>
+              <div className="ratings" style={{fontSize: 18}}>
                 <StarRatingComponent
                   name={"rater_"+i.toString()}
                   starColor="#ffb400"
@@ -253,17 +259,23 @@ class Rate extends Component {
                 }}
                 />
               </div>
-            </div>
          </div>
         )
       });
       return (
         <div className="is-centered container">
           <div className="box dark rating-box">
-            <h1>{this.state.currentThought._neg_thought}</h1>
             <div className="columns">
+              <div className="column is-full">
+                <div className="negative-thought">
+                  {this.state.currentThought._neg_thought}
+                </div>
+              </div>
+            </div>
+            <div className="columns column-container">
               {reframes}
             </div>
+            <div onClick={() => this.backToSelection() } className="back-button">back</div>
           </div>
         </div>
       )
@@ -303,9 +315,9 @@ class Rate extends Component {
           <div className="box dark carousel-container">
             {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
             <div className="control-container">
-              <div className="page-controls left"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
+              <div className="page-controls"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
               {circles}
-              <div className="page-controls right"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
+              <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
             </div>
           </div>
         </div>
