@@ -32,6 +32,7 @@ class Frontpage extends Component {
     if (this.props.profile) {
       var gallery = <Gallery
         getAuthorizationHeader={this.props.getAuthorizationHeader}
+        isAuthenticated={this.props.isAuthenticated()}
         reRender={this.state.shouldRerender}
         stopReRendering={this.stopReRendering}
         user={this.props.profile.nickname}/>;

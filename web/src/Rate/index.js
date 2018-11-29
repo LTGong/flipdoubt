@@ -58,7 +58,7 @@ class Rate extends Component {
     });
 
     fetch(request).then((res) => res.json()).then((res) => {
-      var thoughts = res;
+      let thoughts = res;
       this.setState({thoughts: thoughts});
       this.setState({totalPages: thoughts.length === 3.0 ? 0 : Math.ceil(thoughts.length/3.0)});
       this.setState({lowerBound: 0});
@@ -203,20 +203,7 @@ class Rate extends Component {
     }
 
     console.log('name: %s, nextValue: %s, prevValue: %s', name, nextValue, prevValue);
-    var hitId = e.currentTarget.children[0].attributes['data-hitid'].value
-    for(var i = 0; i < this.state.currentThought._HITs.length; i++) {
-      if(this.state.currentThought._HITs[i].HITId === hitId) {
-        if(i === 0) {
-          this.setState({rating1: nextValue})
-         }
-        if(i === 1) {
-          this.setState({rating2: nextValue})
-         }
-        if(i === 2) {
-          this.setState({rating3: nextValue})
-         }
-      }
-    }
+    let hitId = e.currentTarget.children[0].attributes['data-hitid'].value;
     this.update_thought_with_rating(this.state.currentThought._id, hitId, nextValue)
   }
 
@@ -228,101 +215,120 @@ class Rate extends Component {
     if(this.state.showRating) {
       var reframes = this.state.currentThought._HITs.map((hit, i) => {
         return (
-          <div className="column is-one-third">
+            <div className="column is-one-third">
               <div className="reframes">
                 <div className="reframe" data-hitid={hit.HITId} key={i}>{hit.positive_thought}</div>
               </div>
               <div className="ratings" style={{fontSize: 18}}>
                 <StarRatingComponent
-                  name={"rater_"+i.toString()}
-                  starColor="#ffb400"
-                  emptyStarColor="#ffb400"
-                  value={hit.rating}
-                  onStarClick={this.onStarClickHalfStar.bind(this)}
-                  renderStarIcon={(index, value) => {
-                  return (
-                    <span data-hitid={hit.HITId}>
+                    name={"rater_"+i.toString()}
+                    starColor="#ffb400"
+                    emptyStarColor="#ffb400"
+                    value={hit.rating}
+                    onStarClick={this.onStarClickHalfStar.bind(this)}
+                    renderStarIcon={(index, value) => {
+                      return (
+                          <span data-hitid={hit.HITId}>
                       {(index <= value)
                           ? <FontAwesomeIcon icon={['fas','star']} size="2x"/>
                           : <FontAwesomeIcon icon={['far', 'star']} size="2x"/>}
                     </span>
-                  );
-                }}
-                renderStarIconHalf={() => {
-                  return (
-                    <span data-hitid={hit.HITId} className="half-star-span">
+                      );
+                    }}
+                    renderStarIconHalf={() => {
+                      return (
+                          <span data-hitid={hit.HITId} className="half-star-span">
                       <FontAwesomeIcon style={{position: 'absolute'}} icon={['far', 'star']} size="2x"/>
                       <FontAwesomeIcon icon={['fas', 'star-half']} size="2x"/>
                     </span>
-                  );
-                }}
+                      );
+                    }}
                 />
               </div>
-         </div>
+            </div>
         )
       });
       return (
-        <div className="is-centered container">
-          <div className="box dark rating-box">
-            <div className="columns">
-              <div className="column is-full">
-                <div className="negative-thought">
-                  {this.state.currentThought._neg_thought}
+          <div className="is-centered container">
+            <div className="box dark rating-box">
+              <div className="columns">
+                <div className="column is-full">
+                  <div className="negative-thought">
+                    {this.state.currentThought._neg_thought}
+                  </div>
                 </div>
               </div>
+              <div className="columns column-container">
+                {reframes}
+              </div>
+              <div onClick={() => this.backToSelection() } className="back-button">back</div>
             </div>
-            <div className="columns column-container">
-              {reframes}
-            </div>
-            <div onClick={() => this.backToSelection() } className="back-button">back</div>
           </div>
-        </div>
       )
     } else {
-      var setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
-      var templates = []
-      for(var i = 0; i < setsOfThree.length; i++) {
-        templates.push(setsOfThree[i].map((thought, i) => {
-          return (
-            <div className="column is-4" key={i}>
-              <div className="custom-card"
-                key={i}
-                onClick={() => this.handleCardClick(thought._id)}>
-                <figure className="is-overlay back">
-                  <img src={this.getBackground(thought._img_id)} alt="back"/>
-                  <div className="caption">
-                    <h3>{thought._HITs[0].positive_thought}</h3>
-                  </div>
-                </figure>
-                <figure className="front">
-                  <img src={background11} alt="front"/>
-                  <div className="caption">
-                    <h1>{thought._neg_thought}</h1>
-                  </div>
-                </figure>
+      if(!this.props.isAuthenticated()) {
+        return (
+            <div className="is-centered container">
+              <div className="box dark carousel-container" style={{"text-align": "center"}}>
+                <h2 className="not-logged-in">Please login to rate your thoughts.</h2>
               </div>
             </div>
+        )
+      } else {
+        if(this.state.thoughts.length === 0) {
+          return (
+              <div className="is-centered container">
+                <div className="box dark carousel-container" style={{"text-align": "center"}}>
+                  <h2 className="not-logged-in">Transform some thoughts before coming here to rate the reformulations.</h2>
+                </div>
+              </div>
           )
-        }));
+        } else {
+          var setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
+          var templates = []
+          for(var i = 0; i < setsOfThree.length; i++) {
+            templates.push(setsOfThree[i].map((thought, i) => {
+              return (
+                  <div className="column is-4" key={i}>
+                    <div className="custom-card"
+                         key={i}
+                         onClick={() => this.handleCardClick(thought._id)}>
+                      <figure className="is-overlay back">
+                        <img src={this.getBackground(thought._img_id)} alt="back"/>
+                        <div className="caption">
+                          <h3>{thought._HITs[0].positive_thought}</h3>
+                        </div>
+                      </figure>
+                      <figure className="front">
+                        <img src={background11} alt="front"/>
+                        <div className="caption">
+                          <h1>{thought._neg_thought}</h1>
+                        </div>
+                      </figure>
+                    </div>
+                  </div>
+              )
+            }));
+          }
+          var gallery_template = templates.map((template, i) => <div key={i} className="columns">
+            {template}
+          </div>);
+          var circles = this.getCircleIcons();
+          return (
+              <div className="is-centered container">
+                <div className="box dark carousel-container">
+                  {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
+                  <div className="control-container">
+                    <div className="page-controls"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
+                    {circles}
+                    <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
+                  </div>
+                </div>
+              </div>
+          );
+        }
       }
-      var gallery_template = templates.map((template, i) => <div key={i} className="columns">
-        {template}
-      </div>);
-      var circles = this.getCircleIcons();
-      return (
-        <div className="is-centered container">
-          <div className="box dark carousel-container">
-            {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
-            <div className="control-container">
-              <div className="page-controls"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
-              {circles}
-              <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
-            </div>
-          </div>
-        </div>
-      );
     }
   }
- }
-
+}
 export default Rate;

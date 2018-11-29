@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import "./ThoughtBubble.css";
 
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; // ES6
-// var ReactCSSTransitionGroup = require('react-addons-css-transition-group'); // ES5 with npm
 class ThoughtBubble extends Component {
 
   constructor(props) {
@@ -15,16 +13,16 @@ class ThoughtBubble extends Component {
       anotherThought: 'button is-info is-hidden',
       transformButton: "button is-info",
       processing: "is-hidden"
-    }
+    };
     this.handleChange = this
-      .handleChange
-      .bind(this);
+        .handleChange
+        .bind(this);
     this.transform = this
-      .transform
-      .bind(this);
+        .transform
+        .bind(this);
     this.checkresults = this
-      .checkresults
-      .bind(this);
+        .checkresults
+        .bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.showText = this.showText.bind(this);
     this.showInput = this.showInput.bind(this);
@@ -54,7 +52,7 @@ class ThoughtBubble extends Component {
   }
 
   handleClear (e) {
-      this.setState({value: '', styleClass: "thougtText"})
+    this.setState({value: '', styleClass: "thougtText"})
   }
 
   showText(e) {
@@ -122,9 +120,6 @@ class ThoughtBubble extends Component {
 
       }).catch(err => console.log(err))
     }
-    else {
-      this.props.login();
-    }
   }
 
   checkresults() {
@@ -138,129 +133,137 @@ class ThoughtBubble extends Component {
         'body': JSON.stringify({ 'username': this.props.profile.nickname })
       });
       fetch(get_hits_request)
-      .then(res => res.json())
-      .then(results => {
-        let checkin_request = new Request('/api/mturk/check-hits', {
-          'method': 'POST',
-          'headers': {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          'body': JSON.stringify({ 'HITIds': results })
-        });
+          .then(res => res.json())
+          .then(results => {
+            let checkin_request = new Request('/api/mturk/check-hits', {
+              'method': 'POST',
+              'headers': {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              'body': JSON.stringify({ 'HITIds': results })
+            });
 
-        fetch(checkin_request)
-        .then((res) => res.json())
-        .then((res) => {
-          if(!(res.length === 0)) {
-            values_from_turk = res;
-            var hitids = res.map((item) => item.HITId);
-            var url = new URL("/api/db/get-thoughts", window.location.origin);
-            var params = {HITIds: hitids}
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-            var get_the_thoughts_for_hits = new Request(url.href, {
-              'method': 'GET',
-              'headers': the_headers
-              });
-              fetch(get_the_thoughts_for_hits)
-                  .then((res)=> res.json())
-                  .then((res)=> {
-                      console.log("Results back from checkin_request\n",res);
-                      var update_values = []
-                      for(let i = 0; i < values_from_turk.length; i++) {
-                          for(let j = 0; j < res.length; j++) {
+            fetch(checkin_request)
+                .then((res) => res.json())
+                .then((res) => {
+                  if(!(res.length === 0)) {
+                    values_from_turk = res;
+                    var hitids = res.map((item) => item.HITId);
+                    var url = new URL("/api/db/get-thoughts", window.location.origin);
+                    var params = {HITIds: hitids}
+                    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+                    var get_the_thoughts_for_hits = new Request(url.href, {
+                      'method': 'GET',
+                      'headers': the_headers
+                    });
+                    fetch(get_the_thoughts_for_hits)
+                        .then((res)=> res.json())
+                        .then((res)=> {
+                          console.log("Results back from checkin_request\n",res);
+                          let update_values = [];
+                          for(let i = 0; i < values_from_turk.length; i++) {
+                            for(let j = 0; j < res.length; j++) {
                               for(let k = 0; k < res[j]._HITs.length; k++) {
-                                  if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
-                                      update_values.push({
-                                          id: res[j]._id,
-                                          HITId: values_from_turk[i].HITId,
-                                          positive_thought: values_from_turk[i].pos_thought
-                                      })
-                                  }
+                                if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
+                                  update_values.push({
+                                    id: res[j]._id,
+                                    HITId: values_from_turk[i].HITId,
+                                    positive_thought: values_from_turk[i].pos_thought
+                                  })
+                                }
                               }
+                            }
                           }
-                      }
-                let db_updates = new Request('/api/db/update-processed-HIT', {
-                  'method': 'POST',
-                  'headers': {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                  },
-                  'body': JSON.stringify(update_values)
-                });
-                fetch(db_updates)
-                .then((res)=> res.json())
-                .then((res)=> {
-                  console.log("we gots the results yo");
-                  this.props.reRenderHack();
-                  this.props.notification();
-                  // this.forceUpdate();
-                  console.log(res);
-                })
-              });
-          } else {
-            console.log("no updates from turk yo");
-          }
-        }).catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
+                          let db_updates = new Request('/api/db/update-processed-HIT', {
+                            'method': 'POST',
+                            'headers': {
+                              'Accept': 'application/json',
+                              'Content-Type': 'application/json',
+                            },
+                            'body': JSON.stringify(update_values)
+                          });
+                          fetch(db_updates)
+                              .then((res)=> res.json())
+                              .then((res)=> {
+                                console.log("we gots the results yo");
+                                this.props.reRenderHack();
+                                this.props.notification();
+                                // this.forceUpdate();
+                                console.log(res);
+                              })
+                        });
+                  } else {
+                    console.log("no updates from turk yo");
+                  }
+                }).catch(err => console.log(err));
+          })
+          .catch(err => console.log(err));
     } else {
       console.log("cannot check results, the user is not logged in");
     }
   }
 
   render() {
-        if(this.state.mobile) {
-          return (
-              <div className="section no-cloud ">
-                  <div className={this.state.inputClass}>
-                      <div className="field">
-                          <div className="control text-centered">
-                              <textarea cols="12" rows="5" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought."/>
-                          </div>
-                      </div>
-                  </div>
-                  <div className={this.state.styleClass}>{this.state.value}</div>
-                  <div className="control submit-for-cloud">
-                      <div className="submit-for-cloud-cell">
-                          <a className={this.state.transformButton} onClick={this.transform}>
-                              Transform
-                          </a>
-                          <a className={this.state.anotherThought} onClick={this.showInput}>
-                              Add Another Thought
-                          </a>
-                          <div className={this.state.processing}>Your thought is processing...</div>
-                      </div>
-                  </div>
+    if(this.state.mobile) {
+      return (
+          <div className="section no-cloud ">
+            <div className={this.state.inputClass}>
+              <div className="field">
+                <div className="control text-centered">
+                  <textarea cols="12" rows="5" value={this.state.value} onChange={this.handleChange}
+                            className="textarea" type="text" placeholder="Purge your thought."/>
+                </div>
               </div>
-          )
-        } else {
-          return (
-              <div className="cloud">
-                  <div className="thought">
-                      <div className={this.state.inputClass}>
-                          <div className="field">
-                              <div className="control text-centered">
-                                  <textarea rows="5" cols="12" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
-                              </div>
-                          </div>
-                      </div>
-                      <div className={this.state.styleClass}>{this.state.value}</div>
-                      <div className="control submit-for-cloud">
-                          <div className="submit-for-cloud-cell">
-                              <a className={this.state.transformButton} onClick={this.transform}>
-                                  Transform
-                              </a>
-                              <a className={this.state.anotherThought} onClick={this.showInput}>
-                                  Add Another Thought
-                              </a>
-                              <div className={this.state.processing}>Your thought is processing...</div>
-                          </div>
-                      </div>
-                  </div>
+            </div>
+            <div className={this.state.styleClass}>{this.state.value}</div>
+            <div className="control submit-for-cloud">
+              <div className="submit-for-cloud-cell">
+                <a className={this.state.transformButton} onClick={this.transform}>
+                  Transform
+                </a>
+                <a className={this.state.anotherThought} onClick={this.showInput}>
+                  Add Another Thought
+                </a>
+                <div className={this.state.processing}>Your thought is processing...</div>
               </div>
-          )
-      }
+            </div>
+          </div>
+      )
+    } else {
+      return (
+          <div className="cloud">
+            <div className="thought">
+              <div className={this.state.inputClass}>
+                <div className="field">
+                  <div className="control text-centered">
+                                  <textarea rows="5" cols="12" value={this.state.value}
+                                            disabled={this.props.isAuthenticated() ? "" : "true"}
+                                            onChange={this.handleChange}
+                                            className="textarea"
+                                            type="text"
+                                            placeholder={this.props.isAuthenticated() ? "Purge your thought." : "Login to purge a thought."} />
+                  </div>
+                </div>
+              </div>
+              <div className={this.state.styleClass}>{this.state.value}</div>
+              <div className="control submit-for-cloud">
+                <div className="submit-for-cloud-cell">
+                  <a className={this.state.transformButton}
+                     disabled={this.props.isAuthenticated() ? "" : "true"}
+                     onClick={this.transform}>
+                    Transform
+                  </a>
+                  <a className={this.state.anotherThought} onClick={this.showInput}>
+                    Add Another Thought
+                  </a>
+                  <div className={this.state.processing}>Your thought is processing...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+      )
+    }
   }
 }
 

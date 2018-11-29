@@ -78,7 +78,7 @@ class Gallery extends Component {
   }
 
   fetchThoughts() {
-      var the_headers = Object.assign({
+      let the_headers = Object.assign({
           'Accept': 'application/json',
           'Content-Type': 'application/json'
       }, this.props.getAuthorizationHeader());
@@ -91,21 +91,21 @@ class Gallery extends Component {
 
       console.log(request);
       fetch(request).then((res) => res.json()).then((res) => {
-          res.forEach((item) => {
-              for(var i = 0; i < item._HITs.length; i++) {
-                  if(item._HITs[i].positive_thought !== undefined
-                      && item._pos_thought === undefined) {
-                      item['_pos_thought'] = item._HITs[i].positive_thought;
-                  }
-              }
-          });
-          this.setState({
-              thoughts: res,
-              totalPages: res.length === 3.0 ? 0 : Math.ceil(res.length/3.0),
-              lowerBound: 0,
-              upperBound: 1
-          });
-          this.reRenderState = false;
+        res.forEach((item) => {
+          for(let i = 0; i < item._HITs.length; i++) {
+            if(item._HITs[i].positive_thought !== undefined
+                && item._pos_thought === undefined) {
+              item['_pos_thought'] = item._HITs[i].positive_thought;
+            }
+          }
+        });
+        this.setState({
+          thoughts: res,
+          totalPages: res.length === 3.0 ? 0 : Math.ceil(res.length/3.0),
+          lowerBound: 0,
+          upperBound: 1
+        });
+        this.reRenderState = false;
       }).catch(err => console.log(err));
   }
   }
@@ -116,8 +116,8 @@ class Gallery extends Component {
     } else if(this.state.currentShownPage === (this.state.totalPages - 1)) {
       this.setState({currentShownPage: 0})
     }
-    var upper_bound = 0;
-    var lower_bound = 0;
+    let upper_bound = 0;
+    let lower_bound = 0;
     if(this.state.upperBound === gallery_template.length) {
       this.setState({lowerBound: 0});
       this.setState({upperBound: 1});
@@ -130,7 +130,7 @@ class Gallery extends Component {
   }
 
   showPreviousPage(gallery_template) {
-    var current_page = 0;
+    let current_page = 0;
     if(this.state.currentShownPage > 0) {
       this.setState({currentShownPage: (this.state.currentShownPage - 1)})
       current_page = this.state.currentShownPage - 1;
@@ -138,8 +138,8 @@ class Gallery extends Component {
       this.setState({currentShownPage: this.state.totalPages - 1})
       current_page = this.state.totalPages - 1
     }
-    var upper_bound = 0;
-    var lower_bound = 0;
+    let upper_bound = 0;
+    let lower_bound = 0;
     if(current_page === (this.state.totalPages - 1)) {
       upper_bound = gallery_template.length;
       lower_bound = upper_bound - 1;
@@ -177,11 +177,11 @@ class Gallery extends Component {
 
   handleShareClick(e) {
       e.stopPropagation();
-      var the_headers = Object.assign({
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-      }, this.props.getAuthorizationHeader());
-      let share_request = new Request('/api/db/share-thought', {
+    let the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
+    let share_request = new Request('/api/db/share-thought', {
           method: 'POST',
           body: JSON.stringify({
               _HITId: e
@@ -201,12 +201,12 @@ class Gallery extends Component {
   handlePositiveClick(e) {
       e.stopPropagation();
 
-      var the_headers = Object.assign({
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-      }, this.props.getAuthorizationHeader());
+    let the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
 
-      let increment_positive_req = new Request('/api/db/increment_pos_thought', {
+    let increment_positive_req = new Request('/api/db/increment_pos_thought', {
           method: 'POST',
           body: JSON.stringify({
               _HITId: e
@@ -226,12 +226,12 @@ class Gallery extends Component {
   handleNegativeClick(e) {
       e.stopPropagation();
 
-      var the_headers = Object.assign({
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-      }, this.props.getAuthorizationHeader());
+    let the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
 
-      let increment_negative_req = new Request('/api/db/increment_neg_thought', {
+    let increment_negative_req = new Request('/api/db/increment_neg_thought', {
           method: 'POST',
           body: JSON.stringify({
               _HITId: e
@@ -261,12 +261,12 @@ class Gallery extends Component {
   swap(e) {
       console.log('swap');
       e.stopPropagation();
-      var the_headers = Object.assign({
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-      }, this.props.getAuthorizationHeader());
-      var img = e.currentTarget.parentElement.parentElement.parentElement.children[0];
-      let img_request = new Request('/api/db/swap-image', {
+    const the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
+    const img = e.currentTarget.parentElement.parentElement.parentElement.children[0];
+    let img_request = new Request('/api/db/swap-image', {
           method: 'POST',
           body: JSON.stringify({
               _HITId: e
@@ -322,109 +322,122 @@ class Gallery extends Component {
   }
 
   getCircleIcons() {
-    var circles = [];
-    for(var i = 0; i < this.state.totalPages; i++) {
-      var currentColor = this.state.currentShownPage === i ? "#000000" : "#FFFFFF"
+    let circles = [];
+    for(let i = 0; i < this.state.totalPages; i++) {
+      const currentColor = this.state.currentShownPage === i ? "#000000" : "#FFFFFF";
       circles.push((<FontAwesomeIcon key={i} className="circles" style={{color: currentColor}} icon="circle" />));
     }
     return ( <div className="circles-container">{circles}</div> )
   }
 
   render() {
-      if(this.state.showCarousel) {
-        var setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
-        var templates = []
+    let gallery_template;
+    let setsOfThree;
+    let templates;
+    if(this.state.showCarousel) {
+      if(this.state.thoughts.length === 0) {
+        return(
+            <div/>
+        );
+      } else {
+        setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
+        templates = [];
         for(var i = 0; i < setsOfThree.length; i++) {
           templates.push(setsOfThree[i].map((thought, i) => {
             return (
-              <div className="column is-4" key={i}>
-                <div className="custom-card" key={i} onClick={this.handleCardClick}>
-                  <figure className="front">
+                <div className="column is-4" key={i}>
+                  <div className="custom-card" key={i} onClick={this.handleCardClick}>
+                    <figure className="front">
                       <img src={this.getBackground(thought._img_id)} alt="front"/>
                       <div className="caption">
-                          <h3>{thought._pos_thought}</h3>
+                        <h3>{thought._pos_thought}</h3>
                       </div>
                       <div className="share-social">
-                          <i className="fa fa-exchange"
-                             aria-hidden="true"
-                             value={thought._HITId}
-                             onClick={this.swap}/>
+                        <i className="fa fa-exchange"
+                           aria-hidden="true"
+                           value={thought._HITId}
+                           onClick={this.swap}/>
                       </div>
-                  </figure>
-
-                  <figure className="is-overlay back">
+                    </figure>
+                    <figure className="is-overlay back">
                       <img src={background11} alt="back"/>
                       <div className="caption">
-                          <h3 className="negative">{thought._neg_thought}</h3>
+                        <h3 className="negative">{thought._neg_thought}</h3>
                       </div>
-                  </figure>
+                    </figure>
+                  </div>
                 </div>
-              </div>
             )
           }));
-      }
-      var gallery_template = templates.map((template, i) => <div key={i} className="columns">
-        {template}
-      </div>);
-      var circles = this.getCircleIcons();
-      return (
-        <div className="is-centered section">
-          <div className="box dark carousel-container">
-            <h2 className="title is-3 makeWhite has-text-centered" style={{"width": "100%"}}>Gallery of the Mind</h2>
-            {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
-            <div className="control-container">
-              <div className="page-controls"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
-              {circles}
-              <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
+        }
+        gallery_template = templates.map((template, i) => <div key={i} className="columns">
+          {template}
+        </div>);
+        const circles = this.getCircleIcons();
+        return (
+            <div className="is-centered section">
+              <div className="box dark carousel-container">
+                <h2 className="title is-3 makeWhite has-text-centered" style={{"width": "100%"}}>Gallery of the Mind</h2>
+                {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
+                <div className="control-container">
+                  <div className="page-controls"><FontAwesomeIcon onClick={this.showPreviousPage.bind(this, gallery_template)} className="pull-right" icon="angle-left" size="3x" /></div>
+                  {circles}
+                  <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      );
+        );
+      }
+    } else {
+      if(this.state.thoughts.length === 0) {
+        return(
+           <div/>
+        );
       } else {
         setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
         templates = [];
         for (i = 0; i < setsOfThree.length; i++) {
-            templates.push(setsOfThree[i].map((thought, i) => {
-                return (
-                    <div className="column is-4" key={i}>
-                        <div className="card-container">
-                            <div className="custom-card" onClick={this.handleCardClick}>
-                                <figure className="front">
-                                    <img src={this.getBackground(thought._img_id)} alt="front"/>
-                                    <div className="caption">
-                                        <h3>{thought._pos_thought}</h3>
-                                    </div>
-                                    <div className="share-social">
-                                        <i className="fa fa-exchange"
-                                            aria-hidden="true"
-                                            value={thought._HITId}
-                                            onClick={this.swap}/>
-                                    </div>
-                                </figure>
-                                <figure className="is-overlay back">
-                                    <img src={background11} alt="back"/>
-                                    <div className="caption">
-                                        <h3 className="negative">{thought._neg_thought}</h3>
-                                    </div>
-                                </figure>
-                            </div>
+          templates.push(setsOfThree[i].map((thought, i) => {
+            return (
+                <div className="column is-4" key={i}>
+                  <div className="card-container">
+                    <div className="custom-card" onClick={this.handleCardClick}>
+                      <figure className="front">
+                        <img src={this.getBackground(thought._img_id)} alt="front"/>
+                        <div className="caption">
+                          <h3>{thought._pos_thought}</h3>
                         </div>
+                        <div className="share-social">
+                          <i className="fa fa-exchange"
+                             aria-hidden="true"
+                             value={thought._HITId}
+                             onClick={this.swap}/>
+                        </div>
+                      </figure>
+                      <figure className="is-overlay back">
+                        <img src={background11} alt="back"/>
+                        <div className="caption">
+                          <h3 className="negative">{thought._neg_thought}</h3>
+                        </div>
+                      </figure>
                     </div>
-                );
-            }));
+                  </div>
+                </div>
+            );
+          }));
         }
         gallery_template = templates.map((template, i) => <div key={i} className="columns">
-            {template}
+          {template}
         </div>);
         return (
             <div className="box dark has-text-centered is-radiusless">
-                <p>{this.props.shouldRerender}</p>
-                <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
-                <br/> {gallery_template}
+              <p>{this.props.shouldRerender}</p>
+              <h2 className="card-header title is-3 has-text-centered">Gallery of the Mind</h2>
+              <br/> {gallery_template}
             </div>
         );
-
       }
+    }
   }
 }
 
