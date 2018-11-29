@@ -8,6 +8,7 @@ class ThoughtBubble extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      mobile: window.innerWidth < 1024,
       value: '',
       styleClass: 'thoughtText is-hidden',
       inputClass: 'add-padding',
@@ -27,7 +28,24 @@ class ThoughtBubble extends Component {
     this.handleClear = this.handleClear.bind(this);
     this.showText = this.showText.bind(this);
     this.showInput = this.showInput.bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
     setInterval(() => { this.checkresults() }, 10000);
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
+  }
+
+  updateDimensions() {
+    if(window.innerWidth < 1024) {
+      this.setState({mobile: true});
+    } else {
+      this.setState({mobile: false});
+    }
   }
 
   handleChange(e) {
@@ -143,25 +161,25 @@ class ThoughtBubble extends Component {
             var get_the_thoughts_for_hits = new Request(url.href, {
               'method': 'GET',
               'headers': the_headers
-            });
-            fetch(get_the_thoughts_for_hits)
-              .then((res)=> res.json())
-              .then((res)=> {
-                console.log("Results back from checkin_request\n",res);
-                var update_values = []
-                for(let i = 0; i < values_from_turk.length; i++) {
-                  for(let j = 0; j < res.length; j++) {
-                    for(let k = 0; k < res[j]._HITs.length; k++) {
-                      if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
-                        update_values.push({
-                          id: res[j]._id,
-                          HITId: values_from_turk[i].HITId,
-                          positive_thought: values_from_turk[i].pos_thought
-                        })
+              });
+              fetch(get_the_thoughts_for_hits)
+                  .then((res)=> res.json())
+                  .then((res)=> {
+                      console.log("Results back from checkin_request\n",res);
+                      var update_values = []
+                      for(let i = 0; i < values_from_turk.length; i++) {
+                          for(let j = 0; j < res.length; j++) {
+                              for(let k = 0; k < res[j]._HITs.length; k++) {
+                                  if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
+                                      update_values.push({
+                                          id: res[j]._id,
+                                          HITId: values_from_turk[i].HITId,
+                                          positive_thought: values_from_turk[i].pos_thought
+                                      })
+                                  }
+                              }
+                          }
                       }
-                    }
-                  }
-                }
                 let db_updates = new Request('/api/db/update-processed-HIT', {
                   'method': 'POST',
                   'headers': {
@@ -192,33 +210,57 @@ class ThoughtBubble extends Component {
   }
 
   render() {
-    return (
-        <div>
-          <div className="cloud">
-            <div className="thought">
-              <div className={this.state.inputClass}>
-                <div className="field">
-                  <div className="control text-centered">
-                    <textarea rows="5" cols="15" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
+        if(this.state.mobile) {
+          return (
+              <div className="section no-cloud ">
+                  <div className={this.state.inputClass}>
+                      <div className="field">
+                          <div className="control text-centered">
+                              <textarea cols="12" rows="5" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought."/>
+                          </div>
+                      </div>
                   </div>
-                </div>
+                  <div className={this.state.styleClass}>{this.state.value}</div>
+                  <div className="control submit-for-cloud">
+                      <div className="submit-for-cloud-cell">
+                          <a className={this.state.transformButton} onClick={this.transform}>
+                              Transform
+                          </a>
+                          <a className={this.state.anotherThought} onClick={this.showInput}>
+                              Add Another Thought
+                          </a>
+                          <div className={this.state.processing}>Your thought is processing...</div>
+                      </div>
+                  </div>
               </div>
-              <div className={this.state.styleClass}>{this.state.value}</div>
-              <div className="control submit-for-cloud">
-                <div className="submit-for-cloud-cell">
-                  <a className={this.state.transformButton} onClick={this.transform}>
-                    Transform
-                  </a>
-                  <a className={this.state.anotherThought} onClick={this.showInput}>
-                    Add Another Thought
-                  </a>
-                  <div className={this.state.processing}>Your thought is processing...</div>
-                </div>
+          )
+        } else {
+          return (
+              <div className="cloud">
+                  <div className="thought">
+                      <div className={this.state.inputClass}>
+                          <div className="field">
+                              <div className="control text-centered">
+                                  <textarea rows="5" cols="12" value={this.state.value} onChange={this.handleChange} className="textarea" type="text" placeholder="Purge your thought." />
+                              </div>
+                          </div>
+                      </div>
+                      <div className={this.state.styleClass}>{this.state.value}</div>
+                      <div className="control submit-for-cloud">
+                          <div className="submit-for-cloud-cell">
+                              <a className={this.state.transformButton} onClick={this.transform}>
+                                  Transform
+                              </a>
+                              <a className={this.state.anotherThought} onClick={this.showInput}>
+                                  Add Another Thought
+                              </a>
+                              <div className={this.state.processing}>Your thought is processing...</div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-            </div>
-          </div>
-        </div>
-    )
+          )
+      }
   }
 }
 

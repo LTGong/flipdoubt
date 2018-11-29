@@ -20,9 +20,9 @@ class Gallery extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        thoughts: [],
-        showCarousel: window.innerWidth > 1024 ? false : true,
+        showCarousel: window.innerWidth <= 1024,
         currentShownPage: 0,
+        thoughts: [],
         totalPages: null
       }
       this.handleCardClick = this
@@ -43,10 +43,10 @@ class Gallery extends Component {
       this.handleTwitterClick = this
           .handleTwitterClick
           .bind(this);
-      this.reRenderState = false;
       this.showNextPage = this.showNextPage.bind(this);
       this.showPreviousPage = this.showPreviousPage.bind(this);
       this.updateDimensions = this.updateDimensions.bind(this);
+      this.reRenderState = false;
   }
 
   updateDimensions() {
@@ -71,6 +71,7 @@ class Gallery extends Component {
       if (!this.reRenderState) {
           this.reRenderState = this.props.reRender;
           if (this.reRenderState) {
+              this.props.stopReRendering();
               this.fetchThoughts();
           }
       }
@@ -88,25 +89,25 @@ class Gallery extends Component {
               headers: the_headers
           });
 
-          console.log(request);
-          fetch(request).then((res) => res.json()).then((res) => {
-              res.forEach((item) => {
-                for(var i = 0; i < item._HITs.length; i++) {
+      console.log(request);
+      fetch(request).then((res) => res.json()).then((res) => {
+          res.forEach((item) => {
+              for(var i = 0; i < item._HITs.length; i++) {
                   if(item._HITs[i].positive_thought !== undefined
-                    && item._pos_thought === undefined) {
-                    item['_pos_thought'] = item._HITs[i].positive_thought;
+                      && item._pos_thought === undefined) {
+                      item['_pos_thought'] = item._HITs[i].positive_thought;
                   }
-                }
-              });
-            this.setState({
+              }
+          });
+          this.setState({
               thoughts: res,
               totalPages: res.length === 3.0 ? 0 : Math.ceil(res.length/3.0),
               lowerBound: 0,
               upperBound: 1
-            });
-            this.reRenderState = false;
-          }).catch(err => console.log(err));
-      }
+          });
+          this.reRenderState = false;
+      }).catch(err => console.log(err));
+  }
   }
 
   showNextPage(gallery_template) {
@@ -125,7 +126,6 @@ class Gallery extends Component {
       lower_bound = upper_bound -1;
       this.setState({lowerBound: lower_bound});
       this.setState({upperBound: upper_bound});
-      //this.reRenderState = false;
     }
   }
 
@@ -213,7 +213,6 @@ class Gallery extends Component {
                   .currentTarget
                   .getAttribute('value')
           }),
-          // this header sends the user token from auth0
           headers: the_headers
       });
 
@@ -343,44 +342,20 @@ class Gallery extends Component {
                   <figure className="front">
                       <img src={this.getBackground(thought._img_id)} alt="front"/>
                       <div className="caption">
-                          <h2>{thought._pos_thought}</h2>
-                          <div className="share-social">
-                              <i
-                                  data-service="twitter"
-                                  className="fa fa-twitter"
-                                  aria-hidden="true"
-                                  value={thought._pos_thought}
-                                  onClick={this.handleTwitterClick}></i>
-                              <i
-                                  className="fa fa-bullhorn"
-                                  aria-hidden="true"
-                                  value={thought._HITId}
-                                  onClick={this.handleShareClick}></i>
-                              <i
-                                  className="fa fa-exchange"
-                                  aria-hidden="true"
-                                  value={thought._HITId}
-                                  onClick={this.swap}></i>
-                              <i
-                                  value={thought._HITId}
-                                  className="fa fa-plus"
-                                  aria-hidden="true"
-                                  onClick={this.handlePositiveClick}></i>
-                          </div>
+                          <h3>{thought._pos_thought}</h3>
+                      </div>
+                      <div className="share-social">
+                          <i className="fa fa-exchange"
+                             aria-hidden="true"
+                             value={thought._HITId}
+                             onClick={this.swap}/>
                       </div>
                   </figure>
 
                   <figure className="is-overlay back">
                       <img src={background11} alt="back"/>
                       <div className="caption">
-                          <h2>{thought._neg_thought}</h2>
-                          <div className="share-social">
-                              <i
-                                  value={thought._HITId}
-                                  className="fa fa-plus"
-                                  aria-hidden="true"
-                                  onClick={this.handleNegativeClick}></i>
-                          </div>
+                          <h3 className="negative">{thought._neg_thought}</h3>
                       </div>
                   </figure>
                 </div>
@@ -393,7 +368,7 @@ class Gallery extends Component {
       </div>);
       var circles = this.getCircleIcons();
       return (
-        <div className="is-centered container">
+        <div className="is-centered section">
           <div className="box dark carousel-container">
             <h2 className="title is-3 makeWhite has-text-centered" style={{"width": "100%"}}>Gallery of the Mind</h2>
             {gallery_template.slice(this.state.lowerBound, this.state.upperBound)}
@@ -414,48 +389,22 @@ class Gallery extends Component {
                     <div className="column is-4" key={i}>
                         <div className="card-container">
                             <div className="custom-card" onClick={this.handleCardClick}>
-
                                 <figure className="front">
                                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                                     <div className="caption">
-                                        <h2>{thought._pos_thought}</h2>
-                                        <div className="share-social">
-                                            <i
-                                                data-service="twitter"
-                                                className="fa fa-twitter"
-                                                aria-hidden="true"
-                                                value={thought._pos_thought}
-                                                onClick={this.handleTwitterClick}></i>
-                                            <i
-                                                className="fa fa-bullhorn"
-                                                aria-hidden="true"
-                                                value={thought._HITId}
-                                                onClick={this.handleShareClick}></i>
-                                            <i
-                                                className="fa fa-exchange"
-                                                aria-hidden="true"
-                                                value={thought._HITId}
-                                                onClick={this.swap}></i>
-                                            <i
-                                                value={thought._HITId}
-                                                className="fa fa-plus"
-                                                aria-hidden="true"
-                                                onClick={this.handlePositiveClick}></i>
-                                        </div>
+                                        <h3>{thought._pos_thought}</h3>
+                                    </div>
+                                    <div className="share-social">
+                                        <i className="fa fa-exchange"
+                                            aria-hidden="true"
+                                            value={thought._HITId}
+                                            onClick={this.swap}/>
                                     </div>
                                 </figure>
-
                                 <figure className="is-overlay back">
                                     <img src={background11} alt="back"/>
                                     <div className="caption">
-                                        <h2>{thought._neg_thought}</h2>
-                                        <div className="share-social">
-                                            <i
-                                                value={thought._HITId}
-                                                className="fa fa-plus"
-                                                aria-hidden="true"
-                                                onClick={this.handleNegativeClick}></i>
-                                        </div>
+                                        <h3 className="negative">{thought._neg_thought}</h3>
                                     </div>
                                 </figure>
                             </div>

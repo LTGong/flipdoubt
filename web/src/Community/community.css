@@ -5,6 +5,11 @@
   min-height: inherit;
 }
 
+h3 {
+  font-weight: bold;
+  font-size: 1.15em;
+}
+
 .card-container, figure{
   font-family: 'Raleway', Arial, sans-serif;
 }
@@ -18,21 +23,21 @@
 }
 
 figure{
-  color: #fff;
-  -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
-  overflow: hidden;
-  position: relative;
-  top: 0;
-  left: 0;
-  text-align: center;
-  cursor: pointer;
-  -webkit-transition:0.6s;
-  transition: 0.6s;
-  -webkit-transform-style: preserve-3d;
-          transform-style: preserve-3d;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.9);
-}
+   color: #fff;
+   -webkit-backface-visibility: hidden;
+   backface-visibility: hidden;
+   overflow: hidden;
+   position: relative;
+   top: 0;
+   left: 0;
+   text-align: center;
+   cursor: pointer;
+   -webkit-transition:0.6s;
+   transition: 0.6s;
+   -webkit-transform-style: preserve-3d;
+   transform-style: preserve-3d;
+   box-shadow: 0 1px 5px rgba(0,0,0,0.9);
+ }
 
 figure.front{
   -webkit-transform: rotateY(0deg);
@@ -101,10 +106,10 @@ figure .fa {
   opacity: 0.3;
 }
 
-.front h2{
+.front h3{
   word-spacing: 0.15em;
-  font-weight: 300;
-  font-size: 1.6em;
+/*  font-weight: 300;
+  font-size: 1.6em;*/
   top: 50%;
   left: 0;
   width: 100%;
@@ -143,10 +148,10 @@ figure .fa {
           transform: scale(1);  
 }
 
-.back h2{
+.back h3{
   word-spacing: 0.15em;
-  font-weight: 300;
-  font-size: 1.6em;
+/*  font-weight: 300;
+  font-size: 1.6em;*/
   top: 50%;
   left: 0;
   width: 100%;
@@ -167,9 +172,9 @@ figure a{
 }
 
 .share-social {
-  position: absolute;
-  bottom: 0;
-  width:85%;
+/*  position: absolute;*/
+/*  bottom: 0;*/
+  width:100%;
 }
 
 .box.dark {

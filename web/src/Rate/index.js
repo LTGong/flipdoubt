@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import Carousel from 'nuka-carousel';
 import StarRatingComponent from 'react-star-rating-component';
 import '../Gallery/gallery.css';
 import background1 from '../Gallery/background-1.jpg';
@@ -27,7 +26,7 @@ class Rate extends Component {
       totalPages: null,
       showRating: false,
       currentThought: null
-    }
+    };
     this.handleCardClick = this.handleCardClick.bind(this);
     this.showNextPage = this.showNextPage.bind(this);
     this.showPreviousPage = this.showPreviousPage.bind(this);
@@ -292,13 +291,13 @@ class Rate extends Component {
                 <figure className="is-overlay back">
                   <img src={this.getBackground(thought._img_id)} alt="back"/>
                   <div className="caption">
-                    <h2>{thought._HITs[0].positive_thought}</h2>
+                    <h3>{thought._HITs[0].positive_thought}</h3>
                   </div>
                 </figure>
                 <figure className="front">
                   <img src={background11} alt="front"/>
                   <div className="caption">
-                    <h2>{thought._neg_thought}</h2>
+                    <h1>{thought._neg_thought}</h1>
                   </div>
                 </figure>
               </div>

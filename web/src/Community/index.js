@@ -186,7 +186,7 @@ class Community extends Component {
                   <figure className="front">
                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                     <div className="caption">
-                      <h2>{thought._HITs[0].positive_thought}</h2>
+                      <h3>{thought._HITs[0].positive_thought}</h3>
                     </div>
                   </figure>
                 </div>
@@ -223,15 +223,7 @@ class Community extends Component {
                                 <figure className="front">
                                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                                     <div className="caption">
-                                        <h2>{thought._pos_thought}</h2>
-                                        <div className="share-social">
-                                            <i
-                                                data-service="twitter"
-                                                className="fa fa-twitter"
-                                                aria-hidden="true"
-                                                value={thought._pos_thought}
-                                                onClick={this.handleTwitterClick}></i>
-                                        </div>
+                                        <h3>{thought._pos_thought}</h3>
                                     </div>
                                 </figure>
                             </div>

@@ -13,6 +13,7 @@ class Frontpage extends Component {
     this.reRenderHack = this
       .reRenderHack
       .bind(this);
+    this.stopReRendering = this.stopReRendering.bind(this);
   }
 
   reRenderHack() {
@@ -21,11 +22,18 @@ class Frontpage extends Component {
     this.forceUpdate();
   }
 
+  stopReRendering() {
+    console.log("stopReRendering is running");
+    this.setState({shouldRerender: false});
+    this.forceUpdate();
+  }
+
   render() {
     if (this.props.profile) {
       var gallery = <Gallery
         getAuthorizationHeader={this.props.getAuthorizationHeader}
         reRender={this.state.shouldRerender}
+        stopReRendering={this.stopReRendering}
         user={this.props.profile.nickname}/>;
     }
     return <div className="FrontPage container">

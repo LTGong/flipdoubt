@@ -5,6 +5,13 @@
   min-height: inherit;
 }
 
+h3 {
+  font-size: 1.15em;
+  font-weight: bold;
+}
+.negative {
+  font-weight: normal;
+}
 .card-container, figure{
   font-family: 'Raleway', Arial, sans-serif;
 }
@@ -87,6 +94,7 @@ figure .fa {
 }
 .front .caption{
   font-size: 0.90em;
+  overflow: scroll;
 }
 
 .front .caption:before {
@@ -104,7 +112,7 @@ figure .fa {
 .front h2{
   word-spacing: 0.15em;
   font-weight: 300;
-  font-size: 1.6em;
+/*  font-size: 1.6em;*/
   top: 50%;
   left: 0;
   width: 100%;
@@ -113,7 +121,7 @@ figure .fa {
 
 .front p {
   letter-spacing: 1px;
-  font-size: 68.5%;
+/*  font-size: 68.5%;*/
   position: absolute;
   bottom: 0;
   left: 0;
@@ -146,7 +154,7 @@ figure .fa {
 .back h2{
   word-spacing: 0.15em;
   font-weight: 300;
-  font-size: 1.6em;
+/*  font-size: 1.6em;*/
   top: 50%;
   left: 0;
   width: 100%;
