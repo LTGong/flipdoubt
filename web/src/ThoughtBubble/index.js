@@ -149,9 +149,9 @@ class ThoughtBubble extends Component {
               .then((res)=> {
                 console.log("Results back from checkin_request\n",res);
                 var update_values = []
-                for(var i = 0; i < values_from_turk.length; i++) {
-                  for(var j = 0; j < res.length; j++) {
-                    for(var k = 0; k < res[j]._HITs.length; k++) {
+                for(let i = 0; i < values_from_turk.length; i++) {
+                  for(let j = 0; j < res.length; j++) {
+                    for(let k = 0; k < res[j]._HITs.length; k++) {
                       if(values_from_turk[i].HITId === res[j]._HITs[k].HITId) {
                         update_values.push({
                           id: res[j]._id,
@@ -169,7 +169,7 @@ class ThoughtBubble extends Component {
                     'Content-Type': 'application/json',
                   },
                   'body': JSON.stringify(update_values)
-                })
+                });
                 fetch(db_updates)
                 .then((res)=> res.json())
                 .then((res)=> {

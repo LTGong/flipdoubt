@@ -19,7 +19,7 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
   let newThought = new Thought(
     req.body[0].text,
     default_pos_thought,
-    req.body.user_name,
+    req.body[0].user_name,
     HITs,
     HITs[0].HITTypeId,
     false,
