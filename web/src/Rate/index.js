@@ -48,25 +48,32 @@ class Rate extends Component {
   }
 
   fetchAllThoughts() {
-    var the_headers = Object.assign({
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }, this.props.getAuthorizationHeader());
-    let request = new Request('/api/db/get-thoughts', {
-      method: 'GET',
-      headers: the_headers
-    });
+    if(this.props.profile) {
+      const the_headers = Object.assign({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }, this.props.getAuthorizationHeader());
 
-    fetch(request).then((res) => res.json()).then((res) => {
-      let thoughts = res;
-      this.setState({thoughts: thoughts});
-      this.setState({totalPages: thoughts.length === 3.0 ? 0 : Math.ceil(thoughts.length/3.0)});
-      this.setState({lowerBound: 0});
-      this.setState({upperBound: 1});
-      this.reRenderState = false;
-    }).catch(err => {
-      console.log(err)
-    });
+      let url = new URL("/api/db/get-thoughts", window.location.origin);
+      const params = {user_id: this.props.profile.nickname};
+      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+
+      const request = new Request(url.href, {
+        'method': 'GET',
+        'headers': the_headers
+      });
+
+      fetch(request).then((res) => res.json()).then((res) => {
+        let thoughts = res;
+        this.setState({thoughts: thoughts});
+        this.setState({totalPages: thoughts.length === 3.0 ? 0 : Math.ceil(thoughts.length/3.0)});
+        this.setState({lowerBound: 0});
+        this.setState({upperBound: 1});
+        this.reRenderState = false;
+      }).catch(err => {
+        console.log(err)
+      });
+    }
   }
 
   showNextPage(gallery_template) {

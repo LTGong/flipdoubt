@@ -10,6 +10,7 @@ const fetch = require('node-fetch');
 router.post("/create-new-thought", checkJwt, function (req, res, next) {
   console.log("IN CREATE NEW THOUGHT.");
   let img_id = Math.floor(Math.random() * 10) + 1;
+  console.log("Image Id is: " + img_id);
 
   let new_today = new Date(Date.now());
   let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
@@ -48,25 +49,25 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
 
 router.get('/get-thoughts', checkJwt, function(req, res, next) {
   if(req.query.HITIds) {
-    var ids = req.query.HITIds.split(",");
+    const ids = req.query.HITIds.split(",");
     req.db.collection('thoughts')
-       .find({_HITs: {$elemMatch: {HITId: { $in: ids } }}})
-      .toArray(function(err, results) {
-        res.json(results.reverse());
-      })
+        .find({_HITs: {$elemMatch: {HITId: { $in: ids } }}})
+        .toArray(function(err, results) {
+          res.json(results.reverse());
+        })
   } else {
-    console.log("In /get-thoughts")
+    console.log("In /get-thoughts");
     req.db.collection('thoughts')
-      .find({_HITs: { $elemMatch: {"processing": false}}})
-      .toArray(function(err, results) {
-        var resultsWithAllHitsRespondedTo = results.filter((item) => {
-          var numHitsRespondedTo = _.reduce(item._HITs, (sum, hit) => {
-            return (hit.processing === false) ? (sum + 1) : sum;
-          }, 0);
-          return numHitsRespondedTo === 3;
+        .find({_user_id: req.query.user_id, _HITs: { $elemMatch: {"processing": false}}})
+        .toArray(function(err, results) {
+          let resultsWithAllHitsRespondedTo = results.filter((item) => {
+            let numHitsRespondedTo = _.reduce(item._HITs, (sum, hit) => {
+              return (hit.processing === false) ? (sum + 1) : sum;
+            }, 0);
+            return numHitsRespondedTo === 3;
+          });
+          res.json(resultsWithAllHitsRespondedTo.reverse());
         });
-        res.json(resultsWithAllHitsRespondedTo.reverse());
-      })
   }
 });
 
@@ -107,7 +108,6 @@ router.post('/get-user-thought-summary', checkJwt, function (req, res, next) {
   req
     .db
     .collection('thoughts')
-    // .find()
     .find({"_user_id": user_id})
     .toArray(function (err, results) {
       for (var i = 0; i < results.length; i++) {
@@ -281,12 +281,12 @@ router.get('/community-thoughts', function (req, res, next) {
     .toArray(function (err, results) {
       _.forEach(results, (result => {
         db_ids.push(result._id);
-      }))
+      })); 
       res
         .status(200)
         .send(db_ids);
     });
-})
+});
 
 router.post('/share-thought', function (req, res, next) {
   console.log("req.body._HITId: " + req.body);
@@ -302,7 +302,7 @@ router.post('/share-thought', function (req, res, next) {
     });
 
   res.json({message: 'Shared to community'});
-})
+});
 
 router.post('/increment_pos_thought', function (req, res, next) {
   console.log("req.body._HITId: " + req.body);
@@ -312,19 +312,18 @@ router.post('/increment_pos_thought', function (req, res, next) {
   let date_string = new_today.getMonth() + 1 + "/" + new_today.getDate() + "/" + new_today.getFullYear();
   console.log(date_string);
 
-  req
-    .db
-    .collection('thoughts')
-    .updateOne({
-      _HITId: req.body._HITId
-    }, {
-      $push: {
-        _pos_thought_timestamps: date_string
-      }
-    });
+  req.db
+      .collection('thoughts')
+      .updateOne({
+        _HITId: req.body._HITId
+      }, {
+        $push: {
+          _pos_thought_timestamps: date_string
+        }
+      });
   console.log('POSITIVE INCREMENT');
   res.json({message: 'Incremented Positive'});
-})
+});
 
 router.post('/increment_neg_thought', function (req, res, next) {
   console.log("req.body._HITId: " + req.body);

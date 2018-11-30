@@ -81,8 +81,11 @@ class ThoughtBubble extends Component {
 
   transform() {
     if (this.props.isAuthenticated()){
-      var thought = this.state.value;
-      var the_headers = Object.assign({'Accept': 'application/json','Content-Type': 'application/json'}, this.props.getAuthorizationHeader());
+      let thought = this.state.value;
+      const the_headers = Object.assign({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }, this.props.getAuthorizationHeader());
       console.log('we transformin "' + thought + '"');
 
       this.showText();
@@ -95,8 +98,8 @@ class ThoughtBubble extends Component {
 
       fetch(turk_request).then((res) => res.json()).then((res) => {
         console.log('In callback after mturk api call');
-        var HITs_Created = [];
-        var that = this;
+        let HITs_Created = [];
+        let that = this;
         res.forEach(item => {
           HITs_Created.push({
             'text': thought,
@@ -149,11 +152,11 @@ class ThoughtBubble extends Component {
                 .then((res) => {
                   if(!(res.length === 0)) {
                     values_from_turk = res;
-                    var hitids = res.map((item) => item.HITId);
-                    var url = new URL("/api/db/get-thoughts", window.location.origin);
-                    var params = {HITIds: hitids}
+                    let hitids = res.map((item) => item.HITId);
+                    let url = new URL("/api/db/get-thoughts", window.location.origin);
+                    const params = {HITIds: hitids};
                     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-                    var get_the_thoughts_for_hits = new Request(url.href, {
+                    const get_the_thoughts_for_hits = new Request(url.href, {
                       'method': 'GET',
                       'headers': the_headers
                     });
@@ -241,7 +244,6 @@ class ThoughtBubble extends Component {
                                             disabled={this.props.isAuthenticated() ? "" : "true"}
                                             onChange={this.handleChange}
                                             className="textarea"
-                                            type="text"
                                             placeholder={this.props.isAuthenticated() ? "Purge your thought." : "Login to purge a thought."} />
                   </div>
                 </div>

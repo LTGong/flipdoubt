@@ -18,35 +18,35 @@ var share = require('social-share');
 class Gallery extends Component {
 
   constructor(props) {
-      super(props);
-      this.state = {
-        showCarousel: window.innerWidth <= 1024,
-        currentShownPage: 0,
-        thoughts: [],
-        totalPages: null
-      }
-      this.handleCardClick = this
-          .handleCardClick
-          .bind(this);
-      this.swap = this
-          .swap
-          .bind(this);
-      this.handleShareClick = this
-          .handleShareClick
-          .bind(this);
-      this.handlePositiveClick = this
-          .handlePositiveClick
-          .bind(this);
-      this.handleNegativeClick = this
-          .handleNegativeClick
-          .bind(this);
-      this.handleTwitterClick = this
-          .handleTwitterClick
-          .bind(this);
-      this.showNextPage = this.showNextPage.bind(this);
-      this.showPreviousPage = this.showPreviousPage.bind(this);
-      this.updateDimensions = this.updateDimensions.bind(this);
-      this.reRenderState = false;
+    super(props);
+    this.state = {
+      showCarousel: window.innerWidth <= 1024,
+      currentShownPage: 0,
+      thoughts: [],
+      totalPages: null
+    }
+    this.handleCardClick = this
+        .handleCardClick
+        .bind(this);
+    this.swap = this
+        .swap
+        .bind(this);
+    this.handleShareClick = this
+        .handleShareClick
+        .bind(this);
+    this.handlePositiveClick = this
+        .handlePositiveClick
+        .bind(this);
+    this.handleNegativeClick = this
+        .handleNegativeClick
+        .bind(this);
+    this.handleTwitterClick = this
+        .handleTwitterClick
+        .bind(this);
+    this.showNextPage = this.showNextPage.bind(this);
+    this.showPreviousPage = this.showPreviousPage.bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
+    this.reRenderState = false;
   }
 
   updateDimensions() {
@@ -68,26 +68,26 @@ class Gallery extends Component {
   }
 
   componentWillUpdate() {
-      if (!this.reRenderState) {
-          this.reRenderState = this.props.reRender;
-          if (this.reRenderState) {
-              this.props.stopReRendering();
-              this.fetchThoughts();
-          }
+    if (!this.reRenderState) {
+      this.reRenderState = this.props.reRender;
+      if (this.reRenderState) {
+        this.props.stopReRendering();
+        this.fetchThoughts();
       }
+    }
   }
 
   fetchThoughts() {
-      let the_headers = Object.assign({
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-      }, this.props.getAuthorizationHeader());
-      if (this.props.user != null) {
-          let request = new Request('/api/db/get-user-quotes', {
-              method: 'POST',
-              body: JSON.stringify({username: this.props.user}),
-              headers: the_headers
-          });
+    let the_headers = Object.assign({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, this.props.getAuthorizationHeader());
+    if (this.props.user != null) {
+      let request = new Request('/api/db/get-user-quotes', {
+        method: 'POST',
+        body: JSON.stringify({username: this.props.user}),
+        headers: the_headers
+      });
 
       console.log(request);
       fetch(request).then((res) => res.json()).then((res) => {
@@ -107,7 +107,7 @@ class Gallery extends Component {
         });
         this.reRenderState = false;
       }).catch(err => console.log(err));
-  }
+    }
   }
 
   showNextPage(gallery_template) {
@@ -154,52 +154,52 @@ class Gallery extends Component {
   }
 
   handleCardClick(e) {
-      e.preventDefault();
-      if (e.currentTarget.className.includes('flipped')) {
-          e.currentTarget.className = "custom-card";
-      } else {
-          e.currentTarget.className = "custom-card flipped";
-      }
+    e.preventDefault();
+    if (e.currentTarget.className.includes('flipped')) {
+      e.currentTarget.className = "custom-card";
+    } else {
+      e.currentTarget.className = "custom-card flipped";
+    }
   }
 
   handleTwitterClick(e) {
-      console.log("child click");
-      e.stopPropagation();
-      var url = share('twitter', {
-          title: e
-              .currentTarget
-              .getAttribute('value')
-      });
+    console.log("child click");
+    e.stopPropagation();
+    var url = share('twitter', {
+      title: e
+          .currentTarget
+          .getAttribute('value')
+    });
 
-      this.bounce(e.currentTarget);
-      window.open(url, "_blank");
+    this.bounce(e.currentTarget);
+    window.open(url, "_blank");
   }
 
   handleShareClick(e) {
-      e.stopPropagation();
+    e.stopPropagation();
     let the_headers = Object.assign({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }, this.props.getAuthorizationHeader());
     let share_request = new Request('/api/db/share-thought', {
-          method: 'POST',
-          body: JSON.stringify({
-              _HITId: e
-                  .currentTarget
-                  .getAttribute('value')
-          }),
-          // this header sends the user token from auth0
-          headers: the_headers
-      });
-      fetch(share_request).then((res) => res.json()).then((res) => {
-          console.log(res.message);
-      }).catch(err => console.log(err));
+      method: 'POST',
+      body: JSON.stringify({
+        _HITId: e
+            .currentTarget
+            .getAttribute('value')
+      }),
+      // this header sends the user token from auth0
+      headers: the_headers
+    });
+    fetch(share_request).then((res) => res.json()).then((res) => {
+      console.log(res.message);
+    }).catch(err => console.log(err));
 
-      this.bounce(e.currentTarget);
+    this.bounce(e.currentTarget);
   }
 
   handlePositiveClick(e) {
-      e.stopPropagation();
+    e.stopPropagation();
 
     let the_headers = Object.assign({
       'Accept': 'application/json',
@@ -207,24 +207,24 @@ class Gallery extends Component {
     }, this.props.getAuthorizationHeader());
 
     let increment_positive_req = new Request('/api/db/increment_pos_thought', {
-          method: 'POST',
-          body: JSON.stringify({
-              _HITId: e
-                  .currentTarget
-                  .getAttribute('value')
-          }),
-          headers: the_headers
-      });
+      method: 'POST',
+      body: JSON.stringify({
+        _HITId: e
+            .currentTarget
+            .getAttribute('value')
+      }),
+      headers: the_headers
+    });
 
-      fetch(increment_positive_req).then((res) => res.json()).then((res) => {
-          console.log(res.message);
-      }).catch(err => console.log(err));
+    fetch(increment_positive_req).then((res) => res.json()).then((res) => {
+      console.log(res.message);
+    }).catch(err => console.log(err));
 
-      this.bounce(e.currentTarget);
+    this.bounce(e.currentTarget);
   }
 
   handleNegativeClick(e) {
-      e.stopPropagation();
+    e.stopPropagation();
 
     let the_headers = Object.assign({
       'Accept': 'application/json',
@@ -232,83 +232,83 @@ class Gallery extends Component {
     }, this.props.getAuthorizationHeader());
 
     let increment_negative_req = new Request('/api/db/increment_neg_thought', {
-          method: 'POST',
-          body: JSON.stringify({
-              _HITId: e
-                  .currentTarget
-                  .getAttribute('value')
-          }),
-          // this header sends the user token from auth0
-          headers: the_headers
-      });
+      method: 'POST',
+      body: JSON.stringify({
+        _HITId: e
+            .currentTarget
+            .getAttribute('value')
+      }),
+      // this header sends the user token from auth0
+      headers: the_headers
+    });
 
-      fetch(increment_negative_req).then((res) => res.json()).then((res) => {
-          console.log(res.message);
-      }).catch(err => console.log(err));
+    fetch(increment_negative_req).then((res) => res.json()).then((res) => {
+      console.log(res.message);
+    }).catch(err => console.log(err));
 
-      this.bounce(e.currentTarget);
+    this.bounce(e.currentTarget);
   }
 
   bounce(element) {
-      element
-          .classList
-          .remove("bounce");
-      element
-          .classList
-          .add("bounce");
+    element
+        .classList
+        .remove("bounce");
+    element
+        .classList
+        .add("bounce");
   }
 
   swap(e) {
-      console.log('swap');
-      e.stopPropagation();
+    console.log('swap');
+    e.stopPropagation();
     const the_headers = Object.assign({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }, this.props.getAuthorizationHeader());
     const img = e.currentTarget.parentElement.parentElement.parentElement.children[0];
     let img_request = new Request('/api/db/swap-image', {
-          method: 'POST',
-          body: JSON.stringify({
-              _HITId: e
-                  .currentTarget
-                  .getAttribute('value')
-          }),
-          // this header sends the user token from auth0
-          headers: the_headers
-      });
+      method: 'POST',
+      body: JSON.stringify({
+        _HITId: e
+            .currentTarget
+            .getAttribute('value')
+      }),
+      // this header sends the user token from auth0
+      headers: the_headers
+    });
 
-      fetch(img_request).then((res) => res.json()).then((res) => {
-          img.src = this.getBackground(res._img_id);
-      }).catch(err => console.log(err));
+    fetch(img_request).then((res) => res.json()).then((res) => {
+      img.src = this.getBackground(res._img_id);
+    }).catch(err => console.log(err));
 
-      this.bounce(e.currentTarget);
+    this.bounce(e.currentTarget);
   }
 
   getBackground(img_id) {
-      switch (img_id) {
-          case 1:
-              return background1;
-          case 2:
-              return background2;
-          case 3:
-              return background3;
-          case 4:
-              return background4;
-          case 5:
-              return background5;
-          case 6:
-              return background6;
-          case 7:
-              return background7;
-          case 8:
-              return background8;
-          case 9:
-              return background9;
-          case 10:
-              return background10;
-          default:
-              return background1;
-      }
+    switch (img_id) {
+      case 1:
+        return background1;
+      case 2:
+        return background2;
+      case 3:
+        return background3;
+      case 4:
+        return background4;
+      case 5:
+        return background5;
+      case 6:
+        return background6;
+      case 7:
+        return background7;
+      case 8:
+        return background8;
+      case 9:
+        return background9;
+      case 10:
+        return background10;
+      default:
+        return background1;
+    }
   }
 
   getThoughtsInSetsOfThree(thoughts) {
@@ -391,7 +391,7 @@ class Gallery extends Component {
     } else {
       if(this.state.thoughts.length === 0) {
         return(
-           <div/>
+            <div/>
         );
       } else {
         setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
