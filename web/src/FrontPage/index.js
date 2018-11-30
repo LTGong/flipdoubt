@@ -9,7 +9,7 @@ class Frontpage extends Component {
     super(props);
     this.state = {
       shouldRerender: false
-    }
+    };
     this.reRenderHack = this
       .reRenderHack
       .bind(this);
