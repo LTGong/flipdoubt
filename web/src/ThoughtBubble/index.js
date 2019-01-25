@@ -80,7 +80,7 @@ class ThoughtBubble extends Component {
   }
 
   transform() {
-    if (this.props.isAuthenticated()){
+    if (this.props.isAuthenticated()) {
       let thought = this.state.value;
       const the_headers = Object.assign({
         'Accept': 'application/json',

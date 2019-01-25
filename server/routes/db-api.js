@@ -45,6 +45,11 @@ router.post("/create-new-thought", checkJwt, function (req, res, next) {
     .catch(function (error) {
       throw error;
     });
+  req.db.collection('users')
+     .update(
+       {"user_id": {$eq: req.body[0].username }},
+       {$setOnInsert: {"user_id": req.body[0].user_name }},
+       {upsert: true});
 });
 
 router.get('/get-thoughts', checkJwt, function(req, res, next) {
@@ -66,26 +71,96 @@ router.get('/get-thoughts', checkJwt, function(req, res, next) {
             }, 0);
             return numHitsRespondedTo === 3;
           });
-          res.json(resultsWithAllHitsRespondedTo.reverse());
+          resultsReadyForRating = resultsWithAllHitsRespondedTo.filter((item) => {
+            let numHitsRated = _.reduce(item._HITs, (sum, hit) => {
+              return (hit.rating !== null) ? (sum + 1) : sum;
+            }, 0);
+            return numHitsRated < 3;
+          });
+          res.json(resultsReadyForRating.reverse());
         });
   }
+});
+
+router.get('/get-ratings', checkJwt, function(req, res, next) {
+  req.db.collection('ratings').find().toArray((err, ratings) => {
+    res.json(ratings[0]);
+  });
+});
+
+router.get('/get-user', checkJwt, function(req, res, next) {
+  req.db.collection('users')
+      .find({"user_id": {$eq: req.query.username}})
+      .toArray((err, users) => {
+        res.json(users[0])
+      });
+});
+
+router.post('/set-reason', checkJwt, function(req, res, next) {
+  req.db.collection('thoughts')
+      .update(
+          {_id: ObjectId(req.body.thoughtId), "_HITs.HITId": req.body.hitId},
+          {$set: {"_HITs.$.reason": req.body.reason}}).then((result) => {
+           res.status(200);
+  });
 });
 
 router.post('/set-rating', checkJwt, function(req, res, next) {
   console.log("In set rating");
   req.db.collection('thoughts')
-     .update(
-        {_id: ObjectId(req.body.thoughtId), "_HITs.HITId": req.body.hitId},
-        {$set: {
-          "_HITs.$.rating": req.body.rating
-        }})
-     .then((result) => {
-       res.status(200).send({
-         thoughtId: req.body.thoughtId,
-         hitId: req.body.hitId,
-         rating: req.body.rating
-       });
-     });
+      .find({_id: ObjectId(req.body.thoughtId), "_HITs.HITId": req.body.hitId})
+      .toArray((error, data) => {
+       let thought = data[0];
+        req.db.collection('ratings').find({}).toArray((error, results) => {
+          for(let i = 0; i < results[0].starRatings.length; i++) {
+            if(results[0].starRatings[i].numStars === req.body.rating) {
+              for(let j = 0; j < thought._HITs.length; j++) {
+                if(thought._HITs[j].HITId === req.body.hitId) {
+                  if(thought._HITs[j].rating === null) {
+                    var rating = results[0].starRatings[i];
+                    rating.count += 1;
+                  } else {
+                    rating = results[0].starRatings[i];
+                    rating.count += 1;
+                    var collection = _.filter(results[0].starRatings, (item) => {
+                      return item.numStars === thought._HITs[j].rating;
+                    });
+                    var oldRating = collection[0];
+                    oldRating.count -= 1;
+                  }
+                }
+              }
+            }
+          }
+          if(rating) {
+            req.db.collection('ratings')
+                .update(
+                    {"starRatings": {$elemMatch: {numStars: {$eq: req.body.rating}}}},
+                    {$set: {"starRatings.$.count": rating.count}}).then((result) => {
+            });
+          }
+          if(oldRating) {
+            req.db.collection('ratings').update(
+                {"starRatings": {$elemMatch: {numStars: {$eq: oldRating.numStars}}}},
+                {$set: {"starRatings.$.count": oldRating.count}}).then((result) => {
+                  console.log("Old Rating decremented");
+            });
+          }
+          req.db.collection('thoughts')
+              .update(
+                  {_id: ObjectId(req.body.thoughtId), "_HITs.HITId": req.body.hitId},
+                  {$set: {
+                      "_HITs.$.rating": req.body.rating
+                    }})
+              .then((result) => {
+                res.status(200).send({
+                  thoughtId: req.body.thoughtId,
+                  hitId: req.body.hitId,
+                  rating: req.body.rating
+                });
+              });
+        });
+  });
 });
 
 router.post('/get-user-quotes', checkJwt, function (req, res, next) {
@@ -178,12 +253,12 @@ router.post('/get-processing-HITs', function (req, res, next) {
         for(var i=0; i < ids.length; i++) {
           HITIds.push(ids[i]);
         }
-      }))
+      }));
       res
         .status(200)
         .send(HITIds);
     });
-})
+});
 
 
 router.post("/get-totals", checkJwt, function (req, res, next) {

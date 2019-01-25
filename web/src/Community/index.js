@@ -17,17 +17,17 @@ var share = require('social-share');
 class Community extends Component {
 
   constructor(props) {
-      super(props);
-      this.state = {
-          thoughts: [],
-        showCarousel: window.innerWidth > 1024 ? false : true,
-        currentShownPage: 0,
-        totalPages: null,
-      }
-      this.handleTwitterClick = this
-          .handleTwitterClick
-          .bind(this);
-      this.updateDimensions = this.updateDimensions.bind(this);
+    super(props);
+    this.state = {
+      thoughts: [],
+      showCarousel: window.innerWidth > 1024 ? false : true,
+      currentShownPage: 0,
+      totalPages: null,
+    }
+    this.handleTwitterClick = this
+        .handleTwitterClick
+        .bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
   }
 
   updateDimensions() {
@@ -57,7 +57,7 @@ class Community extends Component {
       res.forEach((item) => {
         for(var i = 0; i < item._HITs.length; i++) {
           if(item._HITs[i].positive_thought !== undefined
-            && item._pos_thought === undefined) {
+              && item._pos_thought === undefined) {
             item['_pos_thought'] = item._HITs[i].positive_thought;
           }
         }
@@ -74,41 +74,41 @@ class Community extends Component {
   }
 
   handleTwitterClick(e) {
-      console.log("child click");
-      e.stopPropagation();
-      var url = share('twitter', {
-          title: e
-              .currentTarget
-              .getAttribute('value')
-      });
-      window.open(url, "_blank");
+    console.log("child click");
+    e.stopPropagation();
+    var url = share('twitter', {
+      title: e
+          .currentTarget
+          .getAttribute('value')
+    });
+    window.open(url, "_blank");
   }
 
   getBackground(img_id) {
-      switch (img_id) {
-          case 1:
-              return background1;
-          case 2:
-              return background2;
-          case 3:
-              return background3;
-          case 4:
-              return background4;
-          case 5:
-              return background5;
-          case 6:
-              return background6;
-          case 7:
-              return background7;
-          case 8:
-              return background8;
-          case 9:
-              return background9;
-          case 10:
-              return background10;
-          default:
-              return background1;
-      }
+    switch (img_id) {
+      case 1:
+        return background1;
+      case 2:
+        return background2;
+      case 3:
+        return background3;
+      case 4:
+        return background4;
+      case 5:
+        return background5;
+      case 6:
+        return background6;
+      case 7:
+        return background7;
+      case 8:
+        return background8;
+      case 9:
+        return background9;
+      case 10:
+        return background10;
+      default:
+        return background1;
+    }
   }
 
   showNextPage(gallery_template) {
@@ -175,30 +175,30 @@ class Community extends Component {
   }
 
   render() {
-      if(this.state.showCarousel) {
-        var setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
-        var templates = []
-        for(var i = 0; i < setsOfThree.length; i++) {
-          templates.push(setsOfThree[i].map((thought, i) => {
-            return (
+    if(this.state.showCarousel) {
+      var setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
+      var templates = []
+      for(var i = 0; i < setsOfThree.length; i++) {
+        templates.push(setsOfThree[i].map((thought, i) => {
+          return (
               <div className="column is-4" key={i}>
                 <div className="custom-card" key={i}>
                   <figure className="front">
                     <img src={this.getBackground(thought._img_id)} alt="front"/>
                     <div className="caption">
-                      <h3>{thought._HITs[0].positive_thought}</h3>
+                      <h3 dangerouslySetInnerHTML={{__html: thought._HITs[0].positive_thought}}/>
                     </div>
                   </figure>
                 </div>
               </div>
-            )
-          }));
-        }
-        var gallery_template = templates.map((template, i) => <div key={i} className="columns">
-          {template}
-        </div>);
-        var circles = this.getCircleIcons();
-        return (
+          )
+        }));
+      }
+      var gallery_template = templates.map((template, i) => <div key={i} className="columns">
+        {template}
+      </div>);
+      var circles = this.getCircleIcons();
+      return (
           <div className="is-centered container">
             <div className="box dark carousel-container">
               <h2 className="title is-3 makeWhite has-text-centered" style={{"width": "100%"}}>Community Inspirations</h2>
@@ -210,50 +210,44 @@ class Community extends Component {
               </div>
             </div>
           </div>
-        );
-      } else {
-        setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
-        templates = [];
-        for (i = 0; i < setsOfThree.length; i++) {
-            templates.push(setsOfThree[i].map((thought, i) => {
-                return (
-                    <div className="column is-4">
-                        <div className="card-container">
-                            <div className="custom-card">
-                                <figure className="front">
-                                    <img src={this.getBackground(thought._img_id)} alt="front"/>
-                                    <div className="caption">
-                                        <h3>{thought._pos_thought}</h3>
-                                    </div>
-                                </figure>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }));
-        }
-        gallery_template = templates.map((template, i) => <div key={i.toString()} className="columns">
-            {template}
-        </div>);
-        return (
-          <div>
-          <div className="makeWhite has-text-centered container">
-         &nbsp;
-          </div>
-            <div className="box dark has-text-centered container">
-                <h2 className="title is-3">Community Inspirations</h2>
-                <br/> {gallery_template}
-            </div>
-            </div>
-        );
+      );
+    } else {
+      setsOfThree = this.getThoughtsInSetsOfThree(this.state.thoughts);
+      templates = [];
+      for (i = 0; i < setsOfThree.length; i++) {
+        templates.push(setsOfThree[i].map((thought, i) => {
+          return (
+              <div className="column is-4">
+                <div className="card-container">
+                  <div className="custom-card">
+                    <figure className="front">
+                      <img src={this.getBackground(thought._img_id)} alt="front"/>
+                      <div className="caption">
+                        <h3 dangerouslySetInnerHTML={{ __html: thought._pos_thought }}></h3>
+                      </div>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+          );
+        }));
       }
+      gallery_template = templates.map((template, i) => <div key={i.toString()} className="columns">
+        {template}
+      </div>);
+      return (
+          <div>
+            <div className="makeWhite has-text-centered container">
+              &nbsp;
+            </div>
+            <div className="box dark has-text-centered container">
+              <h2 className="title is-3">Community Inspirations</h2>
+              <br/> {gallery_template}
+            </div>
+          </div>
+      );
+    }
   }
 }
-
-//<h2 className="title is-3 makeWhite">Life is hard for everybody sometimes.</h2>
-//<h2 className="title is-3 makeWhite">But how you think about life changes how you live.</h2>
-//<h2 className="title is-3 makeWhite">FLIP*DOUBT helps you change negative thought patterns.</h2>
-//<h2 className="title is-3 makeWhite">Get inspired by these positive thoughts from our community.</h2>
-//<h2 className="title is-3 makeWhite">Then transform and track your own thoughts.</h2>
 
 export default Community;

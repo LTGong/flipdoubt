@@ -350,7 +350,7 @@ class Gallery extends Component {
                     <figure className="front">
                       <img src={this.getBackground(thought._img_id)} alt="front"/>
                       <div className="caption">
-                        <h3>{thought._pos_thought}</h3>
+                        <h3 dangerouslySetInnerHTML={{__html: thought._pos_thought}}/>
                       </div>
                       <div className="share-social">
                         <i className="fa fa-exchange"
@@ -362,7 +362,7 @@ class Gallery extends Component {
                     <figure className="is-overlay back">
                       <img src={background11} alt="back"/>
                       <div className="caption">
-                        <h3 className="negative">{thought._neg_thought}</h3>
+                        <h3 className="negative" dangerouslySetInnerHTML={{ __html: thought._neg_thought }} />
                       </div>
                     </figure>
                   </div>
@@ -417,7 +417,7 @@ class Gallery extends Component {
                       <figure className="is-overlay back">
                         <img src={background11} alt="back"/>
                         <div className="caption">
-                          <h3 className="negative">{thought._neg_thought}</h3>
+                          <h3 className="negative" dangerouslySetInnerHTML={{ __html: thought._neg_thought }} />
                         </div>
                       </figure>
                     </div>
