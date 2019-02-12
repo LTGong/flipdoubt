@@ -113,3 +113,12 @@ h1 {
 .reason.show {
     display: block;
 }
+
+.change-view {
+    display: block;
+    margin-top: 1em;
+    padding-top: 1em;
+    color: white;
+    font-size: x-large;
+    cursor: pointer;
+}

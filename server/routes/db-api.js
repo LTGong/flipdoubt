@@ -71,12 +71,17 @@ router.get('/get-thoughts', checkJwt, function(req, res, next) {
             }, 0);
             return numHitsRespondedTo === 3;
           });
-          resultsReadyForRating = resultsWithAllHitsRespondedTo.filter((item) => {
-            let numHitsRated = _.reduce(item._HITs, (sum, hit) => {
-              return (hit.rating !== null) ? (sum + 1) : sum;
-            }, 0);
-            return numHitsRated < 3;
-          });
+          let resultsReadyForRating;
+          if (!req.query.showAll) {
+              resultsReadyForRating = resultsWithAllHitsRespondedTo.filter((item) => {
+              let numHitsRated = _.reduce(item._HITs, (sum, hit) => {
+                return (hit.rating !== null) ? (sum + 1) : sum;
+              }, 0);
+              return numHitsRated < 3;
+            });
+          } else {
+            resultsReadyForRating = resultsWithAllHitsRespondedTo;
+          }
           res.json(resultsReadyForRating.reverse());
         });
   }

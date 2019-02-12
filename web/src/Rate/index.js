@@ -28,12 +28,14 @@ class Rate extends Component {
       currentThought: null,
       showTellUsWhy: false,
       thought_text: "",
-      score: ""
+      score: "",
+      showOnlyUnratedThoughts: true
     };
     this.handleCardClick = this.handleCardClick.bind(this);
     this.showNextPage = this.showNextPage.bind(this);
     this.showPreviousPage = this.showPreviousPage.bind(this);
     this.backToSelection = this.backToSelection.bind(this);
+    this.changeView = this.changeView.bind(this);
     this.reRenderState = false;
   }
 
@@ -42,11 +44,8 @@ class Rate extends Component {
   }
 
   componentWillUpdate() {
-    if (!this.reRenderState) {
-      this.reRenderState = this.props.reRender;
-      if (this.reRenderState) {
-        this.fetchAllThoughts();
-      }
+    if(this.reRenderState) {
+      this.fetchAllThoughts()
     }
   }
 
@@ -58,7 +57,11 @@ class Rate extends Component {
       }, this.props.getAuthorizationHeader());
 
       let url = new URL("/api/db/get-thoughts", window.location.origin);
-      const params = {user_id: this.props.profile.nickname};
+      if(this.state.showOnlyUnratedThoughts) {
+        var params = {user_id: this.props.profile.nickname};
+      } else {
+        params = {user_id: this.props.profile.nickname, showAll: true};
+      }
       Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
       const request = new Request(url.href, {
@@ -77,6 +80,11 @@ class Rate extends Component {
         console.log(err)
       });
     }
+  }
+
+  changeView() {
+    this.setState({showOnlyUnratedThoughts: !this.state.showOnlyUnratedThoughts});
+    this.reRenderState = true;
   }
 
   showNextPage(gallery_template) {
@@ -348,7 +356,7 @@ class Rate extends Component {
         return (
           <div className="column is-one-third">
             <div className="reframes">
-              <div className="reframe" data-hitid={hit.HITId} key={i} dangerouslySetInnerHTML={{ __html: hit.positive_thought }}></div>
+              <div className="reframe" data-hitid={hit.HITId} key={i} dangerouslySetInnerHTML={{__html: hit.positive_thought}}/>
             </div>
             <div className="ratings" style={{fontSize: 18}}>
               <StarRatingComponent
@@ -436,7 +444,7 @@ class Rate extends Component {
                       <figure className="is-overlay back">
                         <img src={this.getBackground(thought._img_id)} alt="back"/>
                         <div className="caption">
-                          <h3 dangerouslySetInnerHTML={{ __html: thought._HITs[0].positive_thought }}></h3>
+                          <h3 dangerouslySetInnerHTML={{ __html: thought._HITs[0].positive_thought }} />
                         </div>
                       </figure>
                       <figure className="front">
@@ -463,6 +471,8 @@ class Rate extends Component {
                     {circles}
                     <div className="page-controls"><FontAwesomeIcon onClick={this.showNextPage.bind(this, gallery_template)} className="pull-left" icon="angle-right" size="3x" /></div>
                   </div>
+                  <span onClick={() => this.changeView() }
+                    className="change-view">{this.state.showOnlyUnratedThoughts ? "Show all thoughts": "Show only thoughts with unrated reframes"}</span>
                 </div>
               </div>
           );
